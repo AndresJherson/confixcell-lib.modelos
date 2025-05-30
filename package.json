@@ -1,0 +1,18 @@
+{
+  "name": "@confixcell/modelos",
+  "version": "1.0.0",
+  "description": "modelos",
+  "license": "ISC",
+  "author": "confixcell",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@types/luxon": "^3.4.2",
+    "decimal.js": "^10.5.0",
+    "luxon": "^3.5.0",
+    "reflect-metadata": "^0.2.2"
+  }
+}

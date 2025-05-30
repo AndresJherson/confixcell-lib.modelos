@@ -1,0 +1,451 @@
+import Decimal from 'decimal.js';
+import { Cliente, DocumentoTransaccion, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, Prop, PropBehavior, Usuario } from '../../../../index';
+import { DateTime } from 'luxon';
+
+@Prop.Class()
+export class NotaVenta extends DocumentoTransaccion
+{
+    static override type: string = 'NotaVenta';
+    override type: string = NotaVenta.type;
+
+    @Prop.Set( PropBehavior.datetime ) fechaCompromiso?: string;
+    @Prop.Set( PropBehavior.model, x => new Cliente( x ) ) cliente?: Cliente;
+    @Prop.Set( PropBehavior.model, x => new NotaVentaPrioridad( x ) ) prioridad?: NotaVentaPrioridad;
+    @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuarioTecnico?: Usuario;
+    @Prop.Set( PropBehavior.model, x => new NotaVentaEstado( x ) ) estado?: NotaVentaEstado;
+
+    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaBienConsumo( x ) ) salidasBienConsumo: NotaVentaSalidaBienConsumo[] = [];
+    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacion( x ) ) salidasProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion[] = [];
+    @Prop.Set( PropBehavior.array, x => new NotaVentaEntradaEfectivo( x ) ) entradasEfectivo: NotaVentaEntradaEfectivo[] = [];
+
+    @Prop.Set() override importeBruto: number = 0;
+    @Prop.Set() importeDescuento: number = 0;
+    @Prop.Set() importeInicial: number = 0;
+    @Prop.Set() importeAdicional: number = 0;
+    @Prop.Set() override importeNeto: number = 0;
+
+    get decimalImporteDescuento(): Decimal {
+        return Prop.toDecimal( this.importeDescuento );
+    }
+    get decimalImporteInicial(): Decimal {
+        return Prop.toDecimal( this.importeInicial );
+    }
+    get decimalImporteAdicional(): Decimal {
+        return Prop.toDecimal( this.importeAdicional );
+    }
+
+    override get importeDevengado() {
+        return this.decimalImporteValorSalidaEfectivo
+            .plus( this.importePrecioSalidaBienConsumo )
+            .plus( this.importePrecioSalidaProduccion )
+            .toNumber();
+    }
+
+    override get importeLiquidado() {
+        return this.decimalImporteValorEntradaEfectivo
+            .plus( this.importeValorEntradaBienConsumo )
+            .toNumber();
+    }
+
+    get dateTimeCompromiso(): DateTime
+    {
+        return Prop.toDateTime( this.fechaCompromiso );
+    }
+
+    
+    constructor( item?: Partial<NotaVenta> )
+    {
+        super();
+        Prop.initialize( this, item );
+    }
+
+
+    override set(item: Partial<NotaVenta>): this {
+        return super.set( item as Partial<this> );
+    }
+
+
+    override setRelation( keys?: 
+        Parameters<DocumentoTransaccion['setRelation']>[0] &
+        Parameters<NotaVentaSalidaProduccionServicioReparacion['setRelation']>[0]
+    ): this 
+    {
+        super.setRelation( keys );
+
+        this.salidasBienConsumo.forEach( salida => salida.setRelation( keys ).set({
+            documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
+        }) );
+
+        this.salidasProduccionServicioReparacion.forEach( salida => salida.setRelation( keys ).set({
+            documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
+        }) );
+
+        this.entradasEfectivo.forEach( entrada => entrada.setRelation( keys ).set({
+            documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
+        }) );
+
+        return this;
+    }
+
+
+    override procesarInformacionEntrada(): this 
+    {
+        super.procesarInformacionEntrada();
+        const prevImporteValorEntradaEfectivo = this.importeValorEntradaEfectivo;
+
+        try {
+            this.importeValorEntradaEfectivo = this.entradasEfectivo.reduce(
+                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ),
+                new Decimal( 0 )
+            )
+            .plus( prevImporteValorEntradaEfectivo )
+            .toNumber();
+        }
+        catch ( error ) {
+            this.importeValorEntradaEfectivo = prevImporteValorEntradaEfectivo;
+        }
+
+        return this;
+    }
+
+
+    override procesarInformacionSalida(): this 
+    {
+        super.procesarInformacionSalida();
+
+        const prevImporteValorSalidaBienConsumo = this.importeValorSalidaBienConsumo;
+        const prevImportePrecioSalidaBienConsumo = this.importePrecioSalidaBienConsumo;
+        
+        try {
+            const recordImportesSalidaBienConsumo = this.salidasBienConsumo.reduce(
+                ( importes, salida ) => {
+                    salida.procesarInformacion();
+                    return {
+                        importeBruto: importes.importeBruto.plus( salida.importePrecioBruto ),
+                        importeDescuento: importes.importeDescuento.plus( salida.importeDescuento ),
+                        importeValorNeto: importes.importeValorNeto.plus( salida.importeValorNeto )
+                    };
+                },
+                {
+                    importeBruto: new Decimal( 0 ),
+                    importeDescuento: new Decimal( 0 ),
+                    importeValorNeto: new Decimal( 0 )
+                }
+            );
+
+            this.set({
+                importeBruto: recordImportesSalidaBienConsumo.importeBruto.toNumber(),
+                importeDescuento: recordImportesSalidaBienConsumo.importeDescuento.toNumber(),
+                importeInicial: recordImportesSalidaBienConsumo.importeBruto.minus( recordImportesSalidaBienConsumo.importeDescuento ).toNumber(),
+                importeValorSalidaBienConsumo: recordImportesSalidaBienConsumo.importeValorNeto.plus( prevImporteValorSalidaBienConsumo ).toNumber(),
+                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo.importeBruto.minus( recordImportesSalidaBienConsumo.importeDescuento )
+                    .plus( prevImportePrecioSalidaBienConsumo )
+                    .toNumber()
+            })
+        }
+        catch ( error ) {
+            this.set({
+                importeBruto: 0,
+                importeDescuento: 0,
+                importeInicial: 0,
+                importeValorSalidaBienConsumo: prevImporteValorSalidaBienConsumo,
+                importePrecioSalidaBienConsumo: prevImportePrecioSalidaBienConsumo
+            })
+        }
+
+
+        const prevImporteValorSalidaProduccion = this.importeValorSalidaProduccion;
+        const prevImportePrecioSalidaProduccion = this.importePrecioSalidaProduccion;
+
+        try {
+            const recordImportesSalidaProduccion = this.salidasProduccionServicioReparacion.reduce(
+                ( importes, salida ) => {
+                    salida.procesarInformacion();
+                    return {
+                        importeAdicional: importes.importeAdicional.plus( salida.importePrecioNeto ),
+                        importeValorSalidaProduccion: importes.importeValorSalidaProduccion.plus( salida.importeValorNeto )
+                    }
+                },
+                {
+                    importeAdicional: new Decimal( 0 ),
+                    importeValorSalidaProduccion: new Decimal( 0 )
+                }
+            )
+            
+            this.set({
+                importeAdicional: recordImportesSalidaProduccion.importeAdicional.toNumber(),
+                importeNeto: recordImportesSalidaProduccion.importeAdicional.plus( this.importeInicial ).toNumber(),
+                importeValorSalidaProduccion: recordImportesSalidaProduccion.importeValorSalidaProduccion.plus( prevImporteValorSalidaProduccion ).toNumber(),
+                importePrecioSalidaProduccion: recordImportesSalidaProduccion.importeAdicional.plus( prevImportePrecioSalidaProduccion ).toNumber()
+            })
+        }
+        catch ( error ) {
+            this.set({
+                importeAdicional: 0,
+                importeNeto: this.importeInicial,
+                importeValorSalidaProduccion: prevImporteValorSalidaProduccion,
+                importePrecioSalidaProduccion: prevImportePrecioSalidaProduccion
+            })
+        }
+
+        
+        return this;
+    }
+
+
+    // Salida Bien de Consumo
+    agregarSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): this
+    {
+        this.salidasBienConsumo.unshift( salidaBienConsumo );
+        this.procesarInformacion();
+        return this;
+    }
+
+
+    actualizarSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): this
+    {
+        let i = this.salidasBienConsumo.findIndex( sal => sal.symbol === salidaBienConsumo.symbol );
+
+        i = i === -1
+            ? this.salidasBienConsumo.findIndex( sal => 
+                ( sal.id === undefined || salidaBienConsumo.id === undefined )
+                    ? false
+                    : ( sal.id === salidaBienConsumo.id )
+            )
+            : i;
+
+        if ( i !== -1 ) {
+            this.salidasBienConsumo[ i ] = salidaBienConsumo;
+            this.procesarInformacion();
+        }
+
+        return this;
+    }
+
+
+    eliminarSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): this
+    {
+        this.salidasBienConsumo = this.salidasBienConsumo.filter( sal => sal.symbol !== salidaBienConsumo.symbol );
+        this.salidasBienConsumo = this.salidasBienConsumo.filter( sal => 
+            ( sal.id === undefined || salidaBienConsumo.id === undefined )
+                ? true
+                : ( sal.id !== salidaBienConsumo.id )
+        )
+
+        this.procesarInformacion();
+
+        return this;
+    }
+
+
+    getSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): NotaVentaSalidaBienConsumo
+    {
+        let i = this.salidasBienConsumo.findIndex( sal => sal.symbol === salidaBienConsumo.symbol );
+
+        i = i === -1
+            ? this.salidasBienConsumo.findIndex( sal => 
+                ( sal.id === undefined || salidaBienConsumo.id === undefined )
+                    ? false
+                    : ( sal.id === salidaBienConsumo.id )
+            )
+            : i;
+
+        if ( i !== -1 ) {
+            return this.salidasBienConsumo[ i ];
+        }
+        else {
+            throw new Error( 'Salida de Bien de Consumo no existe' );
+        }
+    }
+
+
+    // Salida Produccion de Servicio de Reparacion
+    agregarSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): this
+    {
+        this.salidasProduccionServicioReparacion.unshift( salidaProduccionServicioReparacion );
+        this.procesarInformacion();
+        return this;
+    }
+
+
+    actualizarSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): this
+    {
+        let i = this.salidasProduccionServicioReparacion.findIndex( sal => sal.symbol === salidaProduccionServicioReparacion.symbol );
+
+        i = i === -1
+            ? this.salidasProduccionServicioReparacion.findIndex( sal => 
+                ( sal.id === undefined || salidaProduccionServicioReparacion.id === undefined )
+                    ? false
+                    : ( sal.id === salidaProduccionServicioReparacion.id )
+            )
+            : i;
+
+        if ( i !== -1 ) {
+            this.salidasProduccionServicioReparacion[ i ] = salidaProduccionServicioReparacion;
+            this.procesarInformacion();
+        }
+
+        return this;
+    }
+
+
+    eliminarSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): this
+    {
+        this.salidasProduccionServicioReparacion = this.salidasProduccionServicioReparacion.filter( sal => sal.symbol !== salidaProduccionServicioReparacion.symbol );
+        this.salidasProduccionServicioReparacion = this.salidasProduccionServicioReparacion.filter( sal => 
+            ( sal.id === undefined || salidaProduccionServicioReparacion.id === undefined )
+                ? true
+                : ( sal.id !== salidaProduccionServicioReparacion.id )
+        )
+
+        this.procesarInformacion();
+
+        return this;
+    }
+
+
+    getSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): NotaVentaSalidaProduccionServicioReparacion
+    {
+        let i = this.salidasProduccionServicioReparacion.findIndex( sal => sal.symbol === salidaProduccionServicioReparacion.symbol );
+
+        i = i === -1
+            ? this.salidasProduccionServicioReparacion.findIndex( sal => 
+                ( sal.id === undefined || salidaProduccionServicioReparacion.id === undefined )
+                    ? false
+                    : ( sal.id === salidaProduccionServicioReparacion.id )
+            )
+            : i;
+
+        if ( i !== -1 ) {
+            return this.salidasProduccionServicioReparacion[ i ];
+        }
+        else {
+            throw new Error( 'Salida por Produccion de Servicio de Reparacion no existe' );
+        }
+    }
+
+
+    // Entrada de Efectivo
+    agregarEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): this
+    {
+        this.entradasEfectivo.unshift( entradaEfectivo );
+        this.procesarInformacion();
+        return this;
+    }
+
+
+    actualizarEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): this
+    {
+        let i = this.entradasEfectivo.findIndex( ent => ent.symbol === entradaEfectivo.symbol );
+
+        i = i === -1
+            ? this.entradasEfectivo.findIndex( ent => 
+                ( ent.id === undefined || entradaEfectivo.id === undefined )
+                    ? false
+                    : ( ent.id === entradaEfectivo.id )
+            )
+            : i;
+
+        if ( i !== -1 ) {
+            this.entradasEfectivo[ i ] = entradaEfectivo;
+            this.procesarInformacion();
+        }
+
+        return this;
+    }
+
+
+    eliminarEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): this
+    {
+        this.entradasEfectivo = this.entradasEfectivo.filter( ent => ent.symbol !== entradaEfectivo.symbol );
+        this.entradasEfectivo = this.entradasEfectivo.filter( ent => 
+            ( ent.id === undefined || entradaEfectivo.id === undefined )
+                ? true
+                : ( ent.id !== entradaEfectivo.id )
+        )
+
+        this.procesarInformacion();
+
+        return this;
+    }
+
+
+    getEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): NotaVentaEntradaEfectivo
+    {
+        let i = this.entradasEfectivo.findIndex( ent => ent.symbol === entradaEfectivo.symbol );
+
+        i = i === -1
+            ? this.entradasEfectivo.findIndex( ent => 
+                ( ent.id === undefined || entradaEfectivo.id === undefined )
+                    ? false
+                    : ( ent.id === entradaEfectivo.id )
+            )
+            : i;
+
+        if ( i !== -1 ) {
+            return this.entradasEfectivo[ i ];
+        }
+        else {
+            throw new Error( 'Salida por Produccion de Servicio de Reparacion no existe' );
+        }
+    }
+
+
+    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo>): Record<string, KardexBienConsumo>
+    {
+        this.docsEntradaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
+        this.docsSalidaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
+
+        for ( const sal of this.salidasBienConsumo ) {
+            const almacenUuid = sal.almacen?.uuid
+            const bienConsumoUuid = sal.bienConsumo?.uuid;
+            if ( almacenUuid === undefined || bienConsumoUuid === undefined ) continue;
+            
+            const clave = `${almacenUuid}|${bienConsumoUuid}`
+            if ( !( clave in record ) ) {
+                record[clave] = new KardexBienConsumo({
+                    almacen: sal.almacen,
+                    bienConsumo: sal.bienConsumo
+                })
+            }
+            
+            record[clave].movimientos.push(new KardexMovimientoBienConsumo({
+                movimientoUuid: sal.uuid,
+                movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA,
+                fecha: this.fechaEmision,
+                documentoFuenteCodigoSerie: this.codigoSerie,
+                documentoFuenteCodigoNumero: this.codigoNumero,
+                concepto: this.concepto,
+                salidaCantidad: sal.cantidadSaliente
+            }))
+        }
+        
+        for ( const sal of this.salidasProduccionServicioReparacion ) {
+            for ( const recurso of sal.recursosBienConsumo ) {
+                const almacenUuid = recurso.almacen?.uuid
+                const bienConsumoUuid = recurso.bienConsumo?.uuid;
+                if ( almacenUuid === undefined || bienConsumoUuid === undefined ) continue;
+                
+                const clave = `${almacenUuid}|${bienConsumoUuid}`
+                if ( !( clave in record ) ) {
+                    record[clave] = new KardexBienConsumo({
+                        almacen: recurso.almacen,
+                        bienConsumo: recurso.bienConsumo
+                    })
+                }
+                
+                record[clave].movimientos.push(new KardexMovimientoBienConsumo({
+                    movimientoUuid: recurso.uuid,
+                    movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA,
+                    fecha: this.fechaEmision,
+                    documentoFuenteCodigoSerie: this.codigoSerie,
+                    documentoFuenteCodigoNumero: this.codigoNumero,
+                    concepto: this.concepto,
+                    salidaCantidad: recurso.cantidad
+                })) 
+            }
+        }
+
+        return record;
+    }
+}

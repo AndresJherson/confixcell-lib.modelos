@@ -64,27 +64,15 @@ export class DocumentoFuente extends Model
     }
 
 
-    override setRelation(keys?: {
-        documentoFuenteId: number,
-        notaId: number
-    }): this {
-        
+    override setRelation(): this
+    {
+        super.setRelation();
+
         this.set({
-            id: keys?.documentoFuenteId ?? this.id
+            notas: this.notas.map( nota => nota.set({
+                documentoFuente: new DocumentoFuente({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
+            }) )
         });
-        if ( keys?.documentoFuenteId ) keys.documentoFuenteId++;
-
-
-        this.notas.forEach( nota => {
-
-            nota.set({
-                id: keys?.notaId ?? nota.id,
-                documentoFuente: new DocumentoFuente({ id: this.id, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-            })
-            if ( keys?.notaId ) keys.notaId++;
-
-        } )
-
         
         return this;
     }

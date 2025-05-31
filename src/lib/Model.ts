@@ -589,7 +589,7 @@ export class Model
     }
 
 
-    setRelation( keys?: {} ): this
+    setRelation(): this
     {
         return this;
     }

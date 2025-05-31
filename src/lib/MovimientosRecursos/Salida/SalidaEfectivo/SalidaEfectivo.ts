@@ -23,17 +23,4 @@ export class SalidaEfectivo extends SalidaRecurso
     override set(item: Partial<SalidaEfectivo>): this {
         return super.set( item as Partial<this> );
     }
-
-
-    override setRelation(keys?: {
-        salidaEfectivoId: number
-    }): this 
-    {
-        this.set({
-            id: keys?.salidaEfectivoId ?? this.id
-        });
-        if ( keys?.salidaEfectivoId ) keys.salidaEfectivoId++;
-
-        return this;        
-    }
 }

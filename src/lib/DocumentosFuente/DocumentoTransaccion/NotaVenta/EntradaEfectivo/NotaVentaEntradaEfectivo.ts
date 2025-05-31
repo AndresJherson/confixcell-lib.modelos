@@ -29,15 +29,4 @@ export class NotaVentaEntradaEfectivo extends EntradaEfectivo
     {
         return super.set( item as Partial<this> );
     }
-
-
-    override setRelation(keys?: Parameters<EntradaEfectivo['setRelation']>[0] ): this 
-    {
-        this.set({
-            id: keys?.entradaEfectivoId ?? this.id
-        });
-        if ( keys?.entradaEfectivoId ) keys.entradaEfectivoId++;
-
-        return this;
-    }
 }

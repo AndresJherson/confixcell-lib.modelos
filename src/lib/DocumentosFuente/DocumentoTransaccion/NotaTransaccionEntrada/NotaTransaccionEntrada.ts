@@ -55,28 +55,18 @@ export class NotaTransaccionEntrada extends DocumentoTransaccion
     }
 
 
-    override setRelation(keys?: 
-        Parameters<DocumentoTransaccion['setRelation']>[0] & 
-        {
-            notaTransaccionEntradaDetalleId: number
-        } &
-        Parameters<NotaTransaccionEntradaCredito['setRelation']>[0]
-    ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-
-        this.detalles.forEach( detalle => {
-
+        this.detalles.forEach( detalle => 
             detalle.set({
-                id: keys?.notaTransaccionEntradaDetalleId ?? detalle.id,
                 notaTransaccionEntrada: new NotaTransaccionEntrada({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-            });
-            if ( keys?.notaTransaccionEntradaDetalleId ) keys.notaTransaccionEntradaDetalleId++;
+            })
+            .setRelation()
+        )
 
-        } )
-
-        this.credito?.setRelation( keys ).set({
+        this.credito?.set({
             documentoFuente: new NotaTransaccionEntrada({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
         });
 

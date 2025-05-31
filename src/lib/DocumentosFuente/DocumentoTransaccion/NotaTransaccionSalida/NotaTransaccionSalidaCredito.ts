@@ -50,24 +50,16 @@ export class NotaTransaccionSalidaCredito extends SalidaEfectivo implements ICre
     }
 
 
-    override setRelation(keys?: 
-        Parameters<SalidaEfectivo['setRelation']>[0] &
-        {
-            notaTransaccionSalidaCuotaId: number
-        }
-    ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.cuotas.forEach( cuota => {
-
+        this.cuotas.forEach( cuota => 
             cuota.set({
-                id: keys?.notaTransaccionSalidaCuotaId ?? cuota.id,
                 credito: new NotaTransaccionSalidaCredito({ id: this.id, symbol: this.symbol })
-            });
-            if ( keys?.notaTransaccionSalidaCuotaId ) keys.notaTransaccionSalidaCuotaId++;
-
-        } )
+            })
+            .setRelation()
+        )
 
         return this;
     }

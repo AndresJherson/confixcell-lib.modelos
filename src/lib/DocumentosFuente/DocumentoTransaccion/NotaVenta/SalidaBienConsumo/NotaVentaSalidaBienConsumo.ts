@@ -36,17 +36,6 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
     }
 
 
-    override setRelation( keys?: Parameters<SalidaBienConsumo['setRelation']>[0] ): this 
-    {
-        this.set({
-            id: keys?.salidaBienConsumoId ?? this.id
-        });
-        if ( keys?.salidaBienConsumoId ) keys.salidaBienConsumoId++;
-
-        return this;
-    }
-
-
     override procesarInformacion(): this 
     {
         super.procesarInformacion();

@@ -25,19 +25,6 @@ export class SalidaProduccion extends SalidaRecurso
     }
 
 
-    override setRelation(keys?: {
-        salidaProduccionId: number,
-    }): this 
-    {
-        this.set({
-            id: keys?.salidaProduccionId ?? this.id
-        });
-        if( keys?.salidaProduccionId ) keys.salidaProduccionId++;
-
-        return this;
-    }
-
-
     static override initialize( data: Partial<SalidaProduccion>[] ): SalidaProduccion[]
     {
         return data.map( item => new ( Prop.GetClass<SalidaProduccion>( item ) ?? SalidaProduccion ) ( item ) )

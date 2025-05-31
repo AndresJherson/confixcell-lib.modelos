@@ -12,6 +12,15 @@ export class DocumentoTransaccion extends DocumentoFuente
     @Prop.Set( PropBehavior.array, x => new DocumentoEntradaBienConsumo( x ) ) docsEntradaBienConsumo: DocumentoEntradaBienConsumo[] = [];
     @Prop.Set( PropBehavior.array, x => new DocumentoSalidaEfectivo( x ) ) docsSalidaEfectivo: DocumentoSalidaEfectivo[] = [];
     @Prop.Set( PropBehavior.array, x => new DocumentoSalidaBienConsumo( x ) ) docsSalidaBienConsumo: DocumentoSalidaBienConsumo[] = [];
+
+    get documentosMovimientos() {
+        return [
+            ...this.docsEntradaEfectivo,
+            ...this.docsEntradaBienConsumo,
+            ...this.docsSalidaEfectivo,
+            ...this.docsSalidaBienConsumo
+        ]
+    }
     
     @Prop.Set() importeValorEntradaEfectivo: number = 0;
     @Prop.Set() importeValorEntradaBienConsumo: number = 0;
@@ -85,39 +94,39 @@ export class DocumentoTransaccion extends DocumentoFuente
     }
     
 
-    override setRelation( keys?: 
-        Parameters<DocumentoFuente['setRelation']>[0] &
-        Parameters<DocumentoEntradaEfectivo['setRelation']>[0] &
-        Parameters<DocumentoEntradaBienConsumo['setRelation']>[0] &
-        // Parameters<DocumentoEntradaBienCapital['setRelation']>[0] &
-        // Parameters<DocumentoEntradaServicio['setRelation']>[0] &
-        Parameters<DocumentoSalidaEfectivo['setRelation']>[0] &
-        Parameters<DocumentoSalidaBienConsumo['setRelation']>[0]
-        // Parameters<DocumentoSalidaBienCapitalFijo['setRelation']>[0] &
-        // Parameters<DocumentoSalidaBienCapitalTemporal['setRelation']>[0] &
-        // Parameters<DocumentoSalidaServicio['setRelation']>[0] &
-        // Parameters<DocumentoSalidaProduccion['setRelation']>[0]
-    ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
         
-        this.docsEntradaEfectivo.forEach( doc => doc.setRelation( keys ).set({
-            documentoTransaccion: new DocumentoTransaccion({ id: this.id, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-        }) )
+        this.docsEntradaEfectivo.forEach( doc => 
+            doc.set({
+                documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
+            })
+            .setRelation()
+        )
 
-        this.docsEntradaBienConsumo.forEach( doc => doc.setRelation( keys ).set({
-            documentoTransaccion: new DocumentoTransaccion({ id: this.id, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-        }) )
+        this.docsEntradaBienConsumo.forEach( doc => 
+            doc.set({
+                documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
+            })
+            .setRelation()
+        )
 
 
-        this.docsSalidaEfectivo.forEach( doc => doc.setRelation( keys ).set({
-            documentoTransaccion: new DocumentoTransaccion({ id: this.id, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-        }) )
+        this.docsSalidaEfectivo.forEach( doc => 
+            doc.set({
+                documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
+            })
+            .setRelation()
+        )
 
-        this.docsSalidaBienConsumo.forEach( doc => doc.setRelation( keys ).set({
-            documentoTransaccion: new DocumentoTransaccion({ id: this.id, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-        }) )
+        this.docsSalidaBienConsumo.forEach( doc => 
+            doc.set({
+                documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
+            })
+            .setRelation()
+        )
 
         // this.docsSalidaProduccion.forEach( doc => doc.setRelation( keys ).set({
         //     documentoTransaccion: new DocumentoTransaccion({ id: this.id, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),

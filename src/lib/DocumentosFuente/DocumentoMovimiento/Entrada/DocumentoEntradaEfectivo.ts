@@ -22,16 +22,16 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
     }
 
 
-    override setRelation(keys?: 
-        Parameters<DocumentoEntrada['setRelation']>[0] & 
-        Parameters<EntradaEfectivo['setRelation']>[0]
-    ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.entradas.forEach( entrada => entrada.setRelation( keys ).set({
-            documentoFuente: new DocumentoEntradaEfectivo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-        }) );
+        this.entradas.forEach( entrada => 
+            entrada.set({
+                documentoFuente: new DocumentoEntradaEfectivo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
+            })
+            .setRelation()
+        );
 
         return this;
     }

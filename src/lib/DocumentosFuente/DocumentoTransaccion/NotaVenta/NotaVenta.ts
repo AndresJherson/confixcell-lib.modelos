@@ -65,24 +65,30 @@ export class NotaVenta extends DocumentoTransaccion
     }
 
 
-    override setRelation( keys?: 
-        Parameters<DocumentoTransaccion['setRelation']>[0] &
-        Parameters<NotaVentaSalidaProduccionServicioReparacion['setRelation']>[0]
-    ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.salidasBienConsumo.forEach( salida => salida.setRelation( keys ).set({
-            documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-        }) );
+        this.salidasBienConsumo.forEach( salida => 
+            salida.set({
+                documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
+            })
+            .setRelation()
+        );
 
-        this.salidasProduccionServicioReparacion.forEach( salida => salida.setRelation( keys ).set({
-            documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-        }) );
+        this.salidasProduccionServicioReparacion.forEach( salida => 
+            salida.set({
+                documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
+            })
+            .setRelation()
+        );
 
-        this.entradasEfectivo.forEach( entrada => entrada.setRelation( keys ).set({
-            documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-        }) );
+        this.entradasEfectivo.forEach( entrada => 
+            entrada.set({
+                documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
+            })
+            .setRelation()
+        );
 
         return this;
     }

@@ -50,21 +50,16 @@ export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito
     }
 
 
-    override setRelation(keys?: Parameters<SalidaEfectivo['setRelation']>[0] & {
-        salidaEfectivoCuotaId: number
-    }): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.cuotas.forEach( cuota => {
-
+        this.cuotas.forEach( cuota => 
             cuota.set({
-                id: keys?.salidaEfectivoCuotaId ?? cuota.id,
-                credito: new SalidaEfectivoCredito({ id: this.id, symbol: this.symbol })
-            });
-            if ( keys?.salidaEfectivoCuotaId ) keys.salidaEfectivoCuotaId++;
-
-        } );
+                credito: new SalidaEfectivoCredito({ id: this.id, uuid: this.uuid, symbol: this.symbol })
+            })
+            .setRelation()
+        );
 
         return this;
     }

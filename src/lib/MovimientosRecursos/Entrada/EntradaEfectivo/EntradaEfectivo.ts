@@ -18,22 +18,4 @@ export class EntradaEfectivo extends EntradaRecurso
     {
         return data.map( item => new ( Prop.GetClass<EntradaEfectivo>( item ) ?? EntradaEfectivo ) ( item ) )
     }
-
-
-    override set(item: Partial<EntradaEfectivo>): this {
-        return super.set( item as Partial<this> );
-    }
-
-
-    override setRelation(keys?: {
-        entradaEfectivoId: number
-    }): this 
-    {
-        this.set({
-            id: keys?.entradaEfectivoId ?? this.id
-        });
-        if ( keys?.entradaEfectivoId ) keys.entradaEfectivoId++;
-
-        return this;        
-    }
 }

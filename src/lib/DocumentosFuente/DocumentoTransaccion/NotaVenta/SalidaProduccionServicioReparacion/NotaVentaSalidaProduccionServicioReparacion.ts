@@ -32,37 +32,24 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
     }
 
 
-    override setRelation( keys?: Parameters<SalidaProduccionServicio['setRelation']>[0] & {
-        notaVentaSalidaProduccionServicioReparacionRecursoServicioId: number,
-        notaVentaSalidaProduccionServicioReparacionRecursoBienConsumoId: number,
-    } ): this 
+    override setRelation(): this 
     {
-        this.set({
-            id: keys?.salidaProduccionId ?? this.id
-        });
-        if ( keys?.salidaProduccionId ) keys.salidaProduccionId++;
+        super.setRelation();
 
-
-        this.recursosServicio.forEach( recurso => {
-
+        this.recursosServicio.forEach( recurso => 
             recurso.set({
-                id: keys?.notaVentaSalidaProduccionServicioReparacionRecursoServicioId ?? recurso.id,
                 salidaProduccion: new NotaVentaSalidaProduccionServicioReparacion({ id: this.id, symbol: this.symbol })
             })
-            if ( keys?.notaVentaSalidaProduccionServicioReparacionRecursoServicioId ) keys.notaVentaSalidaProduccionServicioReparacionRecursoServicioId++;
-
-        } );
+            .setRelation()
+        );
 
         
-        this.recursosBienConsumo.forEach( recurso => {
-
+        this.recursosBienConsumo.forEach( recurso => 
             recurso.set({
-                id: keys?.notaVentaSalidaProduccionServicioReparacionRecursoBienConsumoId ?? recurso.id,
                 salidaProduccion: new NotaVentaSalidaProduccionServicioReparacion({ id: this.id, symbol: this.symbol })
             })
-            if ( keys?.notaVentaSalidaProduccionServicioReparacionRecursoBienConsumoId ) keys.notaVentaSalidaProduccionServicioReparacionRecursoBienConsumoId++;
-
-        } );
+            .setRelation()
+        );
 
 
         return this;

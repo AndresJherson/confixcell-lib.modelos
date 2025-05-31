@@ -22,31 +22,22 @@ export class SalidaProduccionBienStandar extends SalidaProduccionBien
     }
 
 
-    override setRelation(keys?: 
-        Parameters<SalidaProduccionBien['setRelation']>[0] &
-        {
-            salidaProduccionBienActividadId: number,
-            salidaProduccionBienRecursoBienConsumoId: number
-        }
-    ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.actividades.forEach( act => {
+        this.actividades.forEach( act => 
             act.set({
-                id: keys?.salidaProduccionBienActividadId ?? act.id,
-                salidaProduccionBienStandar: new SalidaProduccionBienStandar({ id: this.id, symbol: this.symbol })
+                salidaProduccionBienStandar: new SalidaProduccionBienStandar({ id: this.id, uuid: this.uuid, symbol: this.symbol }),
+                recursosBienConsumo: act.recursosBienConsumo.map( recurso => 
+                    recurso.set({
+                        actividad: new SalidaProduccionBienActividad({ id: act.id, uuid: act.uuid, symbol: act.symbol })
+                    })
+                    .setRelation()
+                )
             })
-            if ( keys?.salidaProduccionBienActividadId ) keys.salidaProduccionBienActividadId++;
-
-            act.recursosBienConsumo.forEach( recurso => {
-                recurso.set({
-                    id: keys?.salidaProduccionBienRecursoBienConsumoId ?? recurso.id,
-                    actividad: new SalidaProduccionBienActividad({ id: act.id, symbol: act.symbol })
-                })
-                if ( keys?.salidaProduccionBienRecursoBienConsumoId ) keys.salidaProduccionBienRecursoBienConsumoId++;
-            } )
-        } );
+            .setRelation()
+        );
 
         return this;
     }

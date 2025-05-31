@@ -51,21 +51,16 @@ export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito
     }
 
 
-    override setRelation(keys?: Parameters<EntradaEfectivo['setRelation']>[0] & {
-        entradaEfectivoCuotaId: number
-    }): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.cuotas.forEach( cuota => {
-
+        this.cuotas.forEach( cuota =>
             cuota.set({
-                id: keys?.entradaEfectivoCuotaId ?? cuota.id,
-                credito: new EntradaEfectivoCredito({ id: this.id, symbol: this.symbol })
-            });
-            if ( keys?.entradaEfectivoCuotaId ) keys.entradaEfectivoCuotaId++;
-
-        } );
+                credito: new EntradaEfectivoCredito({ id: this.id, uuid: this.uuid, symbol: this.symbol })
+            })
+            .setRelation()
+        );
 
         return this;
     }

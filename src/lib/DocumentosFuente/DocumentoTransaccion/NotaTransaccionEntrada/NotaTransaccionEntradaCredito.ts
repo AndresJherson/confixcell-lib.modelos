@@ -52,21 +52,16 @@ export class NotaTransaccionEntradaCredito extends EntradaEfectivo implements IC
     }
 
 
-    override setRelation(keys?: Parameters<EntradaEfectivo['setRelation']>[0] & {
-        notaTransaccionEntradaCuotaId: number
-    } ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.cuotas.forEach( cuota => {
-            
+        this.cuotas.forEach( cuota => 
             cuota.set({
-                id: keys?.notaTransaccionEntradaCuotaId ?? cuota.id,
                 credito: new NotaTransaccionEntradaCredito({ id: this.id, symbol: this.symbol })
-            });
-            if ( keys?.notaTransaccionEntradaCuotaId ) keys.notaTransaccionEntradaCuotaId++;
-
-        } );
+            })
+            .setRelation()
+        );
 
         return this;
     }

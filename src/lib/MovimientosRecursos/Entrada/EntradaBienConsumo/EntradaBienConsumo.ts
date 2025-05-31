@@ -54,19 +54,6 @@ export class EntradaBienConsumo extends EntradaRecurso
     }
 
 
-    override setRelation(keys?: {
-        entradaBienConsumoId: number
-    }): this 
-    {
-        this.set({
-            id: keys?.entradaBienConsumoId ?? this.id
-        });
-        if ( keys?.entradaBienConsumoId ) keys.entradaBienConsumoId++;
-
-        return this;        
-    }
-
-
     override procesarInformacion(): this 
     {
         try {

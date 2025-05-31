@@ -26,16 +26,16 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     }
 
 
-    override setRelation(keys?: 
-        Parameters<DocumentoSalida['setRelation']>[0] & 
-        Parameters<SalidaBienConsumo['setRelation']>[0]
-    ): this 
+    override setRelation(): this 
     {
-        super.setRelation( keys );
+        super.setRelation();
 
-        this.salidas.forEach( salida => salida.setRelation( keys ).set({
-            documentoFuente: new DocumentoSalidaBienConsumo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-        }) );
+        this.salidas.forEach( salida => 
+            salida.set({
+                documentoFuente: new DocumentoSalidaBienConsumo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
+            })
+            .setRelation()
+        );
 
         return this;
     }

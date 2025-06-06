@@ -26,16 +26,19 @@ export class SalidaBienConsumoValorEntrada extends SalidaBienConsumo
     {
         if ( this.entrada !== undefined ) {
 
-            if ( this.entrada.cantidadDisponible <= 0 ) throw new Error('No hay cantidad disponible');
-
             try {
                 this.set({
-                    importeValorUnitario: this.entrada.importeValorUnitario,
+                    almacen: this.entrada.almacen,
+                    importeCostoUnitario: this.entrada.importeCostoUnitario,
+                    importePrecioNeto: this.decimalImportePrecioUnitario
+                        .mul( this.cantidadSaliente )
+                        .toNumber()
                 })
             }
             catch ( error ) {
                 this.set({
-                    importeValorUnitario: 0,
+                    importeCostoUnitario: 0,
+                    importePrecioNeto: 0
                 });
             }
         }

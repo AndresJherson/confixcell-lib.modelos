@@ -8,8 +8,13 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     override type: string = DocumentoSalidaEfectivo.type;
 
     @Prop.Set( PropBehavior.array, x => new SalidaEfectivo( x ) ) salidas: SalidaEfectivo[] = [];
-    
+    @Prop.Set() importeValorNeto: number = 0;
 
+    get decimalImporteValorNeto(): Decimal {
+        return Prop.toDecimal( this.importeValorNeto );
+    }
+
+    
     constructor( item?: Partial<DocumentoSalidaEfectivo> )
     {
         super();
@@ -42,13 +47,16 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
         super.procesarInformacion();
         
         try {
-            this.importeNeto = this.salidas.reduce(
+            this.importeValorNeto = this.salidas.reduce(
                 ( decimal, salida ) => decimal.plus( salida.procesarInformacion().importeValorNeto ),
                 new Decimal( 0 )
             )
             .toNumber();
+
+            this.importeNeto = this.importeValorNeto;
         }
         catch ( error ) {
+            this.importeValorNeto = 0;
             this.importeNeto = 0;
         }
 

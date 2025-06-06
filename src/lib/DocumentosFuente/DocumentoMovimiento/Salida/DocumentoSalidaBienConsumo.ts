@@ -9,10 +9,15 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
 
     @Prop.Set( PropBehavior.array, x => new SalidaBienConsumo( x ) ) salidas: SalidaBienConsumo[] = [];
 
-    @Prop.Set() importeValorNeto: number = 0;
-    get decimalImporteValorNeto(): Decimal {
-        return Prop.toDecimal( this.importeValorNeto );
+    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() importePrecioNeto: number = 0;
+    get decimalImporteCostoNeto(): Decimal {
+        return Prop.toDecimal( this.importeCostoNeto );
     }
+    get decimalImportePrecioNeto(): Decimal {
+        return Prop.toDecimal( this.importePrecioNeto );
+    }
+
 
     constructor( item?: Partial<DocumentoSalidaBienConsumo> )
     {
@@ -50,24 +55,26 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeValorNeto: importes.importeValorNeto.plus( salida.importeValorNeto ),
+                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ),
                         importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto )
                     };
                 },
                 {
-                    importeValorNeto: new Decimal( 0 ),
+                    importeCostoNeto: new Decimal( 0 ),
                     importePrecioNeto: new Decimal( 0 )
                 }
             );
 
             this.set({
-                importeValorNeto: recordImportes.importeValorNeto.toNumber(),
+                importeCostoNeto: recordImportes.importeCostoNeto.toNumber(),
+                importePrecioNeto: recordImportes.importePrecioNeto.toNumber(),
                 importeNeto: recordImportes.importePrecioNeto.toNumber()
             })
         }
         catch ( error ) {
             this.set({
-                importeValorNeto: 0,
+                importeCostoNeto: 0,
+                importePrecioNeto: 0,
                 importeNeto: 0
             })
         }
@@ -142,7 +149,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     }
 
 
-    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo>): Record<string, KardexBienConsumo>
+    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo> = {}): Record<string, KardexBienConsumo>
     {
         for ( const sal of this.salidas ) {
             const almacenUuid = sal.almacen?.uuid

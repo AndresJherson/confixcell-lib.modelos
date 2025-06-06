@@ -9,11 +9,15 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
 
     @Prop.Set( PropBehavior.array, x => new SalidaProduccion( x ) ) salidas: SalidaProduccion[] = [];
     
-    @Prop.Set() importeValorNeto: number = 0;
-    get decimalImporteValorNeto(): Decimal {
-        return Prop.toDecimal( this.importeValorNeto );
+    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() importePrecioNeto: number = 0;
+    get decimalImporteCostoNeto(): Decimal {
+        return Prop.toDecimal( this.importeCostoNeto );
     }
-    
+    get decimalImportePrecioNeto(): Decimal {
+        return Prop.toDecimal( this.importePrecioNeto );
+    }
+
 
     constructor( item?: Partial<DocumentoSalidaProduccion> )
     {
@@ -51,24 +55,26 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeValorNeto: importes.importeValorNeto.plus( salida.importeValorNeto ),
+                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ),
                         importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto )
                     };
                 },
                 {
-                    importeValorNeto: new Decimal( 0 ),
+                    importeCostoNeto: new Decimal( 0 ),
                     importePrecioNeto: new Decimal( 0 )
                 }
             );
 
             this.set({
-                importeValorNeto: recordImpotes.importeValorNeto.toNumber(),
+                importeCostoNeto: recordImpotes.importeCostoNeto.toNumber(),
+                importePrecioNeto: recordImpotes.importePrecioNeto.toNumber(),
                 importeNeto: recordImpotes.importePrecioNeto.toNumber()
             })
         }
         catch ( error ) {
             this.set({
-                importeValorNeto: 0,
+                importeCostoNeto: 0,
+                importePrecioNeto: 0,
                 importeNeto: 0
             })
         }
@@ -77,8 +83,8 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     }
 
 
-    // Salida de Efectivo
-    agregarWrapper( salida: SalidaProduccion ): this
+    // Salida de Producción
+    agregarSalida( salida: SalidaProduccion ): this
     {
         this.salidas.unshift( salida );
         this.procesarInformacion();
@@ -86,7 +92,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     }
 
 
-    actualizarWrapper( salida: SalidaProduccion ): this
+    actualizarSalida( salida: SalidaProduccion ): this
     {
         let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
 
@@ -107,7 +113,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     }
 
 
-    eliminarWrapper( salida: SalidaProduccion ): this
+    eliminarSalida( salida: SalidaProduccion ): this
     {
         this.salidas = this.salidas.filter( sal => sal.symbol !== salida.symbol );
         this.salidas = this.salidas.filter( sal => 
@@ -122,7 +128,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     }
 
 
-    getWrapper( salida: SalidaProduccion ): SalidaProduccion
+    getSalida( salida: SalidaProduccion ): SalidaProduccion
     {
         let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
 
@@ -138,7 +144,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
             return this.salidas[ i ];
         }
         else {
-            throw new Error( 'Salida de Bien de Consumo no existe' );
+            throw new Error( 'Salida de Producción no existe' );
         }
     }
 }

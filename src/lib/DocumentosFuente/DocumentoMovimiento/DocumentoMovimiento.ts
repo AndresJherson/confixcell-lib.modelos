@@ -1,3 +1,4 @@
+import Decimal from "decimal.js";
 import { DocumentoFuente, DocumentoTransaccion, Prop, PropBehavior } from "../../../index";
 
 @Prop.Class()
@@ -8,7 +9,7 @@ export class DocumentoMovimiento extends DocumentoFuente
 
     @Prop.Set( PropBehavior.model, x => new DocumentoTransaccion( x ) ) documentoTransaccion?: DocumentoTransaccion;
 
-
+    
     constructor( item?: Partial<DocumentoMovimiento> )
     {
         super();

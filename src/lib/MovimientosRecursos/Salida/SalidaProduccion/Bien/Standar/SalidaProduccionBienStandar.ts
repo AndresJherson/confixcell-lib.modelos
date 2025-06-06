@@ -48,15 +48,15 @@ export class SalidaProduccionBienStandar extends SalidaProduccionBien
     {
         try {
 
-            this.importeValorUnitario = this.actividades.reduce(
-                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeValorNeto ),
+            this.importeCostoUnitario = this.actividades.reduce(
+                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeCostoNeto ),
                 new Decimal( 0 )
             )
             .toNumber();
 
         }
         catch ( error ) {
-            this.importeValorUnitario = 0;
+            this.importeCostoUnitario = 0;
         }
 
         super.procesarInformacion();

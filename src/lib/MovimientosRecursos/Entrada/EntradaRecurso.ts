@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import { MovimientoRecurso, Prop } from '../../../index';
 
 @Prop.Class()

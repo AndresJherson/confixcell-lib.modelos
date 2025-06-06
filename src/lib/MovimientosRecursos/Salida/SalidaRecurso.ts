@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import { MovimientoRecurso, Prop } from '../../../index';
 
 @Prop.Class()
@@ -5,7 +6,6 @@ export class SalidaRecurso extends MovimientoRecurso
 {
     static override type: string = 'SalidaRecurso';
     override type: string = SalidaRecurso.type;
-    
 
     constructor( item?: Partial<SalidaRecurso> )
     {

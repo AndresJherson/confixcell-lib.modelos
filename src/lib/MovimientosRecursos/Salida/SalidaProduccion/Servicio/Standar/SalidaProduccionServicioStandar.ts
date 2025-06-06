@@ -48,15 +48,15 @@ export class SalidaProduccionServicioStandar extends SalidaProduccionServicio
     {
         try {
 
-            this.importeValorNeto = this.actividades.reduce(
-                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeValorNeto ),
+            this.importeCostoNeto = this.actividades.reduce(
+                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeCostoNeto ),
                 new Decimal( 0 )
             )
             .toNumber();
 
         }
         catch ( error ) {
-            this.importeValorNeto = 0;
+            this.importeCostoNeto = 0;
         }
 
         super.procesarInformacion();

@@ -22,14 +22,14 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoServicio extends 
         return Prop.toDateTime( this.fechaFinal );
     }
     
-    @Prop.Set() importeValor: number = 0;
-    @Prop.Set() importePrecio: number = 0;
+    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() importePrecioNeto: number = 0;
 
-    get decimalImporteValor(): Decimal {
-        return Prop.toDecimal( this.importeValor );
+    get decimalImporteCostoNeto(): Decimal {
+        return Prop.toDecimal( this.importeCostoNeto );
     }
-    get decimalImportePrecio(): Decimal {
-        return Prop.toDecimal( this.importePrecio );
+    get decimalImportePrecioNeto(): Decimal {
+        return Prop.toDecimal( this.importePrecioNeto );
     }
 
 

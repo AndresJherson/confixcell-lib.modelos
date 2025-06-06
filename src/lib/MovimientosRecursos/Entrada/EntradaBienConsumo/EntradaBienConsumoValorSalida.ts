@@ -25,16 +25,14 @@ export class EntradaBienConsumoValorSalida extends EntradaBienConsumo
     {
         if ( this.salida !== undefined ) {
             
-            if ( this.salida.cantidadDisponible <= 0 ) throw new Error('No hay cantidad disponible');
-
             try {
                 this.set({
-                    importeValorUnitario: this.salida.importeValorUnitario,
+                    importeCostoUnitario: this.salida.importeCostoUnitario,
                 })
             }
             catch ( error ) {
                 this.set({
-                    importeValorUnitario: 0,
+                    importeCostoUnitario: 0,
                 });
             }
         }

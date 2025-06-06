@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import { DocumentoMovimiento, Prop } from '../../../../index';
 
 @Prop.Class()
@@ -5,8 +6,8 @@ export class DocumentoEntrada extends DocumentoMovimiento
 {
     static override type: string = 'DocumentoEntrada';
     override type: string = DocumentoEntrada.type;
-    
 
+    
     constructor( item?: Partial<DocumentoEntrada> )
     {
         super();

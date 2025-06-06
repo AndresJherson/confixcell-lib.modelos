@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BienConsumo, KardexBienConsumo, Model, Nota, Prop, PropBehavior, Usuario } from '../../index';
+import { KardexBienConsumo, Model, Nota, Prop, PropBehavior, Usuario } from '../../index';
 import Decimal from 'decimal.js';
 
 @Prop.Class()
@@ -13,7 +13,7 @@ export class DocumentoFuente extends Model
     @Prop.Set() concepto?: string;
 
     get codigoCompleto(): string {
-        const codigoSerie = this.codigoSerie ? this.codigoSerie : '';
+        const codigoSerie = this.codigoSerie ?? '';
         const codigoNumero = this.codigoNumero !== undefined ? this.codigoNumero.toString() : '';
         const separator = codigoSerie && codigoNumero ? ' - ' : '';
         return `${codigoSerie}${separator}${codigoNumero}`;
@@ -36,15 +36,15 @@ export class DocumentoFuente extends Model
     get dateTimeAnulacion(): DateTime {
         return Prop.toDateTime( this.fechaAnulacion );
     }
-    
-    @Prop.Set() importeNeto: number = 0;
-    get decimalImporteNeto(): Decimal {
-        return Prop.toDecimal( this.importeNeto );
-    }
+
     
     @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuario?: Usuario;
     @Prop.Set( PropBehavior.array, x => new Nota( x ) ) notas: Nota[] = [];
 
+    @Prop.Set() importeNeto: number = 0;
+    get decimalImporteNeto(): Decimal {
+        return Prop.toDecimal( this.importeNeto );
+    }
 
     constructor( item?: Partial<DocumentoFuente> )
     {
@@ -107,6 +107,8 @@ export class DocumentoFuente extends Model
         this.fechaCreacion = dateTimeEmision.toSQL();
         this.fechaActualizacion = dateTimeEmision.toSQL();
         this.fechaEmision = dateTimeEmision.toSQL();
+
+        this.procesarInformacion();
         return this;
     }
 
@@ -115,6 +117,8 @@ export class DocumentoFuente extends Model
         const dateTimeAnulacion = Prop.toDateTimeNow()
         this.fechaAnulacion = dateTimeAnulacion.toSQL();
         this.fechaActualizacion = dateTimeAnulacion.toSQL();
+
+        this.procesarInformacion();
         return this;
     }
 
@@ -122,19 +126,18 @@ export class DocumentoFuente extends Model
     // PROCESAMIENTO
     procesarInformacion(): this
     {
-        this.procesarEstado();
+        this.procesarEstado()
+            .setRelation();
+            
         return this;
     }
 
 
     protected procesarEstado(): this
     {
-        const dateTimeEmision = Prop.toDateTime( this.fechaEmision );
-        const dateTimeAnulacion = Prop.toDateTime( this.fechaAnulacion );
-
-        this.fechaAnulacion = ( dateTimeEmision.isValid && dateTimeAnulacion.isValid ) && 
-                            dateTimeEmision > dateTimeAnulacion
-                                ? dateTimeEmision.toSQL()
+        this.fechaAnulacion = ( this.dateTimeEmision.isValid && this.dateTimeAnulacion.isValid ) &&
+                            this.dateTimeEmision > this.dateTimeAnulacion
+                                ? ( this.dateTimeEmision.toSQL() ?? undefined )
                                 : this.fechaAnulacion;
 
         return this;
@@ -142,7 +145,7 @@ export class DocumentoFuente extends Model
 
 
     // CONVERSION
-    toRecordKardexBienConsumo( record: Record<string,KardexBienConsumo> ): Record<string,KardexBienConsumo>
+    toRecordKardexBienConsumo( record: Record<string,KardexBienConsumo> = {} ): Record<string,KardexBienConsumo>
     {
         return record;
     }

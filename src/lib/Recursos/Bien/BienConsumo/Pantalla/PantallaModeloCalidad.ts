@@ -8,7 +8,7 @@ export class PantallaModeloCalidad extends BienConsumo
 
     @Prop.Set( PropBehavior.model, x => new PantallaModelo( x ) ) modelo?: PantallaModelo;
     @Prop.Set( PropBehavior.model, x => new Calidad( x ) ) calidad?: Calidad;
-    @Prop.Set( PropBehavior.boolean, () => true ) override esSalida: boolean = true;
+    @Prop.Set( PropBehavior.boolean, () => true ) override esSalida?: boolean = true;
     
     override get nombreCompleto()
     {

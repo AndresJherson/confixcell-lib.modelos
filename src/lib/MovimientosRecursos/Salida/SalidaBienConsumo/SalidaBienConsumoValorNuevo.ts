@@ -12,4 +12,25 @@ export class SalidaBienConsumoValorNuevo extends SalidaBienConsumo
         super()
         Prop.initialize( this, item );
     }
+
+
+    override procesarInformacion(): this 
+    {
+        try {
+            this.set({
+                importePrecioNeto: this.decimalImportePrecioUnitario
+                    .mul( this.cantidadSaliente )
+                    .toNumber()
+            })
+        }
+        catch ( error ) {
+            this.set({
+                importePrecioNeto: 0
+            });
+        }
+
+        super.procesarInformacion();
+
+        return this;
+    }
 }

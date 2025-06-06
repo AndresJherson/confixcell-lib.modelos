@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { Cliente, DocumentoIdentificacion, DocumentoTransaccion, KardexBienConsumo, LiquidacionTipo, NotaTransaccionSalidaCredito, NotaTransaccionSalidaDetalle, Prop, PropBehavior } from '../../../../index';
+import { Cliente, DocumentoIdentificacion, DocumentoTransaccion, LiquidacionTipo, NotaTransaccionSalidaCredito, NotaTransaccionSalidaDetalle, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
 export class NotaTransaccionSalida extends DocumentoTransaccion
@@ -20,10 +20,10 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
     @Prop.Set() override importeBruto: number = 0;
     @Prop.Set() importeDescuento: number = 0;
     @Prop.Set() override importeNeto: number = 0;
-
-    get decimalImporteDescuento(): Decimal {
+    get decimalImportePrecioDescuento(): Decimal {
         return Prop.toDecimal( this.importeDescuento );
     }
+
 
     override get importeDevengado() {
         return this.decimalImporteValorSalidaEfectivo
@@ -34,7 +34,7 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
 
     override get importeLiquidado() {
         return this.decimalImporteValorEntradaEfectivo
-            .plus( this.importeValorEntradaBienConsumo )
+            .plus( this.importeCostoEntradaBienConsumo )
             .toNumber();
     }
 
@@ -170,13 +170,5 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
         }
 
         return this;
-    }
-
-
-    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo>): Record<string, KardexBienConsumo>
-    {
-        this.docsEntradaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
-        this.docsSalidaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
-        return record;
     }
 }

@@ -25,9 +25,9 @@ export class SalidaProduccionBienActividad extends Model
     @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoBienCapital( x ) ) recursosBienCapital: SalidaProduccionBienRecursoBienCapital[] = [];
     @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoServicio( x ) ) recursosServicio: SalidaProduccionBienRecursoServicio[] = [];
     
-    @Prop.Set() importeValorNeto: number = 0;
-    get decimalImporteValorNeto(): Decimal {
-        return Prop.toDecimal( this.importeValorNeto );
+    @Prop.Set() importeCostoNeto: number = 0;
+    get decimalImporteCostoNeto(): Decimal {
+        return Prop.toDecimal( this.importeCostoNeto );
     }
 
 
@@ -42,26 +42,26 @@ export class SalidaProduccionBienActividad extends Model
     {
         try {
 
-            this.importeValorNeto = this.recursosBienConsumo.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeValorNeto ),
+            this.importeCostoNeto = this.recursosBienConsumo.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeCostoNeto ),
                 new Decimal( 0 )
             ).toNumber();
 
-            this.importeValorNeto = this.recursosBienCapital.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importeValor ),
-                this.decimalImporteValorNeto
+            this.importeCostoNeto = this.recursosBienCapital.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ),
+                this.decimalImporteCostoNeto
             )
             .toNumber();
 
-            this.importeValorNeto = this.recursosServicio.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importeValor ),
-                this.decimalImporteValorNeto
+            this.importeCostoNeto = this.recursosServicio.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ),
+                this.decimalImporteCostoNeto
             )
             .toNumber();
 
         }
         catch ( error ) {
-            this.importeValorNeto = 0;
+            this.importeCostoNeto = 0;
         }
 
         return this;

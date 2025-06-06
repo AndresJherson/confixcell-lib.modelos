@@ -109,23 +109,24 @@ export class Prop
             
             Object.entries( typeInfo?.recordPropertyInfo ?? {} ).forEach( ([ propertyName, propertyInfo ]) => {
 
+                if ( initializedProperties.has( propertyName ) ) return;
+                if (!(propertyName in item)) return;
+
                 const originalValue = ( target as any )[ propertyName ];
                 const value = item[propertyName];
 
-                if ( initializedProperties.has( propertyName ) ) return;
 
-                // valores nulos
+                // Valores null
                 if ( ( value === null || value === undefined ) && originalValue === undefined ) {
                     Reflect.set( target, propertyName, undefined );
                     initializedProperties.add( propertyName );
                     return;
                 }
-                else if ( ( value === null || value === undefined ) && originalValue !== undefined ) {
-                    Reflect.set( target, propertyName, originalValue );
+                else if ( value === null && originalValue !== undefined ) {
                     initializedProperties.add( propertyName );
                     return;
                 }
-                
+
 
                 const behavior = propertyInfo.behavior;
 
@@ -144,7 +145,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value ) 
-                            : Prop.setNumber( value ) 
+                            : Prop.setNumber( value )
                     );
                 }
                 else if ( behavior === PropBehavior.boolean ) {
@@ -192,7 +193,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : Prop.setDate( value ) 
+                            : Prop.setDate( value )
                     );
                 }
                 else if ( behavior === PropBehavior.time ) {
@@ -201,7 +202,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : Prop.setTime( value ) 
+                            : Prop.setTime( value )
                     );
                 }
                 else if ( behavior === PropBehavior.datetime ) {
@@ -210,7 +211,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : Prop.setDateTime( value ) 
+                            : Prop.setDateTime( value )
                     );
                 }
                 else if ( behavior === PropBehavior.object ) {
@@ -262,19 +263,17 @@ export class Prop
                 const originalValue = ( target as any )[ propertyName ];
 
 
-                // valores nulos
+                // Valores null
                 if ( ( value === null || value === undefined ) && originalValue === undefined ) {
                     Reflect.set( target, propertyName, undefined );
                     initializedProperties.add( propertyName );
                     return;
                 }
-                else if ( ( value === null || value === undefined ) && originalValue !== undefined ) {
-                    Reflect.set( target, propertyName, originalValue );
+                else if ( value === null && originalValue !== undefined ) {
                     initializedProperties.add( propertyName );
                     return;
                 }
-                
-                
+
                 const propertyInfo = typeInfo.recordPropertyInfo[ propertyName ];
                 const behavior = propertyInfo.behavior;
 
@@ -293,7 +292,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value ) 
-                            : Prop.setNumber( value ) 
+                            : Prop.setNumber( value )
                     );
                 }
                 else if ( behavior === PropBehavior.boolean ) {
@@ -341,7 +340,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : Prop.setDate( value ) 
+                            : Prop.setDate( value )
                     );
                 }
                 else if ( behavior === PropBehavior.time ) {
@@ -350,7 +349,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : Prop.setTime( value ) 
+                            : Prop.setTime( value )
                     );
                 }
                 else if ( behavior === PropBehavior.datetime ) {
@@ -359,7 +358,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : Prop.setDateTime( value ) 
+                            : Prop.setDateTime( value )
                     );
                 }
                 else if ( behavior === PropBehavior.object ) {

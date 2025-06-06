@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { Cliente, DocumentoTransaccion, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, Prop, PropBehavior, Usuario } from '../../../../index';
+import { Cliente, DocumentoTransaccion, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo, Prop, PropBehavior, Usuario } from '../../../../index';
 import { DateTime } from 'luxon';
 
 @Prop.Class()
@@ -17,6 +17,15 @@ export class NotaVenta extends DocumentoTransaccion
     @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaBienConsumo( x ) ) salidasBienConsumo: NotaVentaSalidaBienConsumo[] = [];
     @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacion( x ) ) salidasProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion[] = [];
     @Prop.Set( PropBehavior.array, x => new NotaVentaEntradaEfectivo( x ) ) entradasEfectivo: NotaVentaEntradaEfectivo[] = [];
+
+    override get movimientos() {
+        return [
+            ...super.movimientos,
+            ...this.salidasBienConsumo,
+            ...this.salidasProduccionServicioReparacion,
+            ...this.entradasEfectivo,
+        ];
+    }
 
     @Prop.Set() override importeBruto: number = 0;
     @Prop.Set() importeDescuento: number = 0;
@@ -43,7 +52,7 @@ export class NotaVenta extends DocumentoTransaccion
 
     override get importeLiquidado() {
         return this.decimalImporteValorEntradaEfectivo
-            .plus( this.importeValorEntradaBienConsumo )
+            .plus( this.importeCostoEntradaBienConsumo )
             .toNumber();
     }
 
@@ -119,7 +128,7 @@ export class NotaVenta extends DocumentoTransaccion
     {
         super.procesarInformacionSalida();
 
-        const prevImporteValorSalidaBienConsumo = this.importeValorSalidaBienConsumo;
+        const prevImporteCostoSalidaBienConsumo = this.importeCostoSalidaBienConsumo;
         const prevImportePrecioSalidaBienConsumo = this.importePrecioSalidaBienConsumo;
         
         try {
@@ -127,24 +136,27 @@ export class NotaVenta extends DocumentoTransaccion
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeBruto: importes.importeBruto.plus( salida.importePrecioBruto ),
-                        importeDescuento: importes.importeDescuento.plus( salida.importeDescuento ),
-                        importeValorNeto: importes.importeValorNeto.plus( salida.importeValorNeto )
+                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ),
+                        importePrecioBruto: importes.importePrecioBruto.plus( salida.importePrecioBruto ),
+                        importePrecioDescuento: importes.importePrecioDescuento.plus( salida.importePrecioDescuento ),
+                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto )
                     };
                 },
                 {
-                    importeBruto: new Decimal( 0 ),
-                    importeDescuento: new Decimal( 0 ),
-                    importeValorNeto: new Decimal( 0 )
+                    importeCostoNeto: new Decimal( 0 ),
+                    importePrecioBruto: new Decimal( 0 ),
+                    importePrecioDescuento: new Decimal( 0 ),
+                    importePrecioNeto: new Decimal( 0 )
                 }
             );
 
             this.set({
-                importeBruto: recordImportesSalidaBienConsumo.importeBruto.toNumber(),
-                importeDescuento: recordImportesSalidaBienConsumo.importeDescuento.toNumber(),
-                importeInicial: recordImportesSalidaBienConsumo.importeBruto.minus( recordImportesSalidaBienConsumo.importeDescuento ).toNumber(),
-                importeValorSalidaBienConsumo: recordImportesSalidaBienConsumo.importeValorNeto.plus( prevImporteValorSalidaBienConsumo ).toNumber(),
-                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo.importeBruto.minus( recordImportesSalidaBienConsumo.importeDescuento )
+                importeBruto: recordImportesSalidaBienConsumo.importePrecioBruto.toNumber(),
+                importeDescuento: recordImportesSalidaBienConsumo.importePrecioDescuento.toNumber(),
+                importeInicial: recordImportesSalidaBienConsumo.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento ).toNumber(),
+
+                importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo.importeCostoNeto.plus( prevImporteCostoSalidaBienConsumo ).toNumber(),
+                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento )
                     .plus( prevImportePrecioSalidaBienConsumo )
                     .toNumber()
             })
@@ -154,13 +166,14 @@ export class NotaVenta extends DocumentoTransaccion
                 importeBruto: 0,
                 importeDescuento: 0,
                 importeInicial: 0,
-                importeValorSalidaBienConsumo: prevImporteValorSalidaBienConsumo,
+
+                importeCostoSalidaBienConsumo: prevImporteCostoSalidaBienConsumo,
                 importePrecioSalidaBienConsumo: prevImportePrecioSalidaBienConsumo
             })
         }
 
 
-        const prevImporteValorSalidaProduccion = this.importeValorSalidaProduccion;
+        const prevImporteCostoSalidaProduccion = this.importeCostoSalidaProduccion;
         const prevImportePrecioSalidaProduccion = this.importePrecioSalidaProduccion;
 
         try {
@@ -168,28 +181,30 @@ export class NotaVenta extends DocumentoTransaccion
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeAdicional: importes.importeAdicional.plus( salida.importePrecioNeto ),
-                        importeValorSalidaProduccion: importes.importeValorSalidaProduccion.plus( salida.importeValorNeto )
+                        importeCostoSalidaProduccion: importes.importeCostoSalidaProduccion.plus( salida.importeCostoNeto ),
+                        importePrecioAdicional: importes.importePrecioAdicional.plus( salida.importePrecioNeto )
                     }
                 },
                 {
-                    importeAdicional: new Decimal( 0 ),
-                    importeValorSalidaProduccion: new Decimal( 0 )
+                    importeCostoSalidaProduccion: new Decimal( 0 ),
+                    importePrecioAdicional: new Decimal( 0 )
                 }
             )
             
             this.set({
-                importeAdicional: recordImportesSalidaProduccion.importeAdicional.toNumber(),
-                importeNeto: recordImportesSalidaProduccion.importeAdicional.plus( this.importeInicial ).toNumber(),
-                importeValorSalidaProduccion: recordImportesSalidaProduccion.importeValorSalidaProduccion.plus( prevImporteValorSalidaProduccion ).toNumber(),
-                importePrecioSalidaProduccion: recordImportesSalidaProduccion.importeAdicional.plus( prevImportePrecioSalidaProduccion ).toNumber()
+                importeAdicional: recordImportesSalidaProduccion.importePrecioAdicional.toNumber(),
+                importeNeto: recordImportesSalidaProduccion.importePrecioAdicional.plus( this.importeInicial ).toNumber(),
+
+                importeCostoSalidaProduccion: recordImportesSalidaProduccion.importeCostoSalidaProduccion.plus( prevImporteCostoSalidaProduccion ).toNumber(),
+                importePrecioSalidaProduccion: recordImportesSalidaProduccion.importePrecioAdicional.plus( prevImportePrecioSalidaProduccion ).toNumber()
             })
         }
         catch ( error ) {
             this.set({
                 importeAdicional: 0,
                 importeNeto: this.importeInicial,
-                importeValorSalidaProduccion: prevImporteValorSalidaProduccion,
+
+                importeCostoSalidaProduccion: prevImporteCostoSalidaProduccion,
                 importePrecioSalidaProduccion: prevImportePrecioSalidaProduccion
             })
         }
@@ -391,16 +406,15 @@ export class NotaVenta extends DocumentoTransaccion
         if ( i !== -1 ) {
             return this.entradasEfectivo[ i ];
         }
-        else {
-            throw new Error( 'Salida por Produccion de Servicio de Reparacion no existe' );
+        else {i
+            throw new Error( 'Entrada de Efectivo no existe' );
         }
     }
 
 
-    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo>): Record<string, KardexBienConsumo>
+    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo> = {}): Record<string, KardexBienConsumo>
     {
-        this.docsEntradaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
-        this.docsSalidaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
+        super.toRecordKardexBienConsumo(record);
 
         for ( const sal of this.salidasBienConsumo ) {
             const almacenUuid = sal.almacen?.uuid
@@ -442,7 +456,7 @@ export class NotaVenta extends DocumentoTransaccion
                 
                 record[clave].movimientos.push(new KardexMovimientoBienConsumo({
                     movimientoUuid: recurso.uuid,
-                    movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA,
+                    movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA_SERVICIO_REPARACION_RECURSO,
                     fecha: this.fechaEmision,
                     documentoFuenteCodigoSerie: this.codigoSerie,
                     documentoFuenteCodigoNumero: this.codigoNumero,

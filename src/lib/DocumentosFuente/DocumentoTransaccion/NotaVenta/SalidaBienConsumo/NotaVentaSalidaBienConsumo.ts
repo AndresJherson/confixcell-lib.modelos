@@ -12,14 +12,14 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
     @Prop.Set() override cantidadSaliente: number = 0;
     @Prop.Set() override importePrecioUnitario: number = 0;
     @Prop.Set() importePrecioBruto: number = 0;
-    @Prop.Set() importeDescuento: number = 0;
+    @Prop.Set() importePrecioDescuento: number = 0;
     @Prop.Set() override importePrecioNeto: number = 0;
 
     get decimalImportePrecioBruto(): Decimal {
         return Prop.toDecimal( this.importePrecioBruto );
     }
-    get decimalImporteDescuento(): Decimal {
-        return Prop.toDecimal( this.importeDescuento );
+    get decimalImportePrecioDescuento(): Decimal {
+        return Prop.toDecimal( this.importePrecioDescuento );
     }
 
 
@@ -41,12 +41,12 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
         super.procesarInformacion();
 
         try {
-            this.importePrecioBruto = new Decimal( this.importePrecioUnitario )
+            this.importePrecioBruto = this.decimalImportePrecioUnitario
                 .mul( this.cantidadSaliente )
                 .toNumber();
 
-            this.importePrecioNeto = new Decimal( this.importePrecioBruto )
-                .minus( this.importeDescuento )
+            this.importePrecioNeto = this.decimalImportePrecioBruto
+                .minus( this.importePrecioDescuento )
                 .toNumber();
 
         }

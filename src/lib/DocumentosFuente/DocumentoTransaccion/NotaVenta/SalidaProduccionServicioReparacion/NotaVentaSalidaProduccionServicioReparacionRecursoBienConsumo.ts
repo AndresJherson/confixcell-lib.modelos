@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { Almacen, BienConsumo, Model, NotaVentaSalidaProduccionServicioReparacion, Prop, PropBehavior, Servicio } from '../../../../../index';
+import { Almacen, BienConsumo, Model, NotaVentaSalidaProduccionServicioReparacion, Prop, PropBehavior } from '../../../../../index';
 
 @Prop.Class()
 export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo extends Model
@@ -12,19 +12,19 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
     @Prop.Set( PropBehavior.model, x => new Almacen( x ) ) almacen?: Almacen;
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
     @Prop.Set() cantidad: number = 0;
-    @Prop.Set() importeValorUnitario: number = 0;
-    @Prop.Set() importeValorNeto: number = 0;
+    @Prop.Set() importeCostoUnitario: number = 0;
+    @Prop.Set() importeCostoNeto: number = 0;
     @Prop.Set() importePrecioUnitario: number = 0;
     @Prop.Set() importePrecioNeto: number = 0;
 
     get decimalCantidad(): Decimal {
         return Prop.toDecimal( this.cantidad );
     }
-    get decimalImporteValorUnitario(): Decimal {
-        return Prop.toDecimal( this.importeValorUnitario );
+    get decimalImporteCostoUnitario(): Decimal {
+        return Prop.toDecimal( this.importeCostoUnitario );
     }
-    get decimalImporteValorNeto(): Decimal {
-        return Prop.toDecimal( this.importeValorNeto );
+    get decimalImporteCostoNeto(): Decimal {
+        return Prop.toDecimal( this.importeCostoNeto );
     }
     get decimalImportePrecioUnitario(): Decimal {
         return Prop.toDecimal( this.importePrecioUnitario );
@@ -44,16 +44,16 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
     procesarInformacion(): this
     {
         try {
-            this.importeValorNeto = new Decimal( this.importeValorUnitario )
+            this.importeCostoNeto = this.decimalImporteCostoUnitario
                 .mul( this.cantidad )
                 .toNumber();
 
-            this.importePrecioNeto = new Decimal( this.importePrecioUnitario )
+            this.importePrecioNeto = this.decimalImportePrecioUnitario
                 .mul( this.cantidad )
                 .toNumber();
         }
         catch ( error ) {
-            this.importeValorNeto = 0;
+            this.importeCostoNeto = 0;
             this.importePrecioNeto = 0;
         }
 

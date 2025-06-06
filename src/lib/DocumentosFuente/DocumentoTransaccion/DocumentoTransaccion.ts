@@ -1,6 +1,5 @@
 import Decimal from "decimal.js";
-import { DateTime } from "luxon";
-import { DocumentoEntradaBienConsumo, DocumentoEntradaEfectivo, DocumentoFuente, DocumentoSalidaBienConsumo, DocumentoSalidaEfectivo, Prop, PropBehavior } from '../../../index';
+import { DocumentoEntradaBienConsumo, DocumentoEntradaEfectivo, DocumentoFuente, DocumentoSalidaBienConsumo, DocumentoSalidaEfectivo, EntradaBienConsumo, EntradaEfectivo, KardexBienConsumo, Prop, PropBehavior, SalidaBienConsumo, SalidaEfectivo, SalidaProduccion } from '../../../index';
 
 @Prop.Class()
 export class DocumentoTransaccion extends DocumentoFuente
@@ -13,7 +12,16 @@ export class DocumentoTransaccion extends DocumentoFuente
     @Prop.Set( PropBehavior.array, x => new DocumentoSalidaEfectivo( x ) ) docsSalidaEfectivo: DocumentoSalidaEfectivo[] = [];
     @Prop.Set( PropBehavior.array, x => new DocumentoSalidaBienConsumo( x ) ) docsSalidaBienConsumo: DocumentoSalidaBienConsumo[] = [];
 
-    get documentosMovimientos() {
+    get movimientos(): ( EntradaEfectivo | EntradaBienConsumo | SalidaEfectivo | SalidaBienConsumo | SalidaProduccion ) [] {
+        return [
+            ...this.docsEntradaEfectivo.flatMap( doc => doc.entradas ),
+            ...this.docsEntradaBienConsumo.flatMap( doc => doc.entradas ),
+            ...this.docsSalidaEfectivo.flatMap( doc => doc.salidas ),
+            ...this.docsSalidaBienConsumo.flatMap( doc => doc.salidas ),
+        ];
+    }
+
+    get documentosMovimiento() {
         return [
             ...this.docsEntradaEfectivo,
             ...this.docsEntradaBienConsumo,
@@ -23,43 +31,43 @@ export class DocumentoTransaccion extends DocumentoFuente
     }
     
     @Prop.Set() importeValorEntradaEfectivo: number = 0;
-    @Prop.Set() importeValorEntradaBienConsumo: number = 0;
+    @Prop.Set() importeCostoEntradaBienConsumo: number = 0;
 
     get decimalImporteValorEntradaEfectivo(): Decimal {
         return Prop.toDecimal( this.importeValorEntradaEfectivo );
     }
-    get decimalImporteValorEntradaBienConsumo(): Decimal {
-        return Prop.toDecimal( this.importeValorEntradaBienConsumo );
+    get decimalImporteCostoEntradaBienConsumo(): Decimal {
+        return Prop.toDecimal( this.importeCostoEntradaBienConsumo );
     }
 
     @Prop.Set() importeValorSalidaEfectivo: number = 0;
-    @Prop.Set() importeValorSalidaBienConsumo: number = 0;
+    @Prop.Set() importeCostoSalidaBienConsumo: number = 0;
     @Prop.Set() importePrecioSalidaBienConsumo: number = 0;
-    @Prop.Set() importeValorSalidaProduccion: number = 0;
+    @Prop.Set() importeCostoSalidaProduccion: number = 0;
     @Prop.Set() importePrecioSalidaProduccion: number = 0;
 
     get decimalImporteValorSalidaEfectivo(): Decimal {
         return Prop.toDecimal( this.importeValorSalidaEfectivo );
     }
-    get decimalImporteValorSalidaBienConsumo(): Decimal {
-        return Prop.toDecimal( this.importeValorSalidaBienConsumo );
+    get decimalImporteCostoSalidaBienConsumo(): Decimal {
+        return Prop.toDecimal( this.importeCostoSalidaBienConsumo );
     }
     get decimalImportePrecioSalidaBienConsumo(): Decimal {
         return Prop.toDecimal( this.importePrecioSalidaBienConsumo );
     }
-    get decimalImporteValorSalidaProduccion(): Decimal {
-        return Prop.toDecimal( this.importeValorSalidaProduccion );
+    get decimalImporteCostoSalidaProduccion(): Decimal {
+        return Prop.toDecimal( this.importeCostoSalidaProduccion );
     }
     get decimalImportePrecioSalidaProduccion(): Decimal {
         return Prop.toDecimal( this.importePrecioSalidaProduccion );
     }
 
     @Prop.Set() importeBruto: number = 0;
-    @Prop.Set() override importeNeto: number = 0;
-    
+
     get decimalImporteBruto(): Decimal {
-        return Prop.toDecimal( this.importeValorSalidaProduccion );
+        return Prop.toDecimal( this.importeBruto );
     }
+
 
     get importeDevengado(): number{
         return 0;
@@ -97,7 +105,6 @@ export class DocumentoTransaccion extends DocumentoFuente
     override setRelation(): this 
     {
         super.setRelation();
-
         
         this.docsEntradaEfectivo.forEach( doc => 
             doc.set({
@@ -418,6 +425,8 @@ export class DocumentoTransaccion extends DocumentoFuente
         const dateTimeCreacion = Prop.toDateTimeNow();
         this.fechaCreacion = dateTimeCreacion.toSQL();
         this.fechaActualizacion = dateTimeCreacion.toSQL();
+
+        this.procesarInformacion();
         return this;
     }
 
@@ -425,15 +434,19 @@ export class DocumentoTransaccion extends DocumentoFuente
     actualizar()
     {
         this.fechaActualizacion = Prop.toDateTimeNow().toSQL();
+
+        this.procesarInformacion();
         return this;
     }
 
 
-    actualizarYemitir()
+    emitir()
     {
         const dateTimeEmision = Prop.toDateTimeNow();
         this.fechaActualizacion = dateTimeEmision.toSQL();
         this.fechaEmision = dateTimeEmision.toSQL();
+
+        this.procesarInformacion();
         return this;
     }
 
@@ -441,34 +454,18 @@ export class DocumentoTransaccion extends DocumentoFuente
     protected override procesarEstado(): this 
     {
         super.procesarEstado();
-
-        const docs = [
-            ...this.docsEntradaEfectivo,
-            ...this.docsEntradaBienConsumo,
-            ...this.docsSalidaEfectivo,
-            ...this.docsSalidaBienConsumo
-        ]
         
-        const dateTimeEmision = Prop.toDateTime( this.fechaEmision );
-        if ( dateTimeEmision.isValid ) {
-            docs.forEach( doc => {
+        if ( this.dateTimeEmision.isValid ) {
+            this.documentosMovimiento.forEach( doc => {
 
-                const dateTimeEmisionMovimiento = Prop.toDateTime( doc.fechaEmision );
-                const dateTimeEmisionTarget = dateTimeEmisionMovimiento.isValid && dateTimeEmisionMovimiento >= dateTimeEmision
-                                            ? dateTimeEmisionMovimiento
-                                            : dateTimeEmision;
+                doc.fechaEmision = doc.dateTimeEmision.isValid && doc.dateTimeEmision >= this.dateTimeEmision
+                                    ? ( doc.dateTimeEmision.toSQL() ?? undefined )
+                                    : ( this.dateTimeEmision.toSQL() ?? undefined );
 
-                doc.set({ fechaEmision: dateTimeEmisionTarget.toSQL() })
-
-
-                const dateTimeAnulacionMovimiento = Prop.toDateTime( doc.fechaAnulacion );
-
-                doc.set({
-                    fechaAnulacion: ( dateTimeEmisionTarget.isValid && dateTimeAnulacionMovimiento.isValid ) &&
-                                    dateTimeEmisionTarget > dateTimeAnulacionMovimiento
-                                        ? dateTimeEmisionTarget.toSQL()
-                                        : doc.fechaAnulacion
-                })
+                doc.fechaAnulacion = ( doc.dateTimeEmision.isValid && doc.dateTimeAnulacion.isValid ) &&
+                                    doc.dateTimeEmision > doc.dateTimeAnulacion
+                                        ? ( doc.dateTimeEmision.toSQL() ?? undefined )
+                                        : doc.fechaAnulacion;
 
             } )
         }
@@ -479,8 +476,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     override procesarInformacion(): this
     {   
-        super.procesarInformacion();
-        this.procesarInformacionEntrada()
+        super.procesarInformacion()
+            .procesarInformacionEntrada()
             .procesarInformacionSalida();
 
         return this;
@@ -489,8 +486,7 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     procesarInformacionEntrada(): this
     {
-        const dateTimeEmision = Prop.toDateTime( this.fechaEmision );
-        if ( !dateTimeEmision.isValid ) {
+        if ( !this.dateTimeEmision.isValid ) {
             this.docsEntradaEfectivo = [];
             this.docsEntradaBienConsumo = [];
         }
@@ -498,7 +494,7 @@ export class DocumentoTransaccion extends DocumentoFuente
         try {
             this.importeValorEntradaEfectivo = this.docsEntradaEfectivo.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeValorNeto ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -508,15 +504,15 @@ export class DocumentoTransaccion extends DocumentoFuente
         }
 
         try {
-            this.importeValorEntradaBienConsumo = this.docsEntradaBienConsumo.filter( doc => doc.fechaAnulacion === undefined )
+            this.importeCostoEntradaBienConsumo = this.docsEntradaBienConsumo.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeCostoNeto ),
                     new Decimal( 0 )
                 )
                 .toNumber();
         }
         catch ( error ) {
-            this.importeValorEntradaBienConsumo = 0;
+            this.importeCostoEntradaBienConsumo = 0;
         }
 
         return this;
@@ -525,9 +521,7 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     procesarInformacionSalida(): this
     {
-        const dateTimeEmision = Prop.toDateTime( this.fechaEmision );
-
-        if ( !dateTimeEmision.isValid ) {
+        if ( !this.dateTimeEmision.isValid ) {
             this.docsSalidaEfectivo = [];
             this.docsSalidaBienConsumo = [];
         }
@@ -535,7 +529,7 @@ export class DocumentoTransaccion extends DocumentoFuente
         try {
             this.importeValorSalidaEfectivo = this.docsSalidaEfectivo.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeValorNeto ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -550,24 +544,24 @@ export class DocumentoTransaccion extends DocumentoFuente
                 .reduce(
                     ( importes, doc ) => {
                         doc.procesarInformacion();
-                        importes.importeValorNeto.plus( doc.importeValorNeto );
-                        importes.importePrecioNeto.plus( doc.importeNeto );
+                        importes.importeCostoNeto.plus( doc.importeCostoNeto );
+                        importes.importePrecioNeto.plus( doc.importePrecioNeto );
                         return importes;
                     },
                     {
-                        importeValorNeto: new Decimal( 0 ),
+                        importeCostoNeto: new Decimal( 0 ),
                         importePrecioNeto: new Decimal( 0 ),
                     }
                 );
 
             this.set({
-                importeValorSalidaBienConsumo: recordImportesSalidaBienConsumo.importeValorNeto.toNumber(),
+                importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo.importeCostoNeto.toNumber(),
                 importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo.importePrecioNeto.toNumber()
             })
         }
         catch( erorr ) {
             this.set({
-                importeValorSalidaBienConsumo: 0,
+                importeCostoSalidaBienConsumo: 0,
                 importePrecioSalidaBienConsumo: 0
             })
         }
@@ -575,4 +569,14 @@ export class DocumentoTransaccion extends DocumentoFuente
         return this;
     }
 
+
+
+    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo> = {}): Record<string, KardexBienConsumo>
+    {
+        super.toRecordKardexBienConsumo(record);
+        
+        this.docsEntradaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
+        this.docsSalidaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
+        return record;
+    }
 }

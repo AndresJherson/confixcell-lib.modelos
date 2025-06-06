@@ -59,21 +59,21 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
     override procesarInformacion(): this 
     {        
         try {
-            this.importeValorNeto = this.recursosBienConsumo.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeValorNeto ),
+            this.importeCostoNeto = this.recursosBienConsumo.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeCostoNeto ),
                 new Decimal( 0 )
             )
             .toNumber();
 
-            this.importeValorNeto = this.recursosServicio.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importeValor ),
-                new Decimal( this.importeValorNeto )
+            this.importeCostoNeto = this.recursosServicio.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ),
+                new Decimal( this.importeCostoNeto )
             )
             .toNumber();
 
         }
         catch ( error ) {
-            this.importeValorNeto = 0;
+            this.importeCostoNeto = 0;
         }
         
         
@@ -86,7 +86,7 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
             .toNumber();
 
             this.importePrecioNeto = this.recursosServicio.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importePrecio ),
+                ( decimal, recurso ) => decimal.plus( recurso.importePrecioNeto ),
                 new Decimal( this.importePrecioNeto )
             )
             .toNumber();

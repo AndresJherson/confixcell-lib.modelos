@@ -9,6 +9,11 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
 
     @Prop.Set( PropBehavior.array, x => new EntradaBienConsumo( x ) ) entradas: EntradaBienConsumo[] = [];
     
+    @Prop.Set() importeCostoNeto: number = 0;
+    get decimalImporteCostoNeto(): Decimal {
+        return Prop.toDecimal( this.importeCostoNeto );
+    }
+
 
     constructor( item?: Partial<DocumentoEntradaBienConsumo> )
     {
@@ -42,13 +47,16 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
         super.procesarInformacion();
         
         try {
-            this.importeNeto = this.entradas.reduce(
-                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ),
+            this.importeCostoNeto = this.entradas.reduce(
+                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeCostoNeto ),
                 new Decimal( 0 )
             )
             .toNumber();
+
+            this.importeNeto = this.importeCostoNeto;
         }
         catch ( error ) {
+            this.importeCostoNeto = 0;
             this.importeNeto = 0;
         }
 
@@ -122,7 +130,7 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
     }
     
 
-    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo>): Record<string, KardexBienConsumo>
+    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo> = {}): Record<string, KardexBienConsumo>
     {
         for ( const ent of this.entradas ) {
             const almacenUuid = ent.almacen?.uuid
@@ -146,8 +154,8 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
                     documentoFuenteCodigoNumero: this.codigoNumero,
                     concepto: this.concepto,
                     entradaCantidad: ent.cantidadEntrante,
-                    entradaCostoUnitario: ent.importeValorUnitario,
-                    entradaCostoTotal: ent.importeValorNeto
+                    entradaCostoUnitario: ent.importeCostoUnitario,
+                    entradaCostoTotal: ent.importeCostoNeto
                 }))
             }
             else if ( ent instanceof EntradaBienConsumoValorSalida ) {

@@ -9,11 +9,6 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
 
     @Prop.Set( PropBehavior.array, x => new EntradaBienConsumo( x ) ) entradas: EntradaBienConsumo[] = [];
     
-    @Prop.Set() importeCostoNeto: number = 0;
-    get decimalImporteCostoNeto(): Decimal {
-        return Prop.toDecimal( this.importeCostoNeto );
-    }
-
 
     constructor( item?: Partial<DocumentoEntradaBienConsumo> )
     {
@@ -47,16 +42,13 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
         super.procesarInformacion();
         
         try {
-            this.importeCostoNeto = this.entradas.reduce(
+            this.importeNeto = this.entradas.reduce(
                 ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeCostoNeto ),
                 new Decimal( 0 )
             )
             .toNumber();
-
-            this.importeNeto = this.importeCostoNeto;
         }
         catch ( error ) {
-            this.importeCostoNeto = 0;
             this.importeNeto = 0;
         }
 

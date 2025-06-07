@@ -10,13 +10,10 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     @Prop.Set( PropBehavior.array, x => new SalidaProduccion( x ) ) salidas: SalidaProduccion[] = [];
     
     @Prop.Set() importeCostoNeto: number = 0;
-    @Prop.Set() importePrecioNeto: number = 0;
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }
-    get decimalImportePrecioNeto(): Decimal {
-        return Prop.toDecimal( this.importePrecioNeto );
-    }
+
 
 
     constructor( item?: Partial<DocumentoSalidaProduccion> )
@@ -67,14 +64,12 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
 
             this.set({
                 importeCostoNeto: recordImpotes.importeCostoNeto.toNumber(),
-                importePrecioNeto: recordImpotes.importePrecioNeto.toNumber(),
                 importeNeto: recordImpotes.importePrecioNeto.toNumber()
             })
         }
         catch ( error ) {
             this.set({
                 importeCostoNeto: 0,
-                importePrecioNeto: 0,
                 importeNeto: 0
             })
         }

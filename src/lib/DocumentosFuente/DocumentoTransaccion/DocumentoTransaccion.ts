@@ -494,7 +494,7 @@ export class DocumentoTransaccion extends DocumentoFuente
         try {
             this.importeValorEntradaEfectivo = this.docsEntradaEfectivo.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeValorNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -506,7 +506,7 @@ export class DocumentoTransaccion extends DocumentoFuente
         try {
             this.importeCostoEntradaBienConsumo = this.docsEntradaBienConsumo.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeCostoNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -529,7 +529,7 @@ export class DocumentoTransaccion extends DocumentoFuente
         try {
             this.importeValorSalidaEfectivo = this.docsSalidaEfectivo.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeValorNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -545,7 +545,7 @@ export class DocumentoTransaccion extends DocumentoFuente
                     ( importes, doc ) => {
                         doc.procesarInformacion();
                         importes.importeCostoNeto.plus( doc.importeCostoNeto );
-                        importes.importePrecioNeto.plus( doc.importePrecioNeto );
+                        importes.importePrecioNeto.plus( doc.importeNeto );
                         return importes;
                     },
                     {

@@ -68,6 +68,18 @@ export class Prop
     }
 
 
+    static GetTypeInfo( target: any ): TypeInfo | undefined
+    {
+        try {
+            const constructorName = target.prototype?.constructor.type ?? target.constructor.type;
+            return this.recordMetadata.get( constructorName );
+        }
+        catch ( error ) {
+            return undefined;
+        }
+    }
+
+
     static Set<T extends PropBehavior>( behavior?: T, getValue?: PropValue<T> ): PropertyDecorator
     {
         return ( target: any, propertyKey ) => {
@@ -220,7 +232,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : {}
+                            : Prop.setObject( value )
                     );
                 }
                 else {
@@ -367,7 +379,7 @@ export class Prop
                         propertyName, 
                         propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                            : {}
+                            : Prop.setObject( value )
                     );
                 }
                 else {
@@ -379,18 +391,6 @@ export class Prop
             } );
 
             prototype = Object.getPrototypeOf( prototype );
-        }
-    }
-
-
-    static GetTypeInfo( target: any ): TypeInfo | undefined
-    {
-        try {
-            const constructorName = target.prototype?.constructor.type ?? target.constructor.type;
-            return this.recordMetadata.get( constructorName );
-        }
-        catch ( error ) {
-            return undefined;
         }
     }
 

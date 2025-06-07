@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { Almacen, BienConsumo, InventarioBienConsumo, KardexMovimientoBienConsumo, Model, Prop, PropBehavior } from '../../../index';
+import { Almacen, BienConsumo, ErrorKardexBienConsumo, EventoPendienteKardexBienConsumo, InventarioBienConsumo, KardexMovimientoBienConsumo, Model, Prop, PropBehavior } from '../../../index';
 import Decimal from 'decimal.js';
 
 @Prop.Class()
@@ -11,21 +11,41 @@ export class KardexBienConsumo extends Model
     @Prop.Set( PropBehavior.model, x => new InventarioBienConsumo( x ) ) inventario: InventarioBienConsumo = new InventarioBienConsumo();
     @Prop.Set( PropBehavior.model, x => new Almacen( x ) ) almacen?: Almacen;
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
-    @Prop.Set() eventosPendientes: number = 0;
+
+    @Prop.Set( PropBehavior.array, x => new EventoPendienteKardexBienConsumo( x ) ) eventosPendientes: EventoPendienteKardexBienConsumo[] = [];
+    @Prop.Set( PropBehavior.array, x => new ErrorKardexBienConsumo( x ) ) errores: ErrorKardexBienConsumo[] = [];
     @Prop.Set( PropBehavior.array, x => new KardexMovimientoBienConsumo( x ) ) movimientos: KardexMovimientoBienConsumo[] = [];
     
-    @Prop.Set( PropBehavior.date ) fechaInicial?: string;
-    @Prop.Set( PropBehavior.date ) fechaFinal?: string;
-    get dateTimeFechaInicial(): DateTime {
-        return Prop.toDateTime( this.fechaInicial );
+    @Prop.Set( PropBehavior.date ) fechaCreacion?: string;
+    @Prop.Set( PropBehavior.date ) fechaActualizacion?: string;
+    
+    get dateTimeFechaCreacion(): DateTime {
+        return Prop.toDateTime( this.fechaCreacion );
     }
-    get dateTimeFechaFinal(): DateTime {
-        return Prop.toDateTime( this.fechaFinal );
+    get dateTimeFechaActualizacion(): DateTime {
+        return Prop.toDateTime( this.fechaActualizacion );
     }
 
+    @Prop.Set() entradaCantidadAcumulado: number = 0;
+    @Prop.Set() entradaCostoAcumulado: number = 0;
+    @Prop.Set() salidaCantidadAcumulado: number = 0;
+    @Prop.Set() salidaCostoAcumulado: number = 0;
     @Prop.Set() saldoCantidad: number = 0;
     @Prop.Set() saldoValorUnitario: number = 0;
     @Prop.Set() saldoValorTotal: number = 0;
+
+    get decimalEntradaCantidadAcumulado(): Decimal {
+        return Prop.toDecimal( this.entradaCantidadAcumulado );
+    }
+    get decimalEntradaCostoAcumulado(): Decimal {
+        return Prop.toDecimal( this.entradaCostoAcumulado );
+    }
+    get decimalSalidaCantidadAcumulado(): Decimal {
+        return Prop.toDecimal( this.salidaCantidadAcumulado );
+    }
+    get decimalSalidaCostoAcumulado(): Decimal {
+        return Prop.toDecimal( this.salidaCostoAcumulado );
+    }
     get decimalSaldoCantidad(): Decimal {
         return Prop.toDecimal( this.saldoCantidad );
     }

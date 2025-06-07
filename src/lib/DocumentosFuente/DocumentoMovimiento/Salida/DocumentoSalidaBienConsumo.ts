@@ -10,12 +10,8 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     @Prop.Set( PropBehavior.array, x => new SalidaBienConsumo( x ) ) salidas: SalidaBienConsumo[] = [];
 
     @Prop.Set() importeCostoNeto: number = 0;
-    @Prop.Set() importePrecioNeto: number = 0;
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
-    }
-    get decimalImportePrecioNeto(): Decimal {
-        return Prop.toDecimal( this.importePrecioNeto );
     }
 
 
@@ -67,14 +63,12 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
 
             this.set({
                 importeCostoNeto: recordImportes.importeCostoNeto.toNumber(),
-                importePrecioNeto: recordImportes.importePrecioNeto.toNumber(),
                 importeNeto: recordImportes.importePrecioNeto.toNumber()
             })
         }
         catch ( error ) {
             this.set({
                 importeCostoNeto: 0,
-                importePrecioNeto: 0,
                 importeNeto: 0
             })
         }

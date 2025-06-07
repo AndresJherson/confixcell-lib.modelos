@@ -38,8 +38,6 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
 
     override procesarInformacion(): this 
     {
-        super.procesarInformacion();
-
         try {
             this.importePrecioBruto = this.decimalImportePrecioUnitario
                 .mul( this.cantidadSaliente )
@@ -54,6 +52,8 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
             this.importePrecioBruto = 0;
             this.importePrecioNeto = 0;
         }
+
+        super.procesarInformacion();
 
         return this;
     }

@@ -133,9 +133,13 @@ export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/EntradaEfec
 
 
 // Inventario y Kardex
+export * from './lib/Inventario/KardexLock';
+
 export * from './lib/Inventario/BienConsumo/InventarioBienConsumo';
 export * from './lib/Inventario/BienConsumo/KardexBienConsumo';
 export * from './lib/Inventario/BienConsumo/KardexMovimientoBienConsumo';
+export * from './lib/Inventario/BienConsumo/EventoPendienteKardexBienConsumo';
+export * from './lib/Inventario/BienConsumo/ErrorKardexBienConsumo';
 export * from './lib/Inventario/BienConsumo/MovimientoTipoBienConsumo';
 
 

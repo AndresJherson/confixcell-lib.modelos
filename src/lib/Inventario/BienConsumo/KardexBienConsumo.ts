@@ -8,16 +8,16 @@ export class KardexBienConsumo extends Model
     static override type = 'KardexBienConsumo';
     override type: string = KardexBienConsumo.type;
 
-    @Prop.Set( PropBehavior.model, x => new InventarioBienConsumo( x ) ) inventario: InventarioBienConsumo = new InventarioBienConsumo();
+    @Prop.Set( PropBehavior.model, x => new InventarioBienConsumo( x ) ) inventario?: InventarioBienConsumo;
     @Prop.Set( PropBehavior.model, x => new Almacen( x ) ) almacen?: Almacen;
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
 
-    @Prop.Set( PropBehavior.array, x => new EventoPendienteKardexBienConsumo( x ) ) eventosPendientes: EventoPendienteKardexBienConsumo[] = [];
-    @Prop.Set( PropBehavior.array, x => new ErrorKardexBienConsumo( x ) ) errores: ErrorKardexBienConsumo[] = [];
-    @Prop.Set( PropBehavior.array, x => new KardexMovimientoBienConsumo( x ) ) movimientos: KardexMovimientoBienConsumo[] = [];
+    @Prop.Set( PropBehavior.array, x => new EventoPendienteKardexBienConsumo( x ) ) eventosPendientes?: EventoPendienteKardexBienConsumo[];
+    @Prop.Set( PropBehavior.array, x => new ErrorKardexBienConsumo( x ) ) errores?: ErrorKardexBienConsumo[];
+    @Prop.Set( PropBehavior.array, x => new KardexMovimientoBienConsumo( x ) ) movimientos?: KardexMovimientoBienConsumo[];
     
-    @Prop.Set( PropBehavior.date ) fechaCreacion?: string;
-    @Prop.Set( PropBehavior.date ) fechaActualizacion?: string;
+    @Prop.Set( PropBehavior.datetime ) fechaCreacion?: string;
+    @Prop.Set( PropBehavior.datetime ) fechaActualizacion?: string;
     
     get dateTimeFechaCreacion(): DateTime {
         return Prop.toDateTime( this.fechaCreacion );

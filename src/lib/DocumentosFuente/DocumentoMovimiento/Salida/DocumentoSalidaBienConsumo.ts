@@ -7,9 +7,9 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     static override type: string = 'DocumentoSalidaBienConsumo';
     override type: string = DocumentoSalidaBienConsumo.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaBienConsumo( x ) ) salidas: SalidaBienConsumo[] = [];
+    @Prop.Set( PropBehavior.array, x => new SalidaBienConsumo( x ) ) salidas?: SalidaBienConsumo[];
 
-    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() importeCostoNeto?: number;
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }
@@ -31,7 +31,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     {
         super.setRelation();
 
-        this.salidas.forEach( salida => 
+        this.salidas?.forEach( salida => 
             salida.set({
                 documentoFuente: new DocumentoSalidaBienConsumo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
@@ -47,12 +47,12 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
         super.procesarInformacion();
         
         try {
-            const recordImportes = this.salidas.reduce(
+            const recordImportes = this.salidas?.reduce(
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ),
-                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto )
+                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ?? 0 ),
+                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto ?? 0 )
                     };
                 },
                 {
@@ -61,9 +61,10 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
                 }
             );
 
+            this.importeCostoNeto = recordImportes?.importeCostoNeto.toNumber();
             this.set({
-                importeCostoNeto: recordImportes.importeCostoNeto.toNumber(),
-                importeNeto: recordImportes.importePrecioNeto.toNumber()
+                importeCostoNeto: recordImportes?.importeCostoNeto.toNumber(),
+                importeNeto: recordImportes?.importePrecioNeto.toNumber()
             })
         }
         catch ( error ) {
@@ -80,7 +81,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     // Salida de Bien de Consumo
     agregarSalida( salida: SalidaBienConsumo ): this
     {
-        this.salidas.unshift( salida );
+        this.salidas?.unshift( salida );
         this.procesarInformacion();
         return this;
     }
@@ -88,19 +89,21 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
 
     actualizarSalida( salida: SalidaBienConsumo ): this
     {
-        let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
-
-        i = i === -1
-            ? this.salidas.findIndex( sal => 
-                ( sal.id === undefined || salida.id === undefined )
-                    ? false
-                    : ( sal.id === salida.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.salidas[ i ] = salida;
-            this.procesarInformacion();
+        if ( this.salidas ) {
+            let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
+    
+            i = i === -1
+                ? this.salidas.findIndex( sal => 
+                    ( sal.id === undefined || salida.id === undefined )
+                        ? false
+                        : ( sal.id === salida.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.salidas[ i ] = salida;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -109,8 +112,8 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
 
     eliminarSalida( salida: SalidaBienConsumo ): this
     {
-        this.salidas = this.salidas.filter( sal => sal.symbol !== salida.symbol );
-        this.salidas = this.salidas.filter( sal => 
+        this.salidas = this.salidas?.filter( sal => sal.symbol !== salida.symbol );
+        this.salidas = this.salidas?.filter( sal => 
             ( sal.id === undefined || salida.id === undefined )
                 ? true
                 : ( sal.id !== salida.id )
@@ -122,8 +125,10 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     }
 
 
-    getSalida( salida: SalidaBienConsumo ): SalidaBienConsumo
+    getSalida( salida: SalidaBienConsumo ): SalidaBienConsumo | undefined
     {
+        if ( !this.salidas ) return undefined
+
         let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
 
         i = i === -1
@@ -134,18 +139,13 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
             )
             : i;
 
-        if ( i !== -1 ) {
             return this.salidas[ i ];
-        }
-        else {
-            throw new Error( 'Salida de Bien de Consumo no existe' );
-        }
     }
 
 
     override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo> = {}): Record<string, KardexBienConsumo>
     {
-        for ( const sal of this.salidas ) {
+        for ( const sal of this.salidas ?? [] ) {
             const almacenUuid = sal.almacen?.uuid
             const bienConsumoUuid = sal.bienConsumo?.uuid;
             if ( almacenUuid === undefined || bienConsumoUuid === undefined ) continue;
@@ -154,12 +154,13 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
             if ( !( clave in record ) ) {
                 record[clave] = new KardexBienConsumo({
                     almacen: sal.almacen,
-                    bienConsumo: sal.bienConsumo
+                    bienConsumo: sal.bienConsumo,
+                    movimientos: []
                 })
             }
             
             if ( sal instanceof SalidaBienConsumoValorNuevo ) {
-                record[clave].movimientos.push(new KardexMovimientoBienConsumo({
+                record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
                     movimientoUuid: sal.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_NUEVO,
                     fecha: this.fechaEmision,
@@ -170,7 +171,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
                 }))
             }
             else if ( sal instanceof SalidaBienConsumoValorEntrada ) {
-                record[clave].movimientos.push(new KardexMovimientoBienConsumo({
+                record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
                     movimientoUuid: sal.uuid,
                     movimientoRefUuid: sal.entrada?.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_ENTRADA,

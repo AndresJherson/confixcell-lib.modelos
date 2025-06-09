@@ -21,11 +21,11 @@ export class SalidaProduccionBienActividad extends Model
         return Prop.toDateTime( this.fechaFinal );
     }
     
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoBienConsumo( x ) ) recursosBienConsumo: SalidaProduccionBienRecursoBienConsumo[] = [];
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoBienCapital( x ) ) recursosBienCapital: SalidaProduccionBienRecursoBienCapital[] = [];
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoServicio( x ) ) recursosServicio: SalidaProduccionBienRecursoServicio[] = [];
+    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoBienConsumo( x ) ) recursosBienConsumo?: SalidaProduccionBienRecursoBienConsumo[];
+    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoBienCapital( x ) ) recursosBienCapital?: SalidaProduccionBienRecursoBienCapital[];
+    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoServicio( x ) ) recursosServicio?: SalidaProduccionBienRecursoServicio[];
     
-    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() importeCostoNeto?: number;
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }
@@ -42,19 +42,19 @@ export class SalidaProduccionBienActividad extends Model
     {
         try {
 
-            this.importeCostoNeto = this.recursosBienConsumo.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeCostoNeto ),
+            this.importeCostoNeto = this.recursosBienConsumo?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeCostoNeto ?? 0 ),
                 new Decimal( 0 )
             ).toNumber();
 
-            this.importeCostoNeto = this.recursosBienCapital.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ),
+            this.importeCostoNeto = this.recursosBienCapital?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ?? 0 ),
                 this.decimalImporteCostoNeto
             )
             .toNumber();
 
-            this.importeCostoNeto = this.recursosServicio.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ),
+            this.importeCostoNeto = this.recursosServicio?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ?? 0 ),
                 this.decimalImporteCostoNeto
             )
             .toNumber();

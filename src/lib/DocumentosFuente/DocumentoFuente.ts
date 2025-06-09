@@ -12,11 +12,13 @@ export class DocumentoFuente extends Model
     @Prop.Set() codigoNumero?: number;
     @Prop.Set() concepto?: string;
 
-    get codigoCompleto(): string {
+    get codigoCompleto(): string | undefined {
         const codigoSerie = this.codigoSerie ?? '';
         const codigoNumero = this.codigoNumero !== undefined ? this.codigoNumero.toString() : '';
         const separator = codigoSerie && codigoNumero ? ' - ' : '';
-        return `${codigoSerie}${separator}${codigoNumero}`;
+        
+        const nombreCompleto = `${codigoSerie}${separator}${codigoNumero}`.trim();
+        return nombreCompleto ? nombreCompleto : undefined;
     }
 
     @Prop.Set( PropBehavior.datetime ) fechaCreacion?: string;
@@ -39,9 +41,9 @@ export class DocumentoFuente extends Model
 
     
     @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuario?: Usuario;
-    @Prop.Set( PropBehavior.array, x => new Nota( x ) ) notas: Nota[] = [];
+    @Prop.Set( PropBehavior.array, x => new Nota( x ) ) notas?: Nota[];
 
-    @Prop.Set() importeNeto: number = 0;
+    @Prop.Set() importeNeto?: number;
     get decimalImporteNeto(): Decimal {
         return Prop.toDecimal( this.importeNeto );
     }
@@ -69,7 +71,7 @@ export class DocumentoFuente extends Model
         super.setRelation();
 
         this.set({
-            notas: this.notas.map( nota => nota.set({
+            notas: this.notas?.map( nota => nota.set({
                 documentoFuente: new DocumentoFuente({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
             }) )
         });
@@ -82,15 +84,15 @@ export class DocumentoFuente extends Model
     agregarNota( nota: Nota ): this
     {
         nota.fecha = nota.fecha ?? Prop.toDateTimeNow().toSQL();
-        this.notas.unshift( nota );
+        this.notas?.unshift( nota );
         return this;
     }
 
 
     eliminarNota( nota: Nota ): this
     {
-        this.notas = this.notas.filter( n => n.symbol !== nota.symbol );
-        this.notas = this.notas.filter( n =>
+        this.notas = this.notas?.filter( n => n.symbol !== nota.symbol );
+        this.notas = this.notas?.filter( n =>
             ( n.id === undefined || nota.id === undefined )
             ? true
             : ( n.id !== nota.id )

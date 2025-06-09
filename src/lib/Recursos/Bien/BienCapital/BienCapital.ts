@@ -7,14 +7,16 @@ export class BienCapital extends Bien
     override type: string = BienCapital.type;
 
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
-    @Prop.Set() numero: number = 0;
+    @Prop.Set() numero?: number;
     @Prop.Set() descripcion?: string;
 
     override get nombreCompleto() {
         const nombre = this.bienConsumo?.nombreCompleto ?? '';
         const numero = !this.numero ? '' : this.numero.toString();
         const separator = nombre && numero ? ' - ' : '';
-        return `${nombre}${separator}${numero}`;
+
+        const nombreCompleto = `${nombre}${separator}${numero}`.trim()
+        return nombreCompleto ? nombreCompleto : undefined;
     }
 
 

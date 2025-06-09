@@ -25,7 +25,7 @@ export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito
         return Prop.toDecimal( this.importeValorFinal );
     }
 
-    @Prop.Set( PropBehavior.array, x => new EntradaEfectivoCuota( x ) ) cuotas: EntradaEfectivoCuota[] = [];
+    @Prop.Set( PropBehavior.array, x => new EntradaEfectivoCuota( x ) ) cuotas?: EntradaEfectivoCuota[];
 
     @Prop.Set() duracionMinutos: number = 0;
     interesXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
@@ -55,7 +55,7 @@ export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito
     {
         super.setRelation();
 
-        this.cuotas.forEach( cuota =>
+        this.cuotas?.forEach( cuota =>
             cuota.set({
                 credito: new EntradaEfectivoCredito({ id: this.id, uuid: this.uuid, symbol: this.symbol })
             })
@@ -84,7 +84,7 @@ export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito
     }
 
 
-    getCuota( cuota: EntradaEfectivoCuota ): EntradaEfectivoCuota
+    getCuota( cuota: EntradaEfectivoCuota ): EntradaEfectivoCuota | undefined
     {
         return this.credito.getCuota( this, cuota );
     }

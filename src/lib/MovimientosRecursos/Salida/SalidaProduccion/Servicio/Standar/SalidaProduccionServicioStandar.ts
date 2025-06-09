@@ -7,7 +7,7 @@ export class SalidaProduccionServicioStandar extends SalidaProduccionServicio
     static override type: string = 'SalidaProduccionServicioStandar';
     override type: string = SalidaProduccionServicioStandar.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionServicioActividad( x ) ) actividades: SalidaProduccionServicioActividad[] = [];
+    @Prop.Set( PropBehavior.array, x => new SalidaProduccionServicioActividad( x ) ) actividades?: SalidaProduccionServicioActividad[];
 
     constructor( item?: Partial<SalidaProduccionServicioStandar> )
     {
@@ -26,10 +26,10 @@ export class SalidaProduccionServicioStandar extends SalidaProduccionServicio
     {
         super.setRelation();
 
-        this.actividades.forEach( act => 
+        this.actividades?.forEach( act => 
             act.set({
                 salidaProduccionServicioStandar: new SalidaProduccionServicioStandar({ id: this.id, uuid: this.uuid, symbol: this.symbol }),
-                recursosBienConsumo: act.recursosBienConsumo.map( recurso => 
+                recursosBienConsumo: act.recursosBienConsumo?.map( recurso => 
                     recurso.set({
                         actividad: new SalidaProduccionServicioActividad({ id: act.id, uuid: act.uuid, symbol: act.symbol })
                     })
@@ -48,8 +48,8 @@ export class SalidaProduccionServicioStandar extends SalidaProduccionServicio
     {
         try {
 
-            this.importeCostoNeto = this.actividades.reduce(
-                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeCostoNeto ),
+            this.importeCostoNeto = this.actividades?.reduce(
+                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeCostoNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber();

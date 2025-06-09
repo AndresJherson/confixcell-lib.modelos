@@ -14,24 +14,24 @@ export class NotaVenta extends DocumentoTransaccion
     @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuarioTecnico?: Usuario;
     @Prop.Set( PropBehavior.model, x => new NotaVentaEstado( x ) ) estado?: NotaVentaEstado;
 
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaBienConsumo( x ) ) salidasBienConsumo: NotaVentaSalidaBienConsumo[] = [];
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacion( x ) ) salidasProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion[] = [];
-    @Prop.Set( PropBehavior.array, x => new NotaVentaEntradaEfectivo( x ) ) entradasEfectivo: NotaVentaEntradaEfectivo[] = [];
+    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaBienConsumo( x ) ) salidasBienConsumo?: NotaVentaSalidaBienConsumo[];
+    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacion( x ) ) salidasProduccionServicioReparacion?: NotaVentaSalidaProduccionServicioReparacion[];
+    @Prop.Set( PropBehavior.array, x => new NotaVentaEntradaEfectivo( x ) ) entradasEfectivo?: NotaVentaEntradaEfectivo[];
 
     override get movimientos() {
         return [
             ...super.movimientos,
-            ...this.salidasBienConsumo,
-            ...this.salidasProduccionServicioReparacion,
-            ...this.entradasEfectivo,
+            ...this.salidasBienConsumo ?? [],
+            ...this.salidasProduccionServicioReparacion ?? [],
+            ...this.entradasEfectivo ?? [],
         ];
     }
 
-    @Prop.Set() override importeBruto: number = 0;
-    @Prop.Set() importeDescuento: number = 0;
-    @Prop.Set() importeInicial: number = 0;
-    @Prop.Set() importeAdicional: number = 0;
-    @Prop.Set() override importeNeto: number = 0;
+    @Prop.Set() override importeBruto?: number;
+    @Prop.Set() importeDescuento?: number;
+    @Prop.Set() importeInicial?: number;
+    @Prop.Set() importeAdicional?: number;
+    @Prop.Set() override importeNeto?: number;
 
     get decimalImporteDescuento(): Decimal {
         return Prop.toDecimal( this.importeDescuento );
@@ -45,14 +45,14 @@ export class NotaVenta extends DocumentoTransaccion
 
     override get importeDevengado() {
         return this.decimalImporteValorSalidaEfectivo
-            .plus( this.importePrecioSalidaBienConsumo )
-            .plus( this.importePrecioSalidaProduccion )
+            .plus( this.importePrecioSalidaBienConsumo ?? 0 )
+            .plus( this.importePrecioSalidaProduccion ?? 0 )
             .toNumber();
     }
 
     override get importeLiquidado() {
         return this.decimalImporteValorEntradaEfectivo
-            .plus( this.importeCostoEntradaBienConsumo )
+            .plus( this.importeCostoEntradaBienConsumo ?? 0 )
             .toNumber();
     }
 
@@ -78,21 +78,21 @@ export class NotaVenta extends DocumentoTransaccion
     {
         super.setRelation();
 
-        this.salidasBienConsumo.forEach( salida => 
+        this.salidasBienConsumo?.forEach( salida => 
             salida.set({
                 documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
             })
             .setRelation()
         );
 
-        this.salidasProduccionServicioReparacion.forEach( salida => 
+        this.salidasProduccionServicioReparacion?.forEach( salida => 
             salida.set({
                 documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
             })
             .setRelation()
         );
 
-        this.entradasEfectivo.forEach( entrada => 
+        this.entradasEfectivo?.forEach( entrada => 
             entrada.set({
                 documentoFuente: new NotaVenta({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
             })
@@ -109,11 +109,11 @@ export class NotaVenta extends DocumentoTransaccion
         const prevImporteValorEntradaEfectivo = this.importeValorEntradaEfectivo;
 
         try {
-            this.importeValorEntradaEfectivo = this.entradasEfectivo.reduce(
+            this.importeValorEntradaEfectivo = this.entradasEfectivo?.reduce(
                 ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ),
                 new Decimal( 0 )
             )
-            .plus( prevImporteValorEntradaEfectivo )
+            .plus( prevImporteValorEntradaEfectivo ?? 0 )
             .toNumber();
         }
         catch ( error ) {
@@ -132,14 +132,14 @@ export class NotaVenta extends DocumentoTransaccion
         const prevImportePrecioSalidaBienConsumo = this.importePrecioSalidaBienConsumo;
         
         try {
-            const recordImportesSalidaBienConsumo = this.salidasBienConsumo.reduce(
+            const recordImportesSalidaBienConsumo = this.salidasBienConsumo?.reduce(
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ),
-                        importePrecioBruto: importes.importePrecioBruto.plus( salida.importePrecioBruto ),
-                        importePrecioDescuento: importes.importePrecioDescuento.plus( salida.importePrecioDescuento ),
-                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto )
+                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ?? 0 ),
+                        importePrecioBruto: importes.importePrecioBruto.plus( salida.importePrecioBruto ?? 0 ),
+                        importePrecioDescuento: importes.importePrecioDescuento.plus( salida.importePrecioDescuento ?? 0 ),
+                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto ?? 0 )
                     };
                 },
                 {
@@ -151,13 +151,13 @@ export class NotaVenta extends DocumentoTransaccion
             );
 
             this.set({
-                importeBruto: recordImportesSalidaBienConsumo.importePrecioBruto.toNumber(),
-                importeDescuento: recordImportesSalidaBienConsumo.importePrecioDescuento.toNumber(),
-                importeInicial: recordImportesSalidaBienConsumo.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento ).toNumber(),
+                importeBruto: recordImportesSalidaBienConsumo?.importePrecioBruto.toNumber(),
+                importeDescuento: recordImportesSalidaBienConsumo?.importePrecioDescuento.toNumber(),
+                importeInicial: recordImportesSalidaBienConsumo?.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento ).toNumber(),
 
-                importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo.importeCostoNeto.plus( prevImporteCostoSalidaBienConsumo ).toNumber(),
-                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento )
-                    .plus( prevImportePrecioSalidaBienConsumo )
+                importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo?.importeCostoNeto.plus( prevImporteCostoSalidaBienConsumo ?? 0 ).toNumber(),
+                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo?.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento )
+                    .plus( prevImportePrecioSalidaBienConsumo ?? 0 )
                     .toNumber()
             })
         }
@@ -177,12 +177,12 @@ export class NotaVenta extends DocumentoTransaccion
         const prevImportePrecioSalidaProduccion = this.importePrecioSalidaProduccion;
 
         try {
-            const recordImportesSalidaProduccion = this.salidasProduccionServicioReparacion.reduce(
+            const recordImportesSalidaProduccion = this.salidasProduccionServicioReparacion?.reduce(
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeCostoSalidaProduccion: importes.importeCostoSalidaProduccion.plus( salida.importeCostoNeto ),
-                        importePrecioAdicional: importes.importePrecioAdicional.plus( salida.importePrecioNeto )
+                        importeCostoSalidaProduccion: importes.importeCostoSalidaProduccion.plus( salida.importeCostoNeto ?? 0 ),
+                        importePrecioAdicional: importes.importePrecioAdicional.plus( salida.importePrecioNeto ?? 0 )
                     }
                 },
                 {
@@ -192,11 +192,11 @@ export class NotaVenta extends DocumentoTransaccion
             )
             
             this.set({
-                importeAdicional: recordImportesSalidaProduccion.importePrecioAdicional.toNumber(),
-                importeNeto: recordImportesSalidaProduccion.importePrecioAdicional.plus( this.importeInicial ).toNumber(),
+                importeAdicional: recordImportesSalidaProduccion?.importePrecioAdicional.toNumber(),
+                importeNeto: recordImportesSalidaProduccion?.importePrecioAdicional.plus( this.importeInicial ?? 0 ).toNumber(),
 
-                importeCostoSalidaProduccion: recordImportesSalidaProduccion.importeCostoSalidaProduccion.plus( prevImporteCostoSalidaProduccion ).toNumber(),
-                importePrecioSalidaProduccion: recordImportesSalidaProduccion.importePrecioAdicional.plus( prevImportePrecioSalidaProduccion ).toNumber()
+                importeCostoSalidaProduccion: recordImportesSalidaProduccion?.importeCostoSalidaProduccion.plus( prevImporteCostoSalidaProduccion ?? 0 ).toNumber(),
+                importePrecioSalidaProduccion: recordImportesSalidaProduccion?.importePrecioAdicional.plus( prevImportePrecioSalidaProduccion ?? 0 ).toNumber()
             })
         }
         catch ( error ) {
@@ -217,7 +217,7 @@ export class NotaVenta extends DocumentoTransaccion
     // Salida Bien de Consumo
     agregarSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): this
     {
-        this.salidasBienConsumo.unshift( salidaBienConsumo );
+        this.salidasBienConsumo?.unshift( salidaBienConsumo );
         this.procesarInformacion();
         return this;
     }
@@ -225,19 +225,21 @@ export class NotaVenta extends DocumentoTransaccion
 
     actualizarSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): this
     {
-        let i = this.salidasBienConsumo.findIndex( sal => sal.symbol === salidaBienConsumo.symbol );
-
-        i = i === -1
-            ? this.salidasBienConsumo.findIndex( sal => 
-                ( sal.id === undefined || salidaBienConsumo.id === undefined )
-                    ? false
-                    : ( sal.id === salidaBienConsumo.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.salidasBienConsumo[ i ] = salidaBienConsumo;
-            this.procesarInformacion();
+        if ( this.salidasBienConsumo ) {
+            let i = this.salidasBienConsumo.findIndex( sal => sal.symbol === salidaBienConsumo.symbol );
+    
+            i = i === -1
+                ? this.salidasBienConsumo.findIndex( sal => 
+                    ( sal.id === undefined || salidaBienConsumo.id === undefined )
+                        ? false
+                        : ( sal.id === salidaBienConsumo.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.salidasBienConsumo[ i ] = salidaBienConsumo;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -246,8 +248,8 @@ export class NotaVenta extends DocumentoTransaccion
 
     eliminarSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): this
     {
-        this.salidasBienConsumo = this.salidasBienConsumo.filter( sal => sal.symbol !== salidaBienConsumo.symbol );
-        this.salidasBienConsumo = this.salidasBienConsumo.filter( sal => 
+        this.salidasBienConsumo = this.salidasBienConsumo?.filter( sal => sal.symbol !== salidaBienConsumo.symbol );
+        this.salidasBienConsumo = this.salidasBienConsumo?.filter( sal => 
             ( sal.id === undefined || salidaBienConsumo.id === undefined )
                 ? true
                 : ( sal.id !== salidaBienConsumo.id )
@@ -259,8 +261,10 @@ export class NotaVenta extends DocumentoTransaccion
     }
 
 
-    getSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): NotaVentaSalidaBienConsumo
+    getSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): NotaVentaSalidaBienConsumo | undefined
     {
+        if ( !this.salidasBienConsumo ) return undefined;
+
         let i = this.salidasBienConsumo.findIndex( sal => sal.symbol === salidaBienConsumo.symbol );
 
         i = i === -1
@@ -271,19 +275,14 @@ export class NotaVenta extends DocumentoTransaccion
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.salidasBienConsumo[ i ];
-        }
-        else {
-            throw new Error( 'Salida de Bien de Consumo no existe' );
-        }
+        return this.salidasBienConsumo[ i ];
     }
 
 
     // Salida Produccion de Servicio de Reparacion
     agregarSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): this
     {
-        this.salidasProduccionServicioReparacion.unshift( salidaProduccionServicioReparacion );
+        this.salidasProduccionServicioReparacion?.unshift( salidaProduccionServicioReparacion );
         this.procesarInformacion();
         return this;
     }
@@ -291,19 +290,21 @@ export class NotaVenta extends DocumentoTransaccion
 
     actualizarSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): this
     {
-        let i = this.salidasProduccionServicioReparacion.findIndex( sal => sal.symbol === salidaProduccionServicioReparacion.symbol );
-
-        i = i === -1
-            ? this.salidasProduccionServicioReparacion.findIndex( sal => 
-                ( sal.id === undefined || salidaProduccionServicioReparacion.id === undefined )
-                    ? false
-                    : ( sal.id === salidaProduccionServicioReparacion.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.salidasProduccionServicioReparacion[ i ] = salidaProduccionServicioReparacion;
-            this.procesarInformacion();
+        if ( this.salidasProduccionServicioReparacion ) {
+            let i = this.salidasProduccionServicioReparacion.findIndex( sal => sal.symbol === salidaProduccionServicioReparacion.symbol );
+    
+            i = i === -1
+                ? this.salidasProduccionServicioReparacion.findIndex( sal => 
+                    ( sal.id === undefined || salidaProduccionServicioReparacion.id === undefined )
+                        ? false
+                        : ( sal.id === salidaProduccionServicioReparacion.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.salidasProduccionServicioReparacion[ i ] = salidaProduccionServicioReparacion;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -312,8 +313,8 @@ export class NotaVenta extends DocumentoTransaccion
 
     eliminarSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): this
     {
-        this.salidasProduccionServicioReparacion = this.salidasProduccionServicioReparacion.filter( sal => sal.symbol !== salidaProduccionServicioReparacion.symbol );
-        this.salidasProduccionServicioReparacion = this.salidasProduccionServicioReparacion.filter( sal => 
+        this.salidasProduccionServicioReparacion = this.salidasProduccionServicioReparacion?.filter( sal => sal.symbol !== salidaProduccionServicioReparacion.symbol );
+        this.salidasProduccionServicioReparacion = this.salidasProduccionServicioReparacion?.filter( sal => 
             ( sal.id === undefined || salidaProduccionServicioReparacion.id === undefined )
                 ? true
                 : ( sal.id !== salidaProduccionServicioReparacion.id )
@@ -325,8 +326,10 @@ export class NotaVenta extends DocumentoTransaccion
     }
 
 
-    getSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): NotaVentaSalidaProduccionServicioReparacion
+    getSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): NotaVentaSalidaProduccionServicioReparacion | undefined
     {
+        if ( ! this.salidasProduccionServicioReparacion ) return undefined;
+
         let i = this.salidasProduccionServicioReparacion.findIndex( sal => sal.symbol === salidaProduccionServicioReparacion.symbol );
 
         i = i === -1
@@ -337,19 +340,14 @@ export class NotaVenta extends DocumentoTransaccion
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.salidasProduccionServicioReparacion[ i ];
-        }
-        else {
-            throw new Error( 'Salida por Produccion de Servicio de Reparacion no existe' );
-        }
+        return this.salidasProduccionServicioReparacion[ i ];
     }
 
 
     // Entrada de Efectivo
     agregarEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): this
     {
-        this.entradasEfectivo.unshift( entradaEfectivo );
+        this.entradasEfectivo?.unshift( entradaEfectivo );
         this.procesarInformacion();
         return this;
     }
@@ -357,19 +355,21 @@ export class NotaVenta extends DocumentoTransaccion
 
     actualizarEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): this
     {
-        let i = this.entradasEfectivo.findIndex( ent => ent.symbol === entradaEfectivo.symbol );
-
-        i = i === -1
-            ? this.entradasEfectivo.findIndex( ent => 
-                ( ent.id === undefined || entradaEfectivo.id === undefined )
-                    ? false
-                    : ( ent.id === entradaEfectivo.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.entradasEfectivo[ i ] = entradaEfectivo;
-            this.procesarInformacion();
+        if ( this.entradasEfectivo ) {
+            let i = this.entradasEfectivo.findIndex( ent => ent.symbol === entradaEfectivo.symbol );
+    
+            i = i === -1
+                ? this.entradasEfectivo.findIndex( ent => 
+                    ( ent.id === undefined || entradaEfectivo.id === undefined )
+                        ? false
+                        : ( ent.id === entradaEfectivo.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.entradasEfectivo[ i ] = entradaEfectivo;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -378,8 +378,8 @@ export class NotaVenta extends DocumentoTransaccion
 
     eliminarEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): this
     {
-        this.entradasEfectivo = this.entradasEfectivo.filter( ent => ent.symbol !== entradaEfectivo.symbol );
-        this.entradasEfectivo = this.entradasEfectivo.filter( ent => 
+        this.entradasEfectivo = this.entradasEfectivo?.filter( ent => ent.symbol !== entradaEfectivo.symbol );
+        this.entradasEfectivo = this.entradasEfectivo?.filter( ent => 
             ( ent.id === undefined || entradaEfectivo.id === undefined )
                 ? true
                 : ( ent.id !== entradaEfectivo.id )
@@ -391,8 +391,10 @@ export class NotaVenta extends DocumentoTransaccion
     }
 
 
-    getEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): NotaVentaEntradaEfectivo
+    getEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): NotaVentaEntradaEfectivo | undefined
     {
+        if ( !this.entradasEfectivo ) return undefined;
+
         let i = this.entradasEfectivo.findIndex( ent => ent.symbol === entradaEfectivo.symbol );
 
         i = i === -1
@@ -403,12 +405,7 @@ export class NotaVenta extends DocumentoTransaccion
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.entradasEfectivo[ i ];
-        }
-        else {i
-            throw new Error( 'Entrada de Efectivo no existe' );
-        }
+        return this.entradasEfectivo[ i ];
     }
 
 
@@ -416,7 +413,7 @@ export class NotaVenta extends DocumentoTransaccion
     {
         super.toRecordKardexBienConsumo(record);
 
-        for ( const sal of this.salidasBienConsumo ) {
+        for ( const sal of this.salidasBienConsumo ?? [] ) {
             const almacenUuid = sal.almacen?.uuid
             const bienConsumoUuid = sal.bienConsumo?.uuid;
             if ( almacenUuid === undefined || bienConsumoUuid === undefined ) continue;
@@ -425,11 +422,12 @@ export class NotaVenta extends DocumentoTransaccion
             if ( !( clave in record ) ) {
                 record[clave] = new KardexBienConsumo({
                     almacen: sal.almacen,
-                    bienConsumo: sal.bienConsumo
+                    bienConsumo: sal.bienConsumo,
+                    movimientos: []
                 })
             }
             
-            record[clave].movimientos.push(new KardexMovimientoBienConsumo({
+            record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
                 movimientoUuid: sal.uuid,
                 movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA,
                 fecha: this.fechaEmision,
@@ -440,8 +438,8 @@ export class NotaVenta extends DocumentoTransaccion
             }))
         }
         
-        for ( const sal of this.salidasProduccionServicioReparacion ) {
-            for ( const recurso of sal.recursosBienConsumo ) {
+        for ( const sal of this.salidasProduccionServicioReparacion ?? [] ) {
+            for ( const recurso of sal.recursosBienConsumo ?? [] ) {
                 const almacenUuid = recurso.almacen?.uuid
                 const bienConsumoUuid = recurso.bienConsumo?.uuid;
                 if ( almacenUuid === undefined || bienConsumoUuid === undefined ) continue;
@@ -450,11 +448,12 @@ export class NotaVenta extends DocumentoTransaccion
                 if ( !( clave in record ) ) {
                     record[clave] = new KardexBienConsumo({
                         almacen: recurso.almacen,
-                        bienConsumo: recurso.bienConsumo
+                        bienConsumo: recurso.bienConsumo,
+                        movimientos: []
                     })
                 }
                 
-                record[clave].movimientos.push(new KardexMovimientoBienConsumo({
+                record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
                     movimientoUuid: recurso.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA_SERVICIO_REPARACION_RECURSO,
                     fecha: this.fechaEmision,

@@ -9,9 +9,10 @@ export class PantallaModelo extends Model
     @Prop.Set() nombre?: string;
     @Prop.Set( PropBehavior.model, x => new PantallaMarca( x ) ) marca?: PantallaMarca;
     
-    get nombreCompleto(): string
+    get nombreCompleto()
     {
-        return `${this.marca?.nombre ?? ''} ${this.nombre ?? ''}`.trim();
+        const nombreCompleto = `${this.marca?.nombre ?? ''} ${this.nombre ?? ''}`.trim();
+        return nombreCompleto ? nombreCompleto : undefined;
     }
 
     constructor( json?: Partial<PantallaModelo> )

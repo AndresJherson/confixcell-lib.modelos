@@ -13,7 +13,8 @@ export class Producto extends BienConsumo
 
     override get nombreCompleto()
     {
-        return `${this.nombre ?? ''} ${this.marca?.nombre ?? ''} ${this.magnitud?.nombre ?? ''}`.trim()
+        const nombreCompleto = `${this.nombre ?? ''} ${this.marca?.nombre ?? ''} ${this.magnitud?.nombre ?? ''}`.trim()
+        return nombreCompleto ? nombreCompleto : undefined;
     }
 
 

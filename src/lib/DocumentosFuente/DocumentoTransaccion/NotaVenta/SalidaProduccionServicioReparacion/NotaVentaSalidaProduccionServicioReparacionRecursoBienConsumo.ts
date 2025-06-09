@@ -1,5 +1,6 @@
 import Decimal from 'decimal.js';
 import { Almacen, BienConsumo, Model, NotaVentaSalidaProduccionServicioReparacion, Prop, PropBehavior } from '../../../../../index';
+import { DateTime } from 'luxon';
 
 @Prop.Class()
 export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo extends Model
@@ -8,14 +9,19 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
     override type: string = NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo.type;
 
     @Prop.Set( PropBehavior.model, x => new NotaVentaSalidaProduccionServicioReparacion( x ) ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion;
+
     @Prop.Set( PropBehavior.datetime ) fecha?: string;
+    get dateTimeFecha(): DateTime {
+        return Prop.toDateTime( this.fecha );
+    }
+
     @Prop.Set( PropBehavior.model, x => new Almacen( x ) ) almacen?: Almacen;
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
-    @Prop.Set() cantidad: number = 0;
-    @Prop.Set() importeCostoUnitario: number = 0;
-    @Prop.Set() importeCostoNeto: number = 0;
-    @Prop.Set() importePrecioUnitario: number = 0;
-    @Prop.Set() importePrecioNeto: number = 0;
+    @Prop.Set() cantidad?: number;
+    @Prop.Set() importeCostoUnitario?: number;
+    @Prop.Set() importeCostoNeto?: number;
+    @Prop.Set() importePrecioUnitario?: number;
+    @Prop.Set() importePrecioNeto?: number;
 
     get decimalCantidad(): Decimal {
         return Prop.toDecimal( this.cantidad );
@@ -45,11 +51,11 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
     {
         try {
             this.importeCostoNeto = this.decimalImporteCostoUnitario
-                .mul( this.cantidad )
+                .mul( this.cantidad ?? 0 )
                 .toNumber();
 
             this.importePrecioNeto = this.decimalImportePrecioUnitario
-                .mul( this.cantidad )
+                .mul( this.cantidad ?? 0 )
                 .toNumber();
         }
         catch ( error ) {

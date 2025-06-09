@@ -10,7 +10,7 @@ export class Servicio extends Recurso
     @Prop.Set( PropBehavior.model, x => new ServicioCategoria( x ) ) categoria?: ServicioCategoria;
 
     override get nombreCompleto() {
-        return this.nombre ?? '';
+        return this.nombre;
     }
 
 

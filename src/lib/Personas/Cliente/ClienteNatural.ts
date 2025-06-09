@@ -14,7 +14,8 @@ export class ClienteNatural extends Cliente
     @Prop.Set() celularRespaldo?: number;
 
     override get nombreCompleto() {
-        return `${this.nombre ?? ''} ${this.apellido ?? ''}`.trim();
+        const nombreCompleto = `${this.nombre ?? ''} ${this.apellido ?? ''}`.trim();
+        return nombreCompleto ? nombreCompleto : undefined;
     }
 
 

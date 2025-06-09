@@ -8,7 +8,7 @@ export class NotaVentaEntradaEfectivo extends EntradaEfectivo
     override type: string = NotaVentaEntradaEfectivo.type;
 
     @Prop.Set( PropBehavior.model, x => new NotaVenta( x ) ) declare documentoFuente?: NotaVenta;
-    @Prop.Set() numero: number = 0;
+    @Prop.Set() numero?: number;
     @Prop.Set( PropBehavior.datetime ) fecha?: string;
     @Prop.Set( PropBehavior.model, x => new MedioTransferencia( x ) ) medioTransferencia?: MedioTransferencia;
 

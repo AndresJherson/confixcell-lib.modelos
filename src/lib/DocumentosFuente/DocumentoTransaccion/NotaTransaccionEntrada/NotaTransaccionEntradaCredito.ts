@@ -9,10 +9,10 @@ export class NotaTransaccionEntradaCredito extends EntradaEfectivo implements IC
 
     @Prop.Set( PropBehavior.model, x => new NotaTransaccionEntrada( x ) ) declare documentoFuente?: NotaTransaccionEntrada;
 
-    @Prop.Set() tasaInteresDiario: number = 0;
-    @Prop.Set() importeInteres: number = 0;
-    @Prop.Set() porcentajeInteres: number = 0;
-    @Prop.Set() importeValorFinal: number = 0;
+    @Prop.Set() tasaInteresDiario?: number;
+    @Prop.Set() importeInteres?: number;
+    @Prop.Set() porcentajeInteres?: number;
+    @Prop.Set() importeValorFinal?: number;
 
     get decimalTasaInteresDiario(): Decimal {
         return Prop.toDecimal( this.tasaInteresDiario );
@@ -27,9 +27,9 @@ export class NotaTransaccionEntradaCredito extends EntradaEfectivo implements IC
         return Prop.toDecimal( this.importeValorFinal );
     }
 
-    @Prop.Set( PropBehavior.array, x => new NotaTransaccionEntradaCuota ) cuotas: NotaTransaccionEntradaCuota[] = [];
+    @Prop.Set( PropBehavior.array, x => new NotaTransaccionEntradaCuota ) cuotas?: NotaTransaccionEntradaCuota[];
 
-    @Prop.Set() duracionMinutos: number = 0;
+    @Prop.Set() duracionMinutos?: number;
     interesXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
     amortizacionXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
     cuotaXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
@@ -56,7 +56,7 @@ export class NotaTransaccionEntradaCredito extends EntradaEfectivo implements IC
     {
         super.setRelation();
 
-        this.cuotas.forEach( cuota => 
+        this.cuotas?.forEach( cuota => 
             cuota.set({
                 credito: new NotaTransaccionEntradaCredito({ id: this.id, symbol: this.symbol })
             })
@@ -81,7 +81,7 @@ export class NotaTransaccionEntradaCredito extends EntradaEfectivo implements IC
     }
 
 
-    getCuota(cuota: NotaTransaccionEntradaCuota ): NotaTransaccionEntradaCuota {
+    getCuota(cuota: NotaTransaccionEntradaCuota ): NotaTransaccionEntradaCuota | undefined {
         return this.credito.getCuota( this, cuota );
     }
 

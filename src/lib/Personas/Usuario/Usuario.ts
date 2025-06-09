@@ -24,7 +24,6 @@ export class Usuario extends Model
     }
 
 
-
     constructor( item?: Partial<Usuario> )
     {
         super();

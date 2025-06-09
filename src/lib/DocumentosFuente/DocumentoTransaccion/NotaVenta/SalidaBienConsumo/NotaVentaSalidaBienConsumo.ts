@@ -9,11 +9,11 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
 
 
     @Prop.Set( PropBehavior.model, x => new NotaVenta( x ) ) declare documentoFuente?: NotaVenta;
-    @Prop.Set() override cantidadSaliente: number = 0;
-    @Prop.Set() override importePrecioUnitario: number = 0;
-    @Prop.Set() importePrecioBruto: number = 0;
-    @Prop.Set() importePrecioDescuento: number = 0;
-    @Prop.Set() override importePrecioNeto: number = 0;
+    @Prop.Set() override cantidadSaliente?: number;
+    @Prop.Set() override importePrecioUnitario?: number;
+    @Prop.Set() importePrecioBruto?: number;
+    @Prop.Set() importePrecioDescuento?: number;
+    @Prop.Set() override importePrecioNeto?: number;
 
     get decimalImportePrecioBruto(): Decimal {
         return Prop.toDecimal( this.importePrecioBruto );
@@ -40,11 +40,11 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
     {
         try {
             this.importePrecioBruto = this.decimalImportePrecioUnitario
-                .mul( this.cantidadSaliente )
+                .mul( this.cantidadSaliente ?? 0 )
                 .toNumber();
 
             this.importePrecioNeto = this.decimalImportePrecioBruto
-                .minus( this.importePrecioDescuento )
+                .minus( this.importePrecioDescuento ?? 0 )
                 .toNumber();
 
         }

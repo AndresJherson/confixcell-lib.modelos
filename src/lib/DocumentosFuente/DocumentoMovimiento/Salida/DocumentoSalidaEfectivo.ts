@@ -7,7 +7,7 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     static override type: string = 'DocumentoSalidaEfectivo';
     override type: string = DocumentoSalidaEfectivo.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaEfectivo( x ) ) salidas: SalidaEfectivo[] = [];
+    @Prop.Set( PropBehavior.array, x => new SalidaEfectivo( x ) ) salidas?: SalidaEfectivo[];
 
     
     constructor( item?: Partial<DocumentoSalidaEfectivo> )
@@ -26,7 +26,7 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     {
         super.setRelation();
 
-        this.salidas.forEach( salida => 
+        this.salidas?.forEach( salida => 
             salida.set({
                 documentoFuente: new DocumentoSalidaEfectivo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
@@ -42,8 +42,8 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
         super.procesarInformacion();
         
         try {
-            this.importeNeto = this.salidas.reduce(
-                ( decimal, salida ) => decimal.plus( salida.procesarInformacion().importeValorNeto ),
+            this.importeNeto = this.salidas?.reduce(
+                ( decimal, salida ) => decimal.plus( salida.procesarInformacion().importeValorNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber();
@@ -59,7 +59,7 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     // Salida de Efectivo
     agregarSalida( salida: SalidaEfectivo ): this
     {
-        this.salidas.unshift( salida );
+        this.salidas?.unshift( salida );
         this.procesarInformacion();
         return this;
     }
@@ -67,19 +67,21 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
 
     actualizarSalida( salida: SalidaEfectivo ): this
     {
-        let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
-
-        i = i === -1
-            ? this.salidas.findIndex( sal => 
-                ( sal.id === undefined || salida.id === undefined )
-                    ? false
-                    : ( sal.id === salida.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.salidas[ i ] = salida;
-            this.procesarInformacion();
+        if ( this.salidas ) {
+            let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
+    
+            i = i === -1
+                ? this.salidas.findIndex( sal => 
+                    ( sal.id === undefined || salida.id === undefined )
+                        ? false
+                        : ( sal.id === salida.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.salidas[ i ] = salida;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -88,8 +90,8 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
 
     eliminarSalida( salida: SalidaEfectivo ): this
     {
-        this.salidas = this.salidas.filter( sal => sal.symbol !== salida.symbol );
-        this.salidas = this.salidas.filter( sal => 
+        this.salidas = this.salidas?.filter( sal => sal.symbol !== salida.symbol );
+        this.salidas = this.salidas?.filter( sal => 
             ( sal.id === undefined || salida.id === undefined )
                 ? true
                 : ( sal.id !== salida.id )
@@ -101,8 +103,10 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     }
 
 
-    getSalida( salida: SalidaEfectivo ): SalidaEfectivo
+    getSalida( salida: SalidaEfectivo ): SalidaEfectivo | undefined
     {
+        if ( !this.salidas ) return undefined;
+
         let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
 
         i = i === -1
@@ -113,11 +117,6 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.salidas[ i ];
-        }
-        else {
-            throw new Error( 'Salida de Efectivo no existe' );
-        }
+        return this.salidas[ i ];
     }
 }

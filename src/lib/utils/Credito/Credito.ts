@@ -5,11 +5,11 @@ import { DateTime, Interval } from 'luxon';
 
 export interface ICredito
 {
-    importeValorNeto: number;
-    tasaInteresDiario: number;
-    importeInteres: number;
-    porcentajeInteres: number;
-    importeValorFinal: number;
+    importeValorNeto?: number;
+    tasaInteresDiario?: number;
+    importeInteres?: number;
+    porcentajeInteres?: number;
+    importeValorFinal?: number;
     
     get decimalImporteValorNeto(): Decimal;
     get decimalTasaInteresDiario(): Decimal;
@@ -17,9 +17,9 @@ export interface ICredito
     get decimalPorcentajeInteres(): Decimal;
     get decimalImporteValorFinal(): Decimal;
 
-    cuotas: Cuota[];
+    cuotas?: Cuota[];
 
-    duracionMinutos: number;
+    duracionMinutos?: number;
     interesXminuto: Proporcion;
     amortizacionXminuto: Proporcion;
     cuotaXminuto: Proporcion;
@@ -32,7 +32,7 @@ export interface ICredito
     agregarCuota( cuota: Cuota ): this;
     actualizarCuota( cuota: Cuota ): this;
     eliminarCuota( cuota: Cuota ): this;
-    getCuota( cuota: Cuota ): Cuota;
+    getCuota( cuota: Cuota ): Cuota | undefined;
 }
 
 
@@ -40,11 +40,11 @@ export class Credito
 {
     agregarCuota<T extends ICredito, C extends Cuota>( credito: T, cuota: C ): T
     {
-        cuota.fechaInicio = credito.cuotas.length === 0
+        cuota.fechaInicio = !credito.cuotas?.length
                             ? ( cuota.fechaInicio ?? Prop.toDateTimeNow().toSQL() )
                             : ( cuota.fechaInicio ?? credito.cuotas[ credito.cuotas.length - 1 ].fechaVencimiento );
 
-        credito.cuotas.push( cuota );
+        credito.cuotas?.push( cuota );
 
         credito.procesarInformacion();
         
@@ -54,21 +54,22 @@ export class Credito
 
     actualizarCuota<T extends ICredito, C extends Cuota>( credito: T, cuota: C ): T
     {
-        let i = credito.cuotas.findIndex( x => x.symbol === cuota.symbol );
-
-        i = i === -1
-            ? credito.cuotas.findIndex( x => 
-                ( x.id === undefined || cuota.id === undefined )
-                    ? false
-                    : ( x.id === cuota.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            credito.cuotas[ i ] = cuota;
-            credito.procesarInformacion();
+        if ( credito.cuotas ) {
+            let i = credito.cuotas.findIndex( x => x.symbol === cuota.symbol );
+    
+            i = i === -1
+                ? credito.cuotas.findIndex( x => 
+                    ( x.id === undefined || cuota.id === undefined )
+                        ? false
+                        : ( x.id === cuota.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                credito.cuotas[ i ] = cuota;
+                credito.procesarInformacion();
+            }
         }
-
 
         return credito;
     }
@@ -76,8 +77,8 @@ export class Credito
 
     eliminarCuota<T extends ICredito, C extends Cuota>( credito: T, cuota: C ): T
     {
-        credito.cuotas = credito.cuotas.filter( x => x.symbol !== cuota.symbol );
-        credito.cuotas = credito.cuotas.filter( x => 
+        credito.cuotas = credito.cuotas?.filter( x => x.symbol !== cuota.symbol );
+        credito.cuotas = credito.cuotas?.filter( x => 
             ( x.id === undefined || cuota.id === undefined )
                 ? true
                 : ( x.id !== cuota.id )
@@ -89,8 +90,10 @@ export class Credito
     }
 
 
-    getCuota<T extends ICredito, C extends Cuota>( credito: T, cuota: C ): C
+    getCuota<T extends ICredito, C extends Cuota>( credito: T, cuota: C ): C | undefined
     {
+        if ( !credito.cuotas ) return undefined;
+
         let i = credito.cuotas.findIndex( x => x.symbol === cuota.symbol );
 
         i = i === -1
@@ -101,12 +104,7 @@ export class Credito
             )
             : i;
 
-        if ( i !== -1 ) {
-            return credito.cuotas[ i ] as C;
-        }
-        else {
-            throw new Error( 'Cuota no existe' );
-        }
+        return credito.cuotas[ i ] as C;
     }
 
 
@@ -114,21 +112,19 @@ export class Credito
     {   
         try {
 
-            credito.duracionMinutos = credito.cuotas.reduce(
-    
+            credito.duracionMinutos = credito.cuotas?.reduce(
                 ( minuto, cuota, i ) => {
                     
                     cuota.numero = i + 1;
 
                     cuota.fechaInicio = i === 0
                                         ? cuota.fechaInicio
-                                        : credito.cuotas[ i - 1 ].fechaVencimiento;
+                                        : ( credito.cuotas ? credito.cuotas[ i - 1 ].fechaVencimiento : undefined );
 
-                    return minuto.plus( cuota.calcularDuracion().duracionMinutos )
+                    return minuto.plus( cuota.calcularDuracion().duracionMinutos ?? 0 )
     
                 },
                 new Decimal( 0 )
-    
             )
             .toDecimalPlaces( 2 )
             .toNumber();
@@ -138,7 +134,7 @@ export class Credito
                 credito.interesXminuto.antecedente = credito.decimalTasaInteresDiario
                                                     .div( 1440 )
                                                     .div( 100 )
-                                                    .mul( credito.importeValorNeto )
+                                                    .mul( credito.importeValorNeto ?? 0 )
                                                     .toNumber();
     
                 credito.interesXminuto.consecuente = 1;
@@ -151,7 +147,7 @@ export class Credito
     
             try {
                 credito.amortizacionXminuto.antecedente = credito.decimalImporteValorNeto
-                                                        .div( credito.duracionMinutos )
+                                                        .div( credito.duracionMinutos ?? 0 )
                                                         .toNumber();
     
                 credito.amortizacionXminuto.consecuente = 1;
@@ -168,12 +164,12 @@ export class Credito
             credito.cuotaXminuto.consecuente = 1;
     
     
-            credito.importeInteres = credito.interesXminuto.calcularAntecedente( credito.duracionMinutos )
+            credito.importeInteres = credito.interesXminuto.calcularAntecedente( credito.duracionMinutos ?? 0 )
                                 .toDecimalPlaces( 2 )
                                 .toNumber();
 
             credito.porcentajeInteres = credito.decimalImporteInteres
-                                        .div( credito.importeValorNeto )
+                                        .div( credito.importeValorNeto ?? 0 )
                                         .mul( 100 )
                                         .toDecimalPlaces( 2 )
                                         .toNumber();
@@ -185,13 +181,17 @@ export class Credito
     
             this.calcularCuotas( credito );
 
-            const cuotasLength = credito.cuotas.length;
-            const ultimaCuota = credito.cuotas[ cuotasLength - 1 ];
-            if ( cuotasLength > 1 && ultimaCuota.importeSaldo !== 0 ) {
+            const cuotasLength = credito.cuotas?.length ?? 0;
+            const ultimaCuota = credito.cuotas ? credito.cuotas[ cuotasLength - 1 ] : undefined;
+            if (
+                cuotasLength > 1 &&
+                ultimaCuota &&
+                ultimaCuota.importeSaldo !== 0
+            ) {
                 
-                ultimaCuota.importeAmortizacion = credito.cuotas[ cuotasLength - 2 ].importeSaldo;
+                ultimaCuota.importeAmortizacion = credito.cuotas ? credito.cuotas[ cuotasLength - 2 ].importeSaldo : undefined;
                 ultimaCuota.importeCuota = ultimaCuota.decimalImporteAmortizacion
-                                            .plus( ultimaCuota.importeInteres )
+                                            .plus( ultimaCuota.importeInteres ?? 0 )
                                             .toDecimalPlaces( 2 )
                                             .toNumber();
                 ultimaCuota.importeSaldo = 0;
@@ -212,13 +212,13 @@ export class Credito
     private calcularCuotas<T extends ICredito>( credito: T ): T
     {
         try {
-            credito.cuotas.forEach( ( cuota, i ) => {
+            credito.cuotas?.forEach( ( cuota, i ) => {
     
-                cuota.importeAmortizacion = credito.amortizacionXminuto.calcularAntecedente( cuota.duracionMinutos )
+                cuota.importeAmortizacion = credito.amortizacionXminuto.calcularAntecedente( cuota.duracionMinutos ?? 0 )
                                             .toDecimalPlaces( 2 )            
                                             .toNumber();
                                             
-                cuota.importeInteres = credito.interesXminuto.calcularAntecedente( cuota.duracionMinutos )
+                cuota.importeInteres = credito.interesXminuto.calcularAntecedente( cuota.duracionMinutos ?? 0 )
                                         .toDecimalPlaces( 2 )
                                         .toNumber();
 
@@ -232,10 +232,15 @@ export class Credito
                                         .minus( cuota.importeAmortizacion )
                                         .toDecimalPlaces( 2 )
                                         .toNumber()
-                                    : credito.cuotas[ i - 1 ].decimalImporteSaldo
-                                        .minus( cuota.importeAmortizacion )
-                                        .toDecimalPlaces( 2 )
-                                        .toNumber();
+                                    : (
+                                        credito.cuotas
+                                        ? credito.cuotas[ i - 1 ].decimalImporteSaldo
+                                            .minus( cuota.importeAmortizacion )
+                                            .toDecimalPlaces( 2 )
+                                            .toNumber()
+                                        : undefined
+                                    )
+                                        
                         
                 cuota.importeMora = 0;
 
@@ -267,11 +272,11 @@ export class Credito
             
             let saldoCobrado = importeCobrado;
 
-            credito.cuotas.forEach( cuota => {
+            credito.cuotas?.forEach( cuota => {
 
                 const decimalSaldoCobrado = new Decimal( saldoCobrado );
                 saldoCobrado = decimalSaldoCobrado
-                                .minus( cuota.importeCuota )
+                                .minus( cuota.importeCuota ?? 0 )
                                 .toNumber();
 
                 if ( saldoCobrado > 0 ) {
@@ -295,7 +300,7 @@ export class Credito
 
                     try {
                         cuota.porcentajeCobrado = decimalSaldoCobrado
-                                                    .div( cuota.importeCuota )
+                                                    .div( cuota.importeCuota ?? 0 )
                                                     .mul( 100 )
                                                     .toDecimalPlaces( 2 )
                                                     .toNumber();
@@ -331,7 +336,7 @@ export class Cuota extends Model
     static override type: string = 'Cuota';
     override type: string = Cuota.type;
 
-    @Prop.Set() numero: number = 0;
+    @Prop.Set() numero?: number;
     @Prop.Set( PropBehavior.datetime ) fechaInicio?: string;
     @Prop.Set( PropBehavior.datetime ) fechaVencimiento?: string;
 
@@ -345,11 +350,11 @@ export class Cuota extends Model
         return Prop.toDateTime( this.fechaVencimiento );
     }
 
-    @Prop.Set() duracionMinutos: number = 0;
-    @Prop.Set() importeInteres: number = 0;
-    @Prop.Set() importeAmortizacion: number = 0;
-    @Prop.Set() importeCuota: number = 0;
-    @Prop.Set() importeSaldo: number = 0;
+    @Prop.Set() duracionMinutos?: number;
+    @Prop.Set() importeInteres?: number;
+    @Prop.Set() importeAmortizacion?: number;
+    @Prop.Set() importeCuota?: number;
+    @Prop.Set() importeSaldo?: number;
 
     get decimalDuracionMinutos(): Decimal {
         return Prop.toDecimal( this.duracionMinutos );
@@ -369,11 +374,11 @@ export class Cuota extends Model
 
     @Prop.Set() esActivoMora: boolean = false;
     @Prop.Set( PropBehavior.datetime ) fechaLimiteMora?: string;
-    @Prop.Set() importeMora: number = 0;
-    @Prop.Set() importeCobrado: number = 0;
-    @Prop.Set() importePorCobrar: number = 0;
-    @Prop.Set() porcentajeCobrado: number = 0;
-    @Prop.Set() porcentajePorCobrar: number = 0;
+    @Prop.Set() importeMora?: number;
+    @Prop.Set() importeCobrado?: number;
+    @Prop.Set() importePorCobrar?: number;
+    @Prop.Set() porcentajeCobrado?: number;
+    @Prop.Set() porcentajePorCobrar?: number;
     
     get dateTimeLimiteMora(): DateTime {
         return Prop.toDateTime( this.fechaLimiteMora );

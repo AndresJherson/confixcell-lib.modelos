@@ -8,16 +8,18 @@ export class MovimientoRecurso extends Model
     override type: string = MovimientoRecurso.type;
 
     @Prop.Set( PropBehavior.model, x => new DocumentoFuente( x ) ) documentoFuente?: DocumentoFuente;
-    get codigoDocumentoFuente(): string {
+    get codigoDocumentoFuente(): string | undefined {
         const codigoDocumentoFuente = this.documentoFuente?.codigoCompleto ?? '';
         const id = this.id !== undefined ? this.id.toString() : '';
         const separator = codigoDocumentoFuente && id ? ' / ' : '';
-        return `${codigoDocumentoFuente}${separator}${id}`;
+        
+        const codigo = `${codigoDocumentoFuente}${separator}${id}`.trim();
+        return codigo ? codigo : undefined;
     }
 
     
-    get importeNeto(): number {
-        return 0;
+    get importeNeto(): number | undefined {
+        return undefined;
     }
     get decimalImporteNeto(): Decimal {
         return Prop.toDecimal( this.importeNeto );

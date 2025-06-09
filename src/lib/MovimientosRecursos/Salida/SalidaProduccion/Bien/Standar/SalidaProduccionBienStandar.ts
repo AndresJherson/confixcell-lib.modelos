@@ -7,7 +7,7 @@ export class SalidaProduccionBienStandar extends SalidaProduccionBien
     static override type: string = 'SalidaProduccionBienStandar';
     override type: string = SalidaProduccionBienStandar.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienActividad( x ) ) actividades: SalidaProduccionBienActividad[] = [];
+    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienActividad( x ) ) actividades?: SalidaProduccionBienActividad[];
 
     constructor( item?: Partial<SalidaProduccionBien> )
     {
@@ -26,10 +26,10 @@ export class SalidaProduccionBienStandar extends SalidaProduccionBien
     {
         super.setRelation();
 
-        this.actividades.forEach( act => 
+        this.actividades?.forEach( act => 
             act.set({
                 salidaProduccionBienStandar: new SalidaProduccionBienStandar({ id: this.id, uuid: this.uuid, symbol: this.symbol }),
-                recursosBienConsumo: act.recursosBienConsumo.map( recurso => 
+                recursosBienConsumo: act.recursosBienConsumo?.map( recurso => 
                     recurso.set({
                         actividad: new SalidaProduccionBienActividad({ id: act.id, uuid: act.uuid, symbol: act.symbol })
                     })
@@ -48,8 +48,8 @@ export class SalidaProduccionBienStandar extends SalidaProduccionBien
     {
         try {
 
-            this.importeCostoUnitario = this.actividades.reduce(
-                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeCostoNeto ),
+            this.importeCostoUnitario = this.actividades?.reduce(
+                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeCostoNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber();

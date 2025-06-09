@@ -12,7 +12,8 @@ export class PantallaModeloCalidad extends BienConsumo
     
     override get nombreCompleto()
     {
-        return `${this.modelo?.nombreCompleto ?? ''} ${this.calidad?.nombre ?? ''}`.trim();
+        const nombreCompleto = `${this.modelo?.nombreCompleto ?? ''} ${this.calidad?.nombre ?? ''}`.trim();
+        return nombreCompleto ? nombreCompleto : undefined;
     }
 
 

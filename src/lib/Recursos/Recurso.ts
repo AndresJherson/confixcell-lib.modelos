@@ -11,11 +11,11 @@ export class Recurso extends Model
     @Prop.Set() codigo?: string;
     @Prop.Set() esSalida?: boolean;
     
-    get nombreCompleto(): string {
-        return ``;
+    get nombreCompleto(): string | undefined {
+        return undefined;
     }
 
-    @Prop.Set() precioUnitario: number = 0;
+    @Prop.Set() precioUnitario?: number;
     get decimalPrecioUnitario(): Decimal {
         return Prop.toDecimal( this.precioUnitario );
     }

@@ -11,9 +11,9 @@ export class SalidaProduccionBienRecursoBienConsumo extends Model
     @Prop.Set( PropBehavior.model, x => new Almacen( x ) ) almacen?: Almacen;
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
 
-    @Prop.Set() cantidad: number = 0;
-    @Prop.Set() importeCostoUnitario: number = 0;
-    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() cantidad?: number;
+    @Prop.Set() importeCostoUnitario?: number;
+    @Prop.Set() importeCostoNeto?: number;
     
     get decimalCantidad(): Decimal {
         return Prop.toDecimal( this.cantidad );
@@ -38,7 +38,7 @@ export class SalidaProduccionBienRecursoBienConsumo extends Model
         try {
             
             this.importeCostoNeto = this.decimalImporteCostoUnitario
-                                    .mul( this.cantidad )
+                                    .mul( this.cantidad ?? 0 )
                                     .toNumber();
 
         }

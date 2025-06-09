@@ -179,7 +179,7 @@ export class Prop
                             ? new constructorFunction( value ) 
                         : propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                        : {}
+                        : undefined
                     );
                 }
                 else if ( behavior === PropBehavior.array ) {
@@ -196,7 +196,7 @@ export class Prop
                                     ? propertyInfo.getValue( item )
                                 : {}
                             } )
-                            : []
+                            : undefined
                     );
                 }
                 else if ( behavior === PropBehavior.date ) {
@@ -326,7 +326,7 @@ export class Prop
                             ? new constructorFunction( value ) 
                         : propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
-                        : {}
+                        : undefined
                     );
                 }
                 else if ( behavior === PropBehavior.array ) {
@@ -343,7 +343,7 @@ export class Prop
                                     ? propertyInfo.getValue( item )
                                 : {}
                             } )
-                            : []
+                            : undefined
                     );
                 }
                 else if ( behavior === PropBehavior.date ) {

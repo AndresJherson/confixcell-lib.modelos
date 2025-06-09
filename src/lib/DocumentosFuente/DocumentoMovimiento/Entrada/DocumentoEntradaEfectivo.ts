@@ -7,7 +7,7 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
     static override type: string = 'DocumentoEntradaEfectivo';
     override type: string = DocumentoEntradaEfectivo.type;
 
-    @Prop.Set( PropBehavior.array, x => new EntradaEfectivo( x ) ) entradas: EntradaEfectivo[] = [];
+    @Prop.Set( PropBehavior.array, x => new EntradaEfectivo( x ) ) entradas?: EntradaEfectivo[];
 
 
     constructor( item?: Partial<DocumentoEntradaEfectivo> )
@@ -26,7 +26,7 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
     {
         super.setRelation();
 
-        this.entradas.forEach( entrada => 
+        this.entradas?.forEach( entrada => 
             entrada.set({
                 documentoFuente: new DocumentoEntradaEfectivo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
@@ -42,11 +42,11 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
         super.procesarInformacion();
         
         try {
-            this.importeNeto = this.entradas.reduce(
+            this.importeNeto = this.entradas?.reduce(
                 ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ),
                 new Decimal( 0 )
             )
-            .toNumber();
+            .toNumber() ?? 0;
         }
         catch ( error ) {
             this.importeNeto = 0;
@@ -59,7 +59,7 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
     // Entrada de Efectivo
     agregarEntrada( entrada: EntradaEfectivo ): this
     {
-        this.entradas.unshift( entrada );
+        this.entradas?.unshift( entrada );
         this.procesarInformacion();
         return this;
     }
@@ -67,19 +67,21 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
 
     actualizarEntrada( entrada: EntradaEfectivo ): this
     {
-        let i = this.entradas.findIndex( ent => ent.symbol === entrada.symbol );
-
-        i = i === -1
-            ? this.entradas.findIndex( ent => 
-                ( ent.id === undefined || entrada.id === undefined )
-                    ? false
-                    : ( ent.id === entrada.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.entradas[ i ] = entrada;
-            this.procesarInformacion();
+        if ( this.entradas ) {
+            let i = this.entradas.findIndex( ent => ent.symbol === entrada.symbol );
+    
+            i = i === -1
+                ? this.entradas.findIndex( ent => 
+                    ( ent.id === undefined || entrada.id === undefined )
+                        ? false
+                        : ( ent.id === entrada.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.entradas[ i ] = entrada;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -88,8 +90,8 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
 
     eliminarEntrada( entrada: EntradaEfectivo ): this
     {
-        this.entradas = this.entradas.filter( ent => ent.symbol !== entrada.symbol );
-        this.entradas = this.entradas.filter( ent => 
+        this.entradas = this.entradas?.filter( ent => ent.symbol !== entrada.symbol );
+        this.entradas = this.entradas?.filter( ent => 
             ( ent.id === undefined || entrada.id === undefined )
                 ? true
                 : ( ent.id !== entrada.id )
@@ -101,8 +103,10 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
     }
 
 
-    getEntrada( entrada: EntradaEfectivo ): EntradaEfectivo
+    getEntrada( entrada: EntradaEfectivo )
     {
+        if ( !this.entradas ) return undefined;
+
         let i = this.entradas.findIndex( ent => ent.symbol === entrada.symbol );
 
         i = i === -1
@@ -113,11 +117,6 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.entradas[ i ];
-        }
-        else {
-            throw new Error( 'Entrada de Efectivo no existe' );
-        }
+        return this.entradas[ i ];
     }
 }

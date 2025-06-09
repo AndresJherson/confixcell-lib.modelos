@@ -10,7 +10,7 @@ export class SalidaProduccionServicioRecursoBienCapital extends Model
     @Prop.Set( PropBehavior.model, x => new SalidaProduccionServicioActividad( x ) ) actividad?: SalidaProduccionServicioActividad;
     @Prop.Set( PropBehavior.model, x => new BienCapital( x ) ) bienCapital?: BienCapital;
     
-    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() importeCostoNeto?: number;
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }

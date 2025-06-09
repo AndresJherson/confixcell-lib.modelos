@@ -11,7 +11,7 @@ export class ClienteJuridico extends Cliente
     @Prop.Set() celular?: number;
 
     override get nombreCompleto() {
-        return this.nombre ?? '';
+        return this.nombre;
     }
 
     constructor( json?: Partial<ClienteJuridico> )

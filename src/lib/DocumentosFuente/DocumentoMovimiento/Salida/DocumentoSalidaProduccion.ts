@@ -7,7 +7,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     static override type: string = 'DocumentoSalidaProduccion';
     override type: string = DocumentoSalidaProduccion.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccion( x ) ) salidas: SalidaProduccion[] = [];
+    @Prop.Set( PropBehavior.array, x => new SalidaProduccion( x ) ) salidas?: SalidaProduccion[];
     
     @Prop.Set() importeCostoNeto: number = 0;
     get decimalImporteCostoNeto(): Decimal {
@@ -32,7 +32,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     {
         super.setRelation();
 
-        this.salidas.forEach( salida => 
+        this.salidas?.forEach( salida => 
             salida.set({
                 documentoFuente: new DocumentoSalidaProduccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
@@ -48,12 +48,12 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
         super.procesarInformacion();
         
         try {
-            const recordImpotes = this.salidas.reduce(
+            const recordImpotes = this.salidas?.reduce(
                 ( importes, salida ) => {
                     salida.procesarInformacion();
                     return {
-                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ),
-                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto )
+                        importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ?? 0 ),
+                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto ?? 0 )
                     };
                 },
                 {
@@ -63,8 +63,8 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
             );
 
             this.set({
-                importeCostoNeto: recordImpotes.importeCostoNeto.toNumber(),
-                importeNeto: recordImpotes.importePrecioNeto.toNumber()
+                importeCostoNeto: recordImpotes?.importeCostoNeto.toNumber(),
+                importeNeto: recordImpotes?.importePrecioNeto.toNumber()
             })
         }
         catch ( error ) {
@@ -81,7 +81,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     // Salida de Producción
     agregarSalida( salida: SalidaProduccion ): this
     {
-        this.salidas.unshift( salida );
+        this.salidas?.unshift( salida );
         this.procesarInformacion();
         return this;
     }
@@ -89,19 +89,21 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
 
     actualizarSalida( salida: SalidaProduccion ): this
     {
-        let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
-
-        i = i === -1
-            ? this.salidas.findIndex( sal => 
-                ( sal.id === undefined || salida.id === undefined )
-                    ? false
-                    : ( sal.id === salida.id  )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.salidas[ i ] = salida;
-            this.procesarInformacion();
+        if ( this.salidas ) {
+            let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
+    
+            i = i === -1
+                ? this.salidas.findIndex( sal => 
+                    ( sal.id === undefined || salida.id === undefined )
+                        ? false
+                        : ( sal.id === salida.id  )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.salidas[ i ] = salida;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -110,8 +112,8 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
 
     eliminarSalida( salida: SalidaProduccion ): this
     {
-        this.salidas = this.salidas.filter( sal => sal.symbol !== salida.symbol );
-        this.salidas = this.salidas.filter( sal => 
+        this.salidas = this.salidas?.filter( sal => sal.symbol !== salida.symbol );
+        this.salidas = this.salidas?.filter( sal => 
             ( sal.id === undefined || salida.id === undefined )
                 ? true
                 : ( sal.id !== salida.id )
@@ -123,8 +125,10 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
     }
 
 
-    getSalida( salida: SalidaProduccion ): SalidaProduccion
+    getSalida( salida: SalidaProduccion ): SalidaProduccion | undefined
     {
+        if ( !this.salidas ) return undefined;
+
         let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
 
         i = i === -1
@@ -135,11 +139,6 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.salidas[ i ];
-        }
-        else {
-            throw new Error( 'Salida de Producción no existe' );
-        }
+        return this.salidas[ i ];
     }
 }

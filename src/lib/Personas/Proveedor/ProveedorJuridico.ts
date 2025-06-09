@@ -11,7 +11,7 @@ export class ProveedorJuridico extends Proveedor
     @Prop.Set() celular?: number;
 
     override get nombreCompleto() {
-        return this.nombre ?? '';
+        return this.nombre;
     }
 
 

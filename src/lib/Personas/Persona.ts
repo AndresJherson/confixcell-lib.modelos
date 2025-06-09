@@ -11,8 +11,8 @@ export class Persona extends Model
     @Prop.Set() codigo?: string;
     @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuario?: Usuario;
     
-    get nombreCompleto(): string {
-        return '';
+    get nombreCompleto(): string | undefined {
+        return undefined;
     }
 
     @Prop.Set( PropBehavior.datetime ) fechaCreacion?: string;

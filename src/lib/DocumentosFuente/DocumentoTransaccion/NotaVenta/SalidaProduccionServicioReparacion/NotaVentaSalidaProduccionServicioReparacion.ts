@@ -15,8 +15,8 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
     @Prop.Set() contrasena?: string;
     @Prop.Set( PropBehavior.text ) problema?: string;
 
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo( x ) ) recursosBienConsumo: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo[] = [];
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoServicio( x ) ) recursosServicio: NotaVentaSalidaProduccionServicioReparacionRecursoServicio[] = [];
+    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo( x ) ) recursosBienConsumo?: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo[];
+    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoServicio( x ) ) recursosServicio?: NotaVentaSalidaProduccionServicioReparacionRecursoServicio[];
 
 
     constructor( item?: Partial<NotaVentaSalidaProduccionServicioReparacion> )
@@ -36,7 +36,7 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
     {
         super.setRelation();
 
-        this.recursosServicio.forEach( recurso => 
+        this.recursosServicio?.forEach( recurso => 
             recurso.set({
                 salidaProduccion: new NotaVentaSalidaProduccionServicioReparacion({ id: this.id, symbol: this.symbol })
             })
@@ -44,7 +44,7 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
         );
 
         
-        this.recursosBienConsumo.forEach( recurso => 
+        this.recursosBienConsumo?.forEach( recurso => 
             recurso.set({
                 salidaProduccion: new NotaVentaSalidaProduccionServicioReparacion({ id: this.id, symbol: this.symbol })
             })
@@ -59,15 +59,15 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
     override procesarInformacion(): this 
     {        
         try {
-            this.importeCostoNeto = this.recursosBienConsumo.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeCostoNeto ),
+            this.importeCostoNeto = this.recursosBienConsumo?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeCostoNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber();
 
-            this.importeCostoNeto = this.recursosServicio.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ),
-                new Decimal( this.importeCostoNeto )
+            this.importeCostoNeto = this.recursosServicio?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeCostoNeto ?? 0),
+                new Decimal( this.importeCostoNeto ?? 0 )
             )
             .toNumber();
 
@@ -79,15 +79,15 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
         
         // Importe precio neto es el importe adicional
         try {
-            this.importePrecioNeto = this.recursosBienConsumo.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importePrecioNeto ),
+            this.importePrecioNeto = this.recursosBienConsumo?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importePrecioNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber();
 
-            this.importePrecioNeto = this.recursosServicio.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importePrecioNeto ),
-                new Decimal( this.importePrecioNeto )
+            this.importePrecioNeto = this.recursosServicio?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importePrecioNeto ?? 0 ),
+                new Decimal( this.importePrecioNeto ?? 0 )
             )
             .toNumber();
         }

@@ -8,12 +8,12 @@ export class NotaTransaccionSalidaCredito extends SalidaEfectivo implements ICre
     override type: string = NotaTransaccionSalidaCredito.type;
 
     @Prop.Set( PropBehavior.model, x => new NotaTransaccionSalida( x ) ) declare documentoFuente?: NotaTransaccionSalida;
-    @Prop.Set( PropBehavior.array, x => new NotaTransaccionSalidaCuota( x ) ) cuotas: NotaTransaccionSalidaCuota[] = [];
+    @Prop.Set( PropBehavior.array, x => new NotaTransaccionSalidaCuota( x ) ) cuotas?: NotaTransaccionSalidaCuota[];
 
-    @Prop.Set() tasaInteresDiario: number = 0;
-    @Prop.Set() importeInteres: number = 0;
-    @Prop.Set() porcentajeInteres: number = 0;
-    @Prop.Set() importeValorFinal: number = 0;
+    @Prop.Set() tasaInteresDiario?: number;
+    @Prop.Set() importeInteres?: number;
+    @Prop.Set() porcentajeInteres?: number;
+    @Prop.Set() importeValorFinal?: number;
     
     get decimalTasaInteresDiario(): Decimal {
         return Prop.toDecimal( this.tasaInteresDiario );
@@ -28,7 +28,7 @@ export class NotaTransaccionSalidaCredito extends SalidaEfectivo implements ICre
         return Prop.toDecimal( this.importeValorFinal );
     }
 
-    @Prop.Set() duracionMinutos: number = 0;
+    @Prop.Set() duracionMinutos?: number;
     interesXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
     amortizacionXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
     cuotaXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
@@ -54,7 +54,7 @@ export class NotaTransaccionSalidaCredito extends SalidaEfectivo implements ICre
     {
         super.setRelation();
 
-        this.cuotas.forEach( cuota => 
+        this.cuotas?.forEach( cuota => 
             cuota.set({
                 credito: new NotaTransaccionSalidaCredito({ id: this.id, symbol: this.symbol })
             })
@@ -80,7 +80,7 @@ export class NotaTransaccionSalidaCredito extends SalidaEfectivo implements ICre
     }
 
 
-    getCuota(cuota: NotaTransaccionSalidaCuota ): NotaTransaccionSalidaCuota {
+    getCuota(cuota: NotaTransaccionSalidaCuota ): NotaTransaccionSalidaCuota | undefined {
         return this.credito.getCuota( this, cuota );
     }
 

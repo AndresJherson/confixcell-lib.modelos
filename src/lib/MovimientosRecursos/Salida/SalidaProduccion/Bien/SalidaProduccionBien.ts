@@ -9,9 +9,9 @@ export class SalidaProduccionBien extends SalidaProduccion
 
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
 
-    @Prop.Set() cantidadSaliente: number = 0;
-    @Prop.Set() importeCostoUnitario: number = 0;
-    @Prop.Set() importePrecioUnitario: number = 0;
+    @Prop.Set() cantidadSaliente?: number;
+    @Prop.Set() importeCostoUnitario?: number;
+    @Prop.Set() importePrecioUnitario?: number;
 
     get decimalCantidadSaliente(): Decimal {
         return Prop.toDecimal( this.cantidadSaliente );
@@ -23,14 +23,14 @@ export class SalidaProduccionBien extends SalidaProduccion
         return Prop.toDecimal( this.importePrecioUnitario );
     }
 
-    @Prop.Set() cantidadEntrante: number = 0;
+    @Prop.Set() cantidadEntrante?: number;
     get decimalCantidadEntrante(): Decimal {
         return Prop.toDecimal( this.cantidadEntrante );
     }
     
     get cantidadDisponible(): number {
         return this.decimalCantidadSaliente
-            .minus( this.cantidadEntrante )
+            .minus( this.cantidadEntrante ?? 0 )
             .toNumber();
     };
     get decimalCantidadDisponible(): Decimal {
@@ -69,10 +69,10 @@ export class SalidaProduccionBien extends SalidaProduccion
 
             this.set({
                 importeCostoNeto: this.decimalImporteCostoUnitario
-                    .mul( this.cantidadSaliente )
+                    .mul( this.cantidadSaliente ?? 0 )
                     .toNumber(),
                 importePrecioNeto: this.decimalImportePrecioUnitario
-                    .mul( this.cantidadSaliente )
+                    .mul( this.cantidadSaliente ?? 0 )
                     .toNumber()
             });
 

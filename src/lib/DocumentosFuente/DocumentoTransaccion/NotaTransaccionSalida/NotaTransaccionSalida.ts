@@ -14,12 +14,12 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
     @Prop.Set() clienteCelular?: number;
     @Prop.Set( PropBehavior.model, x => new LiquidacionTipo( x ) ) liquidacion?: LiquidacionTipo;
 
-    @Prop.Set( PropBehavior.array, x => new NotaTransaccionSalidaDetalle( x ) ) detalles: NotaTransaccionSalidaDetalle[] = [];
+    @Prop.Set( PropBehavior.array, x => new NotaTransaccionSalidaDetalle( x ) ) detalles?: NotaTransaccionSalidaDetalle[];
     @Prop.Set( PropBehavior.model, x => new NotaTransaccionSalidaCredito ) credito?: NotaTransaccionSalidaCredito;
 
-    @Prop.Set() override importeBruto: number = 0;
-    @Prop.Set() importeDescuento: number = 0;
-    @Prop.Set() override importeNeto: number = 0;
+    @Prop.Set() override importeBruto?: number;
+    @Prop.Set() importeDescuento?: number;
+    @Prop.Set() override importeNeto?: number;
     get decimalImportePrecioDescuento(): Decimal {
         return Prop.toDecimal( this.importeDescuento );
     }
@@ -27,14 +27,14 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
 
     override get importeDevengado() {
         return this.decimalImporteValorSalidaEfectivo
-            .plus( this.importePrecioSalidaBienConsumo )
-            .plus( this.importePrecioSalidaProduccion )
+            .plus( this.importePrecioSalidaBienConsumo ?? 0 )
+            .plus( this.importePrecioSalidaProduccion ?? 0 )
             .toNumber();
     }
 
     override get importeLiquidado() {
         return this.decimalImporteValorEntradaEfectivo
-            .plus( this.importeCostoEntradaBienConsumo )
+            .plus( this.importeCostoEntradaBienConsumo ?? 0 )
             .toNumber();
     }
 
@@ -55,7 +55,7 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
     {
         super.setRelation();
 
-        this.detalles.forEach( detalle => 
+        this.detalles?.forEach( detalle => 
             detalle.set({
                 notaTransaccionSalida: new NotaTransaccionSalida({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
             })
@@ -74,7 +74,7 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
     // Detalles
     agregarDetalle( detalle: NotaTransaccionSalidaDetalle ): this
     {
-        this.detalles.push( detalle );
+        this.detalles?.push( detalle );
         this.procesarInformacion();
         return this;
     }
@@ -82,19 +82,21 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
 
     actualizarDetalle( detalle: NotaTransaccionSalidaDetalle ): this
     {
-        let i = this.detalles.findIndex( x => x.symbol === detalle.symbol );
-
-        i = i === -1
-            ? this.detalles.findIndex( x => 
-                ( x.id === undefined || detalle.id === undefined )
-                    ? false
-                    : ( x.id === detalle.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.detalles[ i ] = detalle;
-            this.procesarInformacion();
+        if ( this.detalles ) {
+            let i = this.detalles.findIndex( x => x.symbol === detalle.symbol );
+    
+            i = i === -1
+                ? this.detalles.findIndex( x => 
+                    ( x.id === undefined || detalle.id === undefined )
+                        ? false
+                        : ( x.id === detalle.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.detalles[ i ] = detalle;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -103,8 +105,8 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
 
     eliminarDetalle( detalle: NotaTransaccionSalidaDetalle ): this
     {
-        this.detalles = this.detalles.filter( x => x.symbol !== detalle.symbol );
-        this.detalles = this.detalles.filter( x => 
+        this.detalles = this.detalles?.filter( x => x.symbol !== detalle.symbol );
+        this.detalles = this.detalles?.filter( x => 
             ( x.id === undefined || detalle.id === undefined )
                 ? true
                 : ( x.id !== detalle.id )
@@ -116,8 +118,10 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
     }
 
 
-    getDetalle( detalle: NotaTransaccionSalidaDetalle ): NotaTransaccionSalidaDetalle
+    getDetalle( detalle: NotaTransaccionSalidaDetalle ): NotaTransaccionSalidaDetalle | undefined
     {
+        if ( !this.detalles ) return undefined;
+
         let i = this.detalles.findIndex( x => x.symbol === detalle.symbol );
 
         i = i === -1
@@ -128,12 +132,7 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.detalles[ i ];
-        }
-        else {
-            throw new Error( 'Detalle no existe' );
-        }
+        return this.detalles[ i ];
     }
 
 
@@ -142,11 +141,11 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
         super.procesarInformacion();
 
         try {
-            const recordImportes = this.detalles.reduce(
+            const recordImportes = this.detalles?.reduce(
                 ( importes, detalle ) => {
                     detalle.procesarInformacion();
-                    importes.importeBruto.plus( detalle.importeBruto );
-                    importes.importeDescuento.plus( detalle.importeDescuento );
+                    importes.importeBruto.plus( detalle.importeBruto ?? 0 );
+                    importes.importeDescuento.plus( detalle.importeDescuento ?? 0 );
                     return importes;
                 },
                 {
@@ -156,9 +155,9 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
             );
 
             this.set({
-                importeBruto: recordImportes.importeBruto.toNumber(),
-                importeDescuento: recordImportes.importeDescuento.toNumber(),
-                importeNeto: recordImportes.importeBruto.minus( recordImportes.importeDescuento ).toNumber()
+                importeBruto: recordImportes?.importeBruto.toNumber(),
+                importeDescuento: recordImportes?.importeDescuento.toNumber(),
+                importeNeto: recordImportes?.importeBruto.minus( recordImportes.importeDescuento ).toNumber()
             });
         }
         catch ( error ) {

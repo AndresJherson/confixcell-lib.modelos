@@ -7,31 +7,31 @@ export class DocumentoTransaccion extends DocumentoFuente
     static override type = 'DocumentoTransaccion';
     override type: string = DocumentoTransaccion.type;
     
-    @Prop.Set( PropBehavior.array, x => new DocumentoEntradaEfectivo( x ) ) docsEntradaEfectivo: DocumentoEntradaEfectivo[] = [];
-    @Prop.Set( PropBehavior.array, x => new DocumentoEntradaBienConsumo( x ) ) docsEntradaBienConsumo: DocumentoEntradaBienConsumo[] = [];
-    @Prop.Set( PropBehavior.array, x => new DocumentoSalidaEfectivo( x ) ) docsSalidaEfectivo: DocumentoSalidaEfectivo[] = [];
-    @Prop.Set( PropBehavior.array, x => new DocumentoSalidaBienConsumo( x ) ) docsSalidaBienConsumo: DocumentoSalidaBienConsumo[] = [];
+    @Prop.Set( PropBehavior.array, x => new DocumentoEntradaEfectivo( x ) ) docsEntradaEfectivo?: DocumentoEntradaEfectivo[];
+    @Prop.Set( PropBehavior.array, x => new DocumentoEntradaBienConsumo( x ) ) docsEntradaBienConsumo?: DocumentoEntradaBienConsumo[];
+    @Prop.Set( PropBehavior.array, x => new DocumentoSalidaEfectivo( x ) ) docsSalidaEfectivo?: DocumentoSalidaEfectivo[];
+    @Prop.Set( PropBehavior.array, x => new DocumentoSalidaBienConsumo( x ) ) docsSalidaBienConsumo?: DocumentoSalidaBienConsumo[];
 
-    get movimientos(): ( EntradaEfectivo | EntradaBienConsumo | SalidaEfectivo | SalidaBienConsumo | SalidaProduccion ) [] {
+    get movimientos(): ( EntradaEfectivo | EntradaBienConsumo | SalidaEfectivo | SalidaBienConsumo | SalidaProduccion )[] {
         return [
-            ...this.docsEntradaEfectivo.flatMap( doc => doc.entradas ),
-            ...this.docsEntradaBienConsumo.flatMap( doc => doc.entradas ),
-            ...this.docsSalidaEfectivo.flatMap( doc => doc.salidas ),
-            ...this.docsSalidaBienConsumo.flatMap( doc => doc.salidas ),
+            ...this.docsEntradaEfectivo?.flatMap( doc => doc.entradas ?? [] ) ?? [],
+            ...this.docsEntradaBienConsumo?.flatMap( doc => doc.entradas ?? [] ) ?? [],
+            ...this.docsSalidaEfectivo?.flatMap( doc => doc.salidas ?? [] ) ?? [],
+            ...this.docsSalidaBienConsumo?.flatMap( doc => doc.salidas ?? [] ) ?? [],
         ];
     }
 
     get documentosMovimiento() {
         return [
-            ...this.docsEntradaEfectivo,
-            ...this.docsEntradaBienConsumo,
-            ...this.docsSalidaEfectivo,
-            ...this.docsSalidaBienConsumo
+            ...this.docsEntradaEfectivo ?? [],
+            ...this.docsEntradaBienConsumo ?? [],
+            ...this.docsSalidaEfectivo ?? [],
+            ...this.docsSalidaBienConsumo ?? []
         ]
     }
     
-    @Prop.Set() importeValorEntradaEfectivo: number = 0;
-    @Prop.Set() importeCostoEntradaBienConsumo: number = 0;
+    @Prop.Set() importeValorEntradaEfectivo?: number;
+    @Prop.Set() importeCostoEntradaBienConsumo?: number;
 
     get decimalImporteValorEntradaEfectivo(): Decimal {
         return Prop.toDecimal( this.importeValorEntradaEfectivo );
@@ -40,11 +40,11 @@ export class DocumentoTransaccion extends DocumentoFuente
         return Prop.toDecimal( this.importeCostoEntradaBienConsumo );
     }
 
-    @Prop.Set() importeValorSalidaEfectivo: number = 0;
-    @Prop.Set() importeCostoSalidaBienConsumo: number = 0;
-    @Prop.Set() importePrecioSalidaBienConsumo: number = 0;
-    @Prop.Set() importeCostoSalidaProduccion: number = 0;
-    @Prop.Set() importePrecioSalidaProduccion: number = 0;
+    @Prop.Set() importeValorSalidaEfectivo?: number;
+    @Prop.Set() importeCostoSalidaBienConsumo?: number;
+    @Prop.Set() importePrecioSalidaBienConsumo?: number;
+    @Prop.Set() importeCostoSalidaProduccion?: number;
+    @Prop.Set() importePrecioSalidaProduccion?: number;
 
     get decimalImporteValorSalidaEfectivo(): Decimal {
         return Prop.toDecimal( this.importeValorSalidaEfectivo );
@@ -62,7 +62,7 @@ export class DocumentoTransaccion extends DocumentoFuente
         return Prop.toDecimal( this.importePrecioSalidaProduccion );
     }
 
-    @Prop.Set() importeBruto: number = 0;
+    @Prop.Set() importeBruto?: number;
 
     get decimalImporteBruto(): Decimal {
         return Prop.toDecimal( this.importeBruto );
@@ -106,14 +106,14 @@ export class DocumentoTransaccion extends DocumentoFuente
     {
         super.setRelation();
         
-        this.docsEntradaEfectivo.forEach( doc => 
+        this.docsEntradaEfectivo?.forEach( doc => 
             doc.set({
                 documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
             .setRelation()
         )
 
-        this.docsEntradaBienConsumo.forEach( doc => 
+        this.docsEntradaBienConsumo?.forEach( doc => 
             doc.set({
                 documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
@@ -121,14 +121,14 @@ export class DocumentoTransaccion extends DocumentoFuente
         )
 
 
-        this.docsSalidaEfectivo.forEach( doc => 
+        this.docsSalidaEfectivo?.forEach( doc => 
             doc.set({
                 documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
             .setRelation()
         )
 
-        this.docsSalidaBienConsumo.forEach( doc => 
+        this.docsSalidaBienConsumo?.forEach( doc => 
             doc.set({
                 documentoTransaccion: new DocumentoTransaccion({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
             })
@@ -146,7 +146,7 @@ export class DocumentoTransaccion extends DocumentoFuente
     // Doc Entrada de Efectivo
     agregarDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): this
     {
-        this.docsEntradaEfectivo.push( docEntradaEfectivo.set({
+        this.docsEntradaEfectivo?.push( docEntradaEfectivo.set({
             fechaEmision: docEntradaEfectivo.fechaEmision ?? this.fechaEmision,
             fechaAnulacion: docEntradaEfectivo.fechaAnulacion ?? this.fechaAnulacion
         }) );
@@ -157,19 +157,21 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     actualizarDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): this
     {
-        let i = this.docsEntradaEfectivo.findIndex( doc => doc.symbol === docEntradaEfectivo.symbol );
-
-        i = i === -1
-            ? this.docsEntradaEfectivo.findIndex( doc => 
-                ( doc.id === undefined || docEntradaEfectivo.id === undefined )
-                    ? false
-                    : ( doc.id === docEntradaEfectivo.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.docsEntradaEfectivo[ i ] = docEntradaEfectivo;
-            this.procesarInformacion();
+        if ( this.docsEntradaEfectivo ) {
+            let i = this.docsEntradaEfectivo.findIndex( doc => doc.symbol === docEntradaEfectivo.symbol );
+    
+            i = i === -1
+                ? this.docsEntradaEfectivo.findIndex( doc => 
+                    ( doc.id === undefined || docEntradaEfectivo.id === undefined )
+                        ? false
+                        : ( doc.id === docEntradaEfectivo.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.docsEntradaEfectivo[ i ] = docEntradaEfectivo;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -178,8 +180,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): this
     {
-        this.docsEntradaEfectivo = this.docsEntradaEfectivo.filter( doc => doc.symbol !== docEntradaEfectivo.symbol );
-        this.docsEntradaEfectivo = this.docsEntradaEfectivo.filter( doc => 
+        this.docsEntradaEfectivo = this.docsEntradaEfectivo?.filter( doc => doc.symbol !== docEntradaEfectivo.symbol );
+        this.docsEntradaEfectivo = this.docsEntradaEfectivo?.filter( doc => 
             ( doc.id === undefined || docEntradaEfectivo.id === undefined )
                 ? true
                 : ( doc.id !== docEntradaEfectivo.id )
@@ -191,8 +193,10 @@ export class DocumentoTransaccion extends DocumentoFuente
     }
 
 
-    getDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): DocumentoEntradaEfectivo
+    getDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): DocumentoEntradaEfectivo | undefined
     {
+        if ( !this.docsEntradaEfectivo ) return undefined;
+
         let i = this.docsEntradaEfectivo.findIndex( doc => doc.symbol === docEntradaEfectivo.symbol );
 
         i = i === -1
@@ -203,19 +207,14 @@ export class DocumentoTransaccion extends DocumentoFuente
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.docsEntradaEfectivo[ i ];
-        }
-        else {
-            throw new Error( 'Documento de Entrada de Efectivo no existe' );
-        }
+        return this.docsEntradaEfectivo[ i ];
     }
 
 
     // Doc Entrada de Bien Consumo
     agregarDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): this
     {
-        this.docsEntradaBienConsumo.push( docEntradaBienConsumo.set({
+        this.docsEntradaBienConsumo?.push( docEntradaBienConsumo.set({
             fechaEmision: docEntradaBienConsumo.fechaEmision ?? this.fechaEmision,
             fechaAnulacion: docEntradaBienConsumo.fechaAnulacion ?? this.fechaAnulacion
         }) );
@@ -226,19 +225,21 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     actualizarDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): this
     {
-        let i = this.docsEntradaBienConsumo.findIndex( doc => doc.symbol === docEntradaBienConsumo.symbol );
-
-        i = i === -1
-            ? this.docsEntradaBienConsumo.findIndex( doc => 
-                ( doc.id === undefined || docEntradaBienConsumo.id === undefined )
-                    ? false
-                    : ( doc.id === docEntradaBienConsumo.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.docsEntradaBienConsumo[ i ] = docEntradaBienConsumo;
-            this.procesarInformacion();
+        if ( this.docsEntradaBienConsumo ) {
+            let i = this.docsEntradaBienConsumo.findIndex( doc => doc.symbol === docEntradaBienConsumo.symbol );
+    
+            i = i === -1
+                ? this.docsEntradaBienConsumo.findIndex( doc => 
+                    ( doc.id === undefined || docEntradaBienConsumo.id === undefined )
+                        ? false
+                        : ( doc.id === docEntradaBienConsumo.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.docsEntradaBienConsumo[ i ] = docEntradaBienConsumo;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -247,8 +248,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): this
     {
-        this.docsEntradaBienConsumo = this.docsEntradaBienConsumo.filter( doc => doc.symbol !== docEntradaBienConsumo.symbol );
-        this.docsEntradaBienConsumo = this.docsEntradaBienConsumo.filter( doc => 
+        this.docsEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => doc.symbol !== docEntradaBienConsumo.symbol );
+        this.docsEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => 
             ( doc.id === undefined || docEntradaBienConsumo.id === undefined )
                 ? true
                 : ( doc.id !== docEntradaBienConsumo.id )
@@ -260,8 +261,10 @@ export class DocumentoTransaccion extends DocumentoFuente
     }
 
 
-    getDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): DocumentoEntradaBienConsumo
+    getDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): DocumentoEntradaBienConsumo | undefined
     {
+        if ( !this.docsEntradaBienConsumo ) return undefined;
+
         let i = this.docsEntradaBienConsumo.findIndex( doc => doc.symbol === docEntradaBienConsumo.symbol );
 
         i = i === -1
@@ -272,19 +275,14 @@ export class DocumentoTransaccion extends DocumentoFuente
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.docsEntradaBienConsumo[ i ];
-        }
-        else {
-            throw new Error( 'Documento de Entrada de Bien de Consumo no existe' );
-        }
+        return this.docsEntradaBienConsumo[ i ];
     }
 
 
     // Doc Salida de efectivo
     agregarDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): this
     {
-        this.docsSalidaEfectivo.push( docSalidaEfectivo.set({
+        this.docsSalidaEfectivo?.push( docSalidaEfectivo.set({
             fechaEmision: docSalidaEfectivo.fechaEmision ?? this.fechaEmision,
             fechaAnulacion: docSalidaEfectivo.fechaAnulacion ?? this.fechaAnulacion
         }) );
@@ -295,19 +293,21 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     actualizarDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): this
     {
-        let i = this.docsSalidaEfectivo.findIndex( doc => doc.symbol === docSalidaEfectivo.symbol );
-
-        i = i === -1
-            ? this.docsSalidaEfectivo.findIndex( doc => 
-                ( doc.id === undefined || docSalidaEfectivo.id === undefined )
-                    ? false
-                    : ( doc.id === docSalidaEfectivo.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.docsSalidaEfectivo[ i ] = docSalidaEfectivo;
-            this.procesarInformacion();
+        if ( this.docsSalidaEfectivo ) {
+            let i = this.docsSalidaEfectivo.findIndex( doc => doc.symbol === docSalidaEfectivo.symbol );
+    
+            i = i === -1
+                ? this.docsSalidaEfectivo.findIndex( doc => 
+                    ( doc.id === undefined || docSalidaEfectivo.id === undefined )
+                        ? false
+                        : ( doc.id === docSalidaEfectivo.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.docsSalidaEfectivo[ i ] = docSalidaEfectivo;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -316,8 +316,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): this
     {
-        this.docsSalidaEfectivo = this.docsSalidaEfectivo.filter( doc => doc.symbol !== docSalidaEfectivo.symbol );
-        this.docsSalidaEfectivo = this.docsSalidaEfectivo.filter( doc => 
+        this.docsSalidaEfectivo = this.docsSalidaEfectivo?.filter( doc => doc.symbol !== docSalidaEfectivo.symbol );
+        this.docsSalidaEfectivo = this.docsSalidaEfectivo?.filter( doc => 
             ( doc.id === undefined || docSalidaEfectivo.id === undefined )
                 ? true
                 : ( doc.id !== docSalidaEfectivo.id )
@@ -329,8 +329,10 @@ export class DocumentoTransaccion extends DocumentoFuente
     }
 
 
-    getDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): DocumentoSalidaEfectivo
+    getDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): DocumentoSalidaEfectivo | undefined
     {
+        if ( !this.docsSalidaEfectivo ) return undefined;
+
         let i = this.docsSalidaEfectivo.findIndex( doc => doc.symbol === docSalidaEfectivo.symbol );
 
         i = i === -1
@@ -341,19 +343,14 @@ export class DocumentoTransaccion extends DocumentoFuente
             )
             : i;
 
-        if ( i !== -1 ) {
-            return this.docsSalidaEfectivo[ i ];
-        }
-        else {
-            throw new Error( 'Documento de Salida de Efectivo no existe' );
-        }
+        return this.docsSalidaEfectivo[ i ];
     }
 
 
     // Doc Salida de Bien Consumo
     agregarDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): this
     {
-        this.docsSalidaBienConsumo.push( docSalidaBienConsumo.set({
+        this.docsSalidaBienConsumo?.push( docSalidaBienConsumo.set({
             fechaEmision: docSalidaBienConsumo.fechaEmision ?? this.fechaEmision,
             fechaAnulacion: docSalidaBienConsumo.fechaAnulacion ?? this.fechaAnulacion
         }) );
@@ -364,19 +361,21 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     actualizarDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): this
     {
-        let i = this.docsSalidaBienConsumo.findIndex( doc => doc.symbol === docSalidaBienConsumo.symbol );
-
-        i = i === -1
-            ? this.docsSalidaBienConsumo.findIndex( doc => 
-                ( doc.id === undefined || docSalidaBienConsumo.id === undefined )
-                    ? false
-                    : ( doc.id === docSalidaBienConsumo.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            this.docsSalidaBienConsumo[ i ] = docSalidaBienConsumo;
-            this.procesarInformacion();
+        if ( this.docsSalidaBienConsumo ) {
+            let i = this.docsSalidaBienConsumo.findIndex( doc => doc.symbol === docSalidaBienConsumo.symbol );
+    
+            i = i === -1
+                ? this.docsSalidaBienConsumo.findIndex( doc => 
+                    ( doc.id === undefined || docSalidaBienConsumo.id === undefined )
+                        ? false
+                        : ( doc.id === docSalidaBienConsumo.id )
+                )
+                : i;
+    
+            if ( i !== -1 ) {
+                this.docsSalidaBienConsumo[ i ] = docSalidaBienConsumo;
+                this.procesarInformacion();
+            }
         }
 
         return this;
@@ -385,8 +384,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): this
     {
-        this.docsSalidaBienConsumo = this.docsSalidaBienConsumo.filter( doc => doc.symbol !== docSalidaBienConsumo.symbol );
-        this.docsSalidaBienConsumo = this.docsSalidaBienConsumo.filter( doc => 
+        this.docsSalidaBienConsumo = this.docsSalidaBienConsumo?.filter( doc => doc.symbol !== docSalidaBienConsumo.symbol );
+        this.docsSalidaBienConsumo = this.docsSalidaBienConsumo?.filter( doc => 
             ( doc.id === undefined || docSalidaBienConsumo.id === undefined )
                 ? true
                 : ( doc.id !== docSalidaBienConsumo.id )
@@ -398,8 +397,10 @@ export class DocumentoTransaccion extends DocumentoFuente
     }
 
 
-    getDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): DocumentoSalidaBienConsumo
+    getDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): DocumentoSalidaBienConsumo | undefined
     {
+        if ( !this.docsSalidaBienConsumo ) return undefined;
+
         let i = this.docsSalidaBienConsumo.findIndex( doc => doc.symbol === docSalidaBienConsumo.symbol );
 
         i = i === -1
@@ -492,9 +493,9 @@ export class DocumentoTransaccion extends DocumentoFuente
         }
 
         try {
-            this.importeValorEntradaEfectivo = this.docsEntradaEfectivo.filter( doc => doc.fechaAnulacion === undefined )
+            this.importeValorEntradaEfectivo = this.docsEntradaEfectivo?.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ?? 0 ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -504,9 +505,9 @@ export class DocumentoTransaccion extends DocumentoFuente
         }
 
         try {
-            this.importeCostoEntradaBienConsumo = this.docsEntradaBienConsumo.filter( doc => doc.fechaAnulacion === undefined )
+            this.importeCostoEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ?? 0 ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -527,9 +528,9 @@ export class DocumentoTransaccion extends DocumentoFuente
         }
 
         try {
-            this.importeValorSalidaEfectivo = this.docsSalidaEfectivo.filter( doc => doc.fechaAnulacion === undefined )
+            this.importeValorSalidaEfectivo = this.docsSalidaEfectivo?.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
-                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ),
+                    ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ?? 0 ),
                     new Decimal( 0 )
                 )
                 .toNumber();
@@ -540,12 +541,12 @@ export class DocumentoTransaccion extends DocumentoFuente
 
 
         try {
-            const recordImportesSalidaBienConsumo = this.docsSalidaBienConsumo.filter( doc => doc.fechaAnulacion === undefined )
+            const recordImportesSalidaBienConsumo = this.docsSalidaBienConsumo?.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
                     ( importes, doc ) => {
                         doc.procesarInformacion();
-                        importes.importeCostoNeto.plus( doc.importeCostoNeto );
-                        importes.importePrecioNeto.plus( doc.importeNeto );
+                        importes.importeCostoNeto.plus( doc.importeCostoNeto ?? 0 );
+                        importes.importePrecioNeto.plus( doc.importeNeto ?? 0 );
                         return importes;
                     },
                     {
@@ -555,8 +556,8 @@ export class DocumentoTransaccion extends DocumentoFuente
                 );
 
             this.set({
-                importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo.importeCostoNeto.toNumber(),
-                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo.importePrecioNeto.toNumber()
+                importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo?.importeCostoNeto.toNumber(),
+                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo?.importePrecioNeto.toNumber()
             })
         }
         catch( erorr ) {
@@ -575,8 +576,8 @@ export class DocumentoTransaccion extends DocumentoFuente
     {
         super.toRecordKardexBienConsumo(record);
         
-        this.docsEntradaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
-        this.docsSalidaBienConsumo.forEach( doc => doc.toRecordKardexBienConsumo(record) );
+        this.docsEntradaBienConsumo?.forEach( doc => doc.toRecordKardexBienConsumo(record) );
+        this.docsSalidaBienConsumo?.forEach( doc => doc.toRecordKardexBienConsumo(record) );
         return record;
     }
 }

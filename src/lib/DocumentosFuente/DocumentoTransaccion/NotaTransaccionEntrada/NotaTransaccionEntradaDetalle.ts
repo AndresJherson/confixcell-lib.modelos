@@ -11,14 +11,14 @@ export class NotaTransaccionEntradaDetalle extends Model
     @Prop.Set( PropBehavior.model, x => new Recurso( x ) ) recurso?: Recurso;
     
     @Prop.Set() concepto?: string;
-    @Prop.Set() cantidad: number = 0;
-    @Prop.Set() importeUnitario: number = 0;
-    @Prop.Set() importeBruto: number = 0;
-    @Prop.Set() importeDescuento: number = 0;
-    @Prop.Set() importeNeto: number = 0;
+    @Prop.Set() cantidad?: number;
+    @Prop.Set() importeUnitario?: number;
+    @Prop.Set() importeBruto?: number;
+    @Prop.Set() importeDescuento?: number;
+    @Prop.Set() importeNeto?: number;
     @Prop.Set( PropBehavior.text ) comentario?: string;
 
-    get importeCantidad(): Decimal {
+    get decimalCantidad(): Decimal {
         return Prop.toDecimal( this.cantidad );
     }
     get decimalImporteUnitario(): Decimal {
@@ -45,12 +45,12 @@ export class NotaTransaccionEntradaDetalle extends Model
     procesarInformacion(): this
     {
         try {
-            this.importeBruto = new Decimal( this.cantidad )
-                .mul( this.importeUnitario )
+            this.importeBruto = this.decimalCantidad
+                .mul( this.importeUnitario ?? 0 )
                 .toNumber();
     
-            this.importeNeto = new Decimal( this.importeBruto )
-                .minus( this.importeDescuento )
+            this.importeNeto = this.decimalImporteBruto
+                .minus( this.importeDescuento ?? 0 )
                 .toNumber();
         }
         catch ( error ) {

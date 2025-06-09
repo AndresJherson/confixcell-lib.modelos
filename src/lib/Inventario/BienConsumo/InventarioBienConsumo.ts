@@ -6,7 +6,7 @@ export class InventarioBienConsumo extends Model
     static override type = 'InventarioBienConsumo';
     override type: string = InventarioBienConsumo.type;
     
-    @Prop.Set( PropBehavior.array, x => new KardexBienConsumo( x ) ) kardexs: KardexBienConsumo[] = [];
+    @Prop.Set( PropBehavior.array, x => new KardexBienConsumo( x ) ) kardexs?: KardexBienConsumo[];
 
 
     constructor( item?: Partial<InventarioBienConsumo> )

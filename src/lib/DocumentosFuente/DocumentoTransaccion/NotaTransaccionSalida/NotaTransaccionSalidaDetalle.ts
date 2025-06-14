@@ -15,7 +15,7 @@ export class NotaTransaccionSalidaDetalle extends Model
     @Prop.Set() importeBruto?: number;
     @Prop.Set() importeDescuento?: number;
     @Prop.Set() importeNeto?: number;
-    @Prop.Set( PropBehavior.text ) comentario?: string;
+    @Prop.Set() comentario?: string;
 
     get decimalCantidad(): Decimal {
         return Prop.toDecimal( this.cantidad );

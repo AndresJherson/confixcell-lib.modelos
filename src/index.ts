@@ -29,14 +29,8 @@ export * from './lib/Personas/Persona';
 export * from './lib/Personas/Genero';
 export * from './lib/Personas/DocumentoIdentificacion';
 
-export * from './lib/Personas/Cliente/Cliente';
-export * from './lib/Personas/Cliente/ClienteNatural';
-export * from './lib/Personas/Cliente/ClienteJuridico';
-
-export * from './lib/Personas/Proveedor/Proveedor';
-export * from './lib/Personas/Proveedor/ProveedorNatural';
-export * from './lib/Personas/Proveedor/ProveedorJuridico';
-
+export * from './lib/Personas/PersonaNatural/PersonaNatural';
+export * from './lib/Personas/PersonaJuridica/PersonaJuridica';
 export * from './lib/Personas/Usuario/Usuario';
 export * from './lib/Personas/Empresa/Empresa';
 export * from './lib/Personas/Empresa/PoliticaComercial';
@@ -92,8 +86,6 @@ export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/Standa
 // Documentos Fuente
 export * from './lib/DocumentosFuente/DocumentoFuente';
 export * from './lib/DocumentosFuente/Nota/Nota';
-export * from './lib/DocumentosFuente/Politica';
-
 
 export * from './lib/DocumentosFuente/DocumentoMovimiento/DocumentoMovimiento';
 

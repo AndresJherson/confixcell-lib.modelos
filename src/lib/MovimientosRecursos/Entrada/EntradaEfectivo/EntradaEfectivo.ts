@@ -7,15 +7,9 @@ export class EntradaEfectivo extends EntradaRecurso
     static override type: string = 'EntradaEfectivo';
     override type: string = EntradaEfectivo.type;
 
-    @Prop.Set() importeValorNeto: number = 0;
-    get decimalImporteValorNeto(): Decimal {
-        return Prop.toDecimal( this.importeValorNeto );
-    }
-    override get importeNeto() {
-        return this.importeValorNeto;
-    }
+    @Prop.Set() override importeValorNeto?: number;
 
-
+    
     constructor( item?: Partial<EntradaEfectivo> )
     {
         super()

@@ -8,16 +8,10 @@ export class SalidaProduccion extends SalidaRecurso
     override type: string = SalidaProduccion.type;
 
     @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() importePrecioNeto?: number;
-
+    @Prop.Set() override importeValorNeto?: number;
+    
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
-    }
-    get decimalImportePrecioNeto(): Decimal {
-        return Prop.toDecimal( this.importePrecioNeto );
-    }
-    override get importeNeto() {
-        return this.importePrecioNeto;
     }
 
     constructor( item?: Partial<SalidaProduccion> )

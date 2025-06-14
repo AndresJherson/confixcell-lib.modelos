@@ -1,10 +1,10 @@
-import { Cliente, Prop } from "../../../index";
+import { Persona, Prop } from "../../../index";
 
 @Prop.Class()
-export class ClienteJuridico extends Cliente
+export class PersonaJuridica extends Persona
 {
-    static override type = 'ClienteJuridico';
-    override type: string = ClienteJuridico.type;
+    static override type = 'PersonaJuridica';
+    override type: string = PersonaJuridica.type;
 
     @Prop.Set() nombre?: string;
     @Prop.Set() domicilio?: string;
@@ -14,7 +14,7 @@ export class ClienteJuridico extends Cliente
         return this.nombre;
     }
 
-    constructor( json?: Partial<ClienteJuridico> )
+    constructor( json?: Partial<PersonaJuridica> )
     {
         super();
         Prop.initialize( this, json );

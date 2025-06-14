@@ -7,10 +7,10 @@ export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito
     static override type: string = 'EntradaEfectivoCredito';
     override type: string = EntradaEfectivoCredito.type;
 
-    @Prop.Set() tasaInteresDiario: number = 0;
-    @Prop.Set() importeInteres: number = 0;
-    @Prop.Set() porcentajeInteres: number = 0;
-    @Prop.Set() importeValorFinal:number = 0;
+    @Prop.Set() tasaInteresDiario?: number;
+    @Prop.Set() importeInteres?: number;
+    @Prop.Set() porcentajeInteres?: number;
+    @Prop.Set() importeValorFinal?:number;
     
     get decimalTasaInteresDiario(): Decimal {
         return Prop.toDecimal( this.tasaInteresDiario );
@@ -27,7 +27,7 @@ export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito
 
     @Prop.Set( PropBehavior.array, x => new EntradaEfectivoCuota( x ) ) cuotas?: EntradaEfectivoCuota[];
 
-    @Prop.Set() duracionMinutos: number = 0;
+    @Prop.Set() duracionMinutos?: number;
     interesXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
     amortizacionXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
     cuotaXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );

@@ -13,7 +13,7 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
     @Prop.Set() imei?: string;
     @Prop.Set() patron?: number;
     @Prop.Set() contrasena?: string;
-    @Prop.Set( PropBehavior.text ) problema?: string;
+    @Prop.Set() diagnostico?: string;
 
     @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo( x ) ) recursosBienConsumo?: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo[];
     @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoServicio( x ) ) recursosServicio?: NotaVentaSalidaProduccionServicioReparacionRecursoServicio[];
@@ -79,20 +79,20 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
         
         // Importe precio neto es el importe adicional
         try {
-            this.importePrecioNeto = this.recursosBienConsumo?.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importePrecioNeto ?? 0 ),
+            this.importeValorNeto = this.recursosBienConsumo?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeValorNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber();
 
-            this.importePrecioNeto = this.recursosServicio?.reduce(
-                ( decimal, recurso ) => decimal.plus( recurso.importePrecioNeto ?? 0 ),
-                new Decimal( this.importePrecioNeto ?? 0 )
+            this.importeValorNeto = this.recursosServicio?.reduce(
+                ( decimal, recurso ) => decimal.plus( recurso.importeValorNeto ?? 0 ),
+                new Decimal( this.importeValorNeto ?? 0 )
             )
             .toNumber();
         }
         catch ( error ) {
-            this.importePrecioNeto = 0;
+            this.importeValorNeto = 0;
         }
 
         return this;

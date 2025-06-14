@@ -31,20 +31,20 @@ export class DocumentoTransaccion extends DocumentoFuente
     }
     
     @Prop.Set() importeValorEntradaEfectivo?: number;
-    @Prop.Set() importeCostoEntradaBienConsumo?: number;
+    @Prop.Set() importeValorEntradaBienConsumo?: number;
 
     get decimalImporteValorEntradaEfectivo(): Decimal {
         return Prop.toDecimal( this.importeValorEntradaEfectivo );
     }
-    get decimalImporteCostoEntradaBienConsumo(): Decimal {
-        return Prop.toDecimal( this.importeCostoEntradaBienConsumo );
+    get decimalImporteValorEntradaBienConsumo(): Decimal {
+        return Prop.toDecimal( this.importeValorEntradaBienConsumo );
     }
 
     @Prop.Set() importeValorSalidaEfectivo?: number;
     @Prop.Set() importeCostoSalidaBienConsumo?: number;
-    @Prop.Set() importePrecioSalidaBienConsumo?: number;
+    @Prop.Set() importeValorSalidaBienConsumo?: number;
     @Prop.Set() importeCostoSalidaProduccion?: number;
-    @Prop.Set() importePrecioSalidaProduccion?: number;
+    @Prop.Set() importeValorSalidaProduccion?: number;
 
     get decimalImporteValorSalidaEfectivo(): Decimal {
         return Prop.toDecimal( this.importeValorSalidaEfectivo );
@@ -52,14 +52,14 @@ export class DocumentoTransaccion extends DocumentoFuente
     get decimalImporteCostoSalidaBienConsumo(): Decimal {
         return Prop.toDecimal( this.importeCostoSalidaBienConsumo );
     }
-    get decimalImportePrecioSalidaBienConsumo(): Decimal {
-        return Prop.toDecimal( this.importePrecioSalidaBienConsumo );
+    get decimalImporteValorSalidaBienConsumo(): Decimal {
+        return Prop.toDecimal( this.importeValorSalidaBienConsumo );
     }
     get decimalImporteCostoSalidaProduccion(): Decimal {
         return Prop.toDecimal( this.importeCostoSalidaProduccion );
     }
-    get decimalImportePrecioSalidaProduccion(): Decimal {
-        return Prop.toDecimal( this.importePrecioSalidaProduccion );
+    get decimalImporteValorSalidaProduccion(): Decimal {
+        return Prop.toDecimal( this.importeValorSalidaProduccion );
     }
 
     @Prop.Set() importeBruto?: number;
@@ -505,7 +505,7 @@ export class DocumentoTransaccion extends DocumentoFuente
         }
 
         try {
-            this.importeCostoEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => doc.fechaAnulacion === undefined )
+            this.importeValorEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => doc.fechaAnulacion === undefined )
                 .reduce(
                     ( decimal, doc ) => decimal.plus( doc.procesarInformacion().importeNeto ?? 0 ),
                     new Decimal( 0 )
@@ -513,7 +513,7 @@ export class DocumentoTransaccion extends DocumentoFuente
                 .toNumber();
         }
         catch ( error ) {
-            this.importeCostoEntradaBienConsumo = 0;
+            this.importeValorEntradaBienConsumo = 0;
         }
 
         return this;
@@ -557,13 +557,13 @@ export class DocumentoTransaccion extends DocumentoFuente
 
             this.set({
                 importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo?.importeCostoNeto.toNumber(),
-                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo?.importePrecioNeto.toNumber()
+                importeValorSalidaBienConsumo: recordImportesSalidaBienConsumo?.importePrecioNeto.toNumber()
             })
         }
         catch( erorr ) {
             this.set({
                 importeCostoSalidaBienConsumo: 0,
-                importePrecioSalidaBienConsumo: 0
+                importeValorSalidaBienConsumo: 0
             })
         }
 

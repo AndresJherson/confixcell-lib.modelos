@@ -43,7 +43,7 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada
         
         try {
             this.importeNeto = this.entradas?.reduce(
-                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ),
+                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber() ?? 0;

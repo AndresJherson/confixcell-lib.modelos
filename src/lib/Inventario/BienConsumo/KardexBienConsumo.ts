@@ -26,13 +26,13 @@ export class KardexBienConsumo extends Model
         return Prop.toDateTime( this.fechaActualizacion );
     }
 
-    @Prop.Set() entradaCantidadAcumulado: number = 0;
-    @Prop.Set() entradaCostoAcumulado: number = 0;
-    @Prop.Set() salidaCantidadAcumulado: number = 0;
-    @Prop.Set() salidaCostoAcumulado: number = 0;
-    @Prop.Set() saldoCantidad: number = 0;
-    @Prop.Set() saldoValorUnitario: number = 0;
-    @Prop.Set() saldoValorTotal: number = 0;
+    @Prop.Set() entradaCantidadAcumulado?: number;
+    @Prop.Set() entradaCostoAcumulado?: number;
+    @Prop.Set() salidaCantidadAcumulado?: number;
+    @Prop.Set() salidaCostoAcumulado?: number;
+    @Prop.Set() saldoCantidad?: number;
+    @Prop.Set() saldoValorUnitario?: number;
+    @Prop.Set() saldoValorTotal?: number;
 
     get decimalEntradaCantidadAcumulado(): Decimal {
         return Prop.toDecimal( this.entradaCantidadAcumulado );

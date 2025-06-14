@@ -23,13 +23,13 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoServicio extends 
     }
     
     @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() importePrecioNeto?: number;
+    @Prop.Set() importeValorNeto?: number;
 
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }
-    get decimalImportePrecioNeto(): Decimal {
-        return Prop.toDecimal( this.importePrecioNeto );
+    get decimalImporteValorNeto(): Decimal {
+        return Prop.toDecimal( this.importeValorNeto );
     }
 
 

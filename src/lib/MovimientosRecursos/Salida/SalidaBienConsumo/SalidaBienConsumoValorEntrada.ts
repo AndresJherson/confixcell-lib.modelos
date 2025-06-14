@@ -29,26 +29,26 @@ export class SalidaBienConsumoValorEntrada extends SalidaBienConsumo
             try {
                 this.set({
                     almacen: this.entrada.almacen,
-                    importeCostoUnitario: this.entrada.importeCostoUnitario
+                    importeCostoUnitario: this.entrada.importeValorUnitario
                 })
             }
             catch ( error ) {
                 this.set({
-                    importePrecioNeto: 0
+                    importeCostoUnitario: 0
                 });
             }
         }
 
         try {
             this.set({
-                importePrecioNeto: this.decimalImportePrecioUnitario
+                importeValorNeto: this.decimalImporteValorUnitario
                     .mul( this.cantidadSaliente ?? 0 )
                     .toNumber()
             });
         }
         catch ( error ) {
             this.set({
-                importePrecioNeto: 0
+                importeValorNeto: 0
             });
         }
 

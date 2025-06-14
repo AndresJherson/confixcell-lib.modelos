@@ -1,4 +1,3 @@
-import Decimal from "decimal.js";
 import { DocumentoFuente, DocumentoTransaccion, Prop, PropBehavior } from "../../../index";
 
 @Prop.Class()

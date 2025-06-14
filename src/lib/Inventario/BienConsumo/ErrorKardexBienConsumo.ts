@@ -8,7 +8,7 @@ export class ErrorKardexBienConsumo extends Model
     override type: string = ErrorKardexBienConsumo.type;
 
     @Prop.Set( PropBehavior.model, x => new KardexBienConsumo( x ) ) kardex?: KardexBienConsumo;
-    @Prop.Set( PropBehavior.text ) mensaje?: string;
+    @Prop.Set() mensaje?: string;
     
     @Prop.Set( PropBehavior.datetime ) fecha?: string;
     get dateTimeFecha(): DateTime {

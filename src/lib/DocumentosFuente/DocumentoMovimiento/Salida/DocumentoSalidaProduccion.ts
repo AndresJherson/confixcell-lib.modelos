@@ -9,7 +9,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
 
     @Prop.Set( PropBehavior.array, x => new SalidaProduccion( x ) ) salidas?: SalidaProduccion[];
     
-    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() importeCostoNeto?: number;
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }
@@ -53,18 +53,18 @@ export class DocumentoSalidaProduccion extends DocumentoSalida
                     salida.procesarInformacion();
                     return {
                         importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ?? 0 ),
-                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto ?? 0 )
+                        importeValorNeto: importes.importeValorNeto.plus( salida.importeValorNeto ?? 0 )
                     };
                 },
                 {
                     importeCostoNeto: new Decimal( 0 ),
-                    importePrecioNeto: new Decimal( 0 )
+                    importeValorNeto: new Decimal( 0 )
                 }
             );
 
             this.set({
                 importeCostoNeto: recordImpotes?.importeCostoNeto.toNumber(),
-                importeNeto: recordImpotes?.importePrecioNeto.toNumber()
+                importeNeto: recordImpotes?.importeValorNeto.toNumber()
             })
         }
         catch ( error ) {

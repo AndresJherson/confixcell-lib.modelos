@@ -27,12 +27,12 @@ export class EntradaBienConsumoValorSalida extends EntradaBienConsumo
             
             try {
                 this.set({
-                    importeCostoUnitario: this.salida.importeCostoUnitario,
+                    importeValorUnitario: this.salida.importeCostoUnitario,
                 })
             }
             catch ( error ) {
                 this.set({
-                    importeCostoUnitario: 0,
+                    importeValorUnitario: 0,
                 });
             }
         }

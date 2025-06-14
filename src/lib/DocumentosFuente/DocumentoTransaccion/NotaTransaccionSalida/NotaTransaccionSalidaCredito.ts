@@ -29,10 +29,10 @@ export class NotaTransaccionSalidaCredito extends SalidaEfectivo implements ICre
     }
 
     @Prop.Set() duracionMinutos?: number;
-    interesXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
-    amortizacionXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
-    cuotaXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
-    credito: Credito = new Credito();
+    @Prop.Set( PropBehavior.object, x => new Proporcion( TipoProporcion.directa, 0, 0 ) ) interesXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
+    @Prop.Set( PropBehavior.object, x => new Proporcion( TipoProporcion.directa, 0, 0 ) ) amortizacionXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
+    @Prop.Set( PropBehavior.object, x => new Proporcion( TipoProporcion.directa, 0, 0 ) ) cuotaXminuto: Proporcion = new Proporcion( TipoProporcion.directa, 0, 0 );
+    @Prop.Set( PropBehavior.object, x => new Credito() ) credito: Credito = new Credito();
 
     get decimalDuracionMinutos(): Decimal {
         return Prop.toDecimal( this.duracionMinutos );

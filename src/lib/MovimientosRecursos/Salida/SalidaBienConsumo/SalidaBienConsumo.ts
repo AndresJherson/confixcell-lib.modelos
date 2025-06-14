@@ -13,8 +13,8 @@ export class SalidaBienConsumo extends SalidaRecurso
     @Prop.Set() cantidadSaliente?: number;
     @Prop.Set() importeCostoUnitario?: number;
     @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() importePrecioUnitario?: number;
-    @Prop.Set() importePrecioNeto?: number;
+    @Prop.Set() importeValorUnitario?: number;
+    @Prop.Set() override importeValorNeto?: number;
 
     get decimalCantidadSaliente(): Decimal {
         return Prop.toDecimal( this.cantidadSaliente );
@@ -25,14 +25,8 @@ export class SalidaBienConsumo extends SalidaRecurso
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }
-    get decimalImportePrecioUnitario(): Decimal {
-        return Prop.toDecimal( this.importePrecioUnitario );
-    }
-    get decimalImportePrecioNeto(): Decimal {
-        return Prop.toDecimal( this.importePrecioNeto );
-    }
-    override get importeNeto() {
-        return this.importePrecioNeto;
+    get decimalImporteValorUnitario(): Decimal {
+        return Prop.toDecimal( this.importeValorUnitario );
     }
 
     @Prop.Set() cantidadEntrante?: number;

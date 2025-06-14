@@ -10,23 +10,16 @@ export class EntradaBienConsumo extends EntradaRecurso
     @Prop.Set( PropBehavior.model, x => new Almacen( x ) ) almacen?: Almacen;
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
     
-    @Prop.Set() cantidadEntrante: number = 0;
-    @Prop.Set() importeCostoUnitario: number = 0;
-    @Prop.Set() importeCostoNeto: number = 0;
+    @Prop.Set() cantidadEntrante?: number;
+    @Prop.Set() importeValorUnitario?: number;
+    @Prop.Set() override importeValorNeto?: number;
 
     get decimalCantidadEntrante(): Decimal {
         return Prop.toDecimal( this.cantidadEntrante );
     }
-    get decimalImporteCostoUnitario(): Decimal {
-        return Prop.toDecimal( this.importeCostoUnitario );
+    get decimalImporteValorUnitario(): Decimal {
+        return Prop.toDecimal( this.importeValorUnitario );
     }
-    get decimalImporteCostoNeto(): Decimal {
-        return Prop.toDecimal( this.importeCostoNeto );
-    }
-    override get importeNeto() {
-        return this.importeCostoNeto;
-    }
-
 
     @Prop.Set() cantidadSaliente: number = 0;
     get decimalCantidadSaliente(): Decimal {
@@ -66,14 +59,14 @@ export class EntradaBienConsumo extends EntradaRecurso
     {
         try {
             this.set({
-                importeCostoNeto: this.decimalImporteCostoUnitario
-                                    .mul( this.cantidadEntrante )
+                importeValorNeto: this.decimalImporteValorUnitario
+                                    .mul( this.cantidadEntrante ?? 0 )
                                     .toNumber()
             });
         }
         catch ( error ) {
             this.set({
-                importeCostoNeto: 0
+                importeValorNeto: 0
             });
         }
         

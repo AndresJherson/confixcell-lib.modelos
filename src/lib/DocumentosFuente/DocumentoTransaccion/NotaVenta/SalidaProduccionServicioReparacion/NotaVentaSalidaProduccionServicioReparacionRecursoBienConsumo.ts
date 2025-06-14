@@ -20,8 +20,8 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
     @Prop.Set() cantidad?: number;
     @Prop.Set() importeCostoUnitario?: number;
     @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() importePrecioUnitario?: number;
-    @Prop.Set() importePrecioNeto?: number;
+    @Prop.Set() importeValorUnitario?: number;
+    @Prop.Set() importeValorNeto?: number;
 
     get decimalCantidad(): Decimal {
         return Prop.toDecimal( this.cantidad );
@@ -32,11 +32,11 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
     get decimalImporteCostoNeto(): Decimal {
         return Prop.toDecimal( this.importeCostoNeto );
     }
-    get decimalImportePrecioUnitario(): Decimal {
-        return Prop.toDecimal( this.importePrecioUnitario );
+    get decimalImporteValorUnitario(): Decimal {
+        return Prop.toDecimal( this.importeValorUnitario );
     }
-    get decimalImportePrecioNeto(): Decimal {
-        return Prop.toDecimal( this.importePrecioNeto );
+    get decimalImporteValorNeto(): Decimal {
+        return Prop.toDecimal( this.importeValorNeto );
     }
 
 
@@ -54,13 +54,13 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
                 .mul( this.cantidad ?? 0 )
                 .toNumber();
 
-            this.importePrecioNeto = this.decimalImportePrecioUnitario
+            this.importeValorNeto = this.decimalImporteValorUnitario
                 .mul( this.cantidad ?? 0 )
                 .toNumber();
         }
         catch ( error ) {
             this.importeCostoNeto = 0;
-            this.importePrecioNeto = 0;
+            this.importeValorNeto = 0;
         }
 
         return this;

@@ -10,16 +10,16 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
 
     @Prop.Set( PropBehavior.model, x => new NotaVenta( x ) ) declare documentoFuente?: NotaVenta;
     @Prop.Set() override cantidadSaliente?: number;
-    @Prop.Set() override importePrecioUnitario?: number;
-    @Prop.Set() importePrecioBruto?: number;
-    @Prop.Set() importePrecioDescuento?: number;
-    @Prop.Set() override importePrecioNeto?: number;
+    @Prop.Set() override importeValorUnitario?: number;
+    @Prop.Set() importeValorBruto?: number;
+    @Prop.Set() importeValorDescuento?: number;
+    @Prop.Set() override importeValorNeto?: number;
 
-    get decimalImportePrecioBruto(): Decimal {
-        return Prop.toDecimal( this.importePrecioBruto );
+    get decimalImporteValorBruto(): Decimal {
+        return Prop.toDecimal( this.importeValorBruto );
     }
-    get decimalImportePrecioDescuento(): Decimal {
-        return Prop.toDecimal( this.importePrecioDescuento );
+    get decimalImporteValorDescuento(): Decimal {
+        return Prop.toDecimal( this.importeValorDescuento );
     }
 
 
@@ -39,18 +39,18 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo
     override procesarInformacion(): this 
     {
         try {
-            this.importePrecioBruto = this.decimalImportePrecioUnitario
+            this.importeValorBruto = this.decimalImporteValorUnitario
                 .mul( this.cantidadSaliente ?? 0 )
                 .toNumber();
 
-            this.importePrecioNeto = this.decimalImportePrecioBruto
-                .minus( this.importePrecioDescuento ?? 0 )
+            this.importeValorNeto = this.decimalImporteValorBruto
+                .minus( this.importeValorDescuento ?? 0 )
                 .toNumber();
 
         }
         catch ( error ) {
-            this.importePrecioBruto = 0;
-            this.importePrecioNeto = 0;
+            this.importeValorBruto = 0;
+            this.importeValorNeto = 0;
         }
 
         super.procesarInformacion();

@@ -18,14 +18,14 @@ export class SalidaBienConsumoValorNuevo extends SalidaBienConsumo
     {
         try {
             this.set({
-                importePrecioNeto: this.decimalImportePrecioUnitario
+                importeValorNeto: this.decimalImporteValorUnitario
                     .mul( this.cantidadSaliente ?? 0 )
                     .toNumber()
             })
         }
         catch ( error ) {
             this.set({
-                importePrecioNeto: 0
+                importeValorNeto: 0
             });
         }
 

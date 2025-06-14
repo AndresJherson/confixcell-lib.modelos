@@ -9,11 +9,10 @@ export class NotaVentaEntradaEfectivo extends EntradaEfectivo
 
     @Prop.Set( PropBehavior.model, x => new NotaVenta( x ) ) declare documentoFuente?: NotaVenta;
     @Prop.Set() numero?: number;
-    @Prop.Set( PropBehavior.datetime ) fecha?: string;
     @Prop.Set( PropBehavior.model, x => new MedioTransferencia( x ) ) medioTransferencia?: MedioTransferencia;
-
-    get dateTimeFecha(): DateTime
-    {
+    
+    @Prop.Set( PropBehavior.datetime ) fecha?: string;
+    get dateTimeFecha(): DateTime {
         return Prop.toDateTime( this.fecha );
     }
 

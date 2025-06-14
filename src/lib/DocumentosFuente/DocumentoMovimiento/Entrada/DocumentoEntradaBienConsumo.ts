@@ -43,7 +43,7 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
         
         try {
             this.importeNeto = this.entradas?.reduce(
-                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeCostoNeto ),
+                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .toNumber() ?? 0;
@@ -139,21 +139,21 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada
             
             if ( ent instanceof EntradaBienConsumoValorNuevo ) {
                 record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
-                    movimientoUuid: ent.uuid,
+                    uuid: ent.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.ENTRADA_VALOR_NUEVO,
                     fecha: this.fechaEmision,
                     documentoFuenteCodigoSerie: this.codigoSerie,
                     documentoFuenteCodigoNumero: this.codigoNumero,
                     concepto: this.concepto,
                     entradaCantidad: ent.cantidadEntrante,
-                    entradaCostoUnitario: ent.importeCostoUnitario,
-                    entradaCostoTotal: ent.importeCostoNeto
+                    entradaCostoUnitario: ent.importeValorUnitario,
+                    entradaCostoTotal: ent.importeValorNeto
                 }))
             }
             else if ( ent instanceof EntradaBienConsumoValorSalida ) {
                 record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
-                    movimientoUuid: ent.uuid,
-                    movimientoRefUuid: ent.salida?.uuid,
+                    uuid: ent.uuid,
+                    referenciaUuid: ent.salida?.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.ENTRADA_VALOR_SALIDA,
                     fecha: this.fechaEmision,
                     documentoFuenteCodigoSerie: this.codigoSerie,

@@ -17,12 +17,9 @@ export class MovimientoRecurso extends Model
         return codigo ? codigo : undefined;
     }
 
-    
-    get importeNeto(): number | undefined {
-        return undefined;
-    }
-    get decimalImporteNeto(): Decimal {
-        return Prop.toDecimal( this.importeNeto );
+    @Prop.Set() importeValorNeto?: number;
+    get decimalImporteValorNeto(): Decimal {
+        return Prop.toDecimal( this.importeValorNeto );
     }
     
 

@@ -52,19 +52,19 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
                     salida.procesarInformacion();
                     return {
                         importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ?? 0 ),
-                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto ?? 0 )
+                        importeValorNeto: importes.importeValorNeto.plus( salida.importeValorNeto ?? 0 )
                     };
                 },
                 {
                     importeCostoNeto: new Decimal( 0 ),
-                    importePrecioNeto: new Decimal( 0 )
+                    importeValorNeto: new Decimal( 0 )
                 }
             );
 
             this.importeCostoNeto = recordImportes?.importeCostoNeto.toNumber();
             this.set({
                 importeCostoNeto: recordImportes?.importeCostoNeto.toNumber(),
-                importeNeto: recordImportes?.importePrecioNeto.toNumber()
+                importeNeto: recordImportes?.importeValorNeto.toNumber()
             })
         }
         catch ( error ) {
@@ -161,7 +161,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
             
             if ( sal instanceof SalidaBienConsumoValorNuevo ) {
                 record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
-                    movimientoUuid: sal.uuid,
+                    uuid: sal.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_NUEVO,
                     fecha: this.fechaEmision,
                     documentoFuenteCodigoSerie: this.codigoSerie,
@@ -172,8 +172,8 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
             }
             else if ( sal instanceof SalidaBienConsumoValorEntrada ) {
                 record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
-                    movimientoUuid: sal.uuid,
-                    movimientoRefUuid: sal.entrada?.uuid,
+                    uuid: sal.uuid,
+                    referenciaUuid: sal.entrada?.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_ENTRADA,
                     fecha: this.fechaEmision,
                     documentoFuenteCodigoSerie: this.codigoSerie,

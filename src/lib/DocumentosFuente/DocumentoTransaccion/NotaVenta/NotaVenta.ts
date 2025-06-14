@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { Cliente, DocumentoTransaccion, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo, Prop, PropBehavior, Usuario } from '../../../../index';
+import { DocumentoTransaccion, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo, Persona, Prop, PropBehavior, Usuario } from '../../../../index';
 import { DateTime } from 'luxon';
 
 @Prop.Class()
@@ -9,7 +9,7 @@ export class NotaVenta extends DocumentoTransaccion
     override type: string = NotaVenta.type;
 
     @Prop.Set( PropBehavior.datetime ) fechaCompromiso?: string;
-    @Prop.Set( PropBehavior.model, x => new Cliente( x ) ) cliente?: Cliente;
+    @Prop.Set( PropBehavior.model, x => new Persona( x ) ) cliente?: Persona;
     @Prop.Set( PropBehavior.model, x => new NotaVentaPrioridad( x ) ) prioridad?: NotaVentaPrioridad;
     @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuarioTecnico?: Usuario;
     @Prop.Set( PropBehavior.model, x => new NotaVentaEstado( x ) ) estado?: NotaVentaEstado;
@@ -45,14 +45,14 @@ export class NotaVenta extends DocumentoTransaccion
 
     override get importeDevengado() {
         return this.decimalImporteValorSalidaEfectivo
-            .plus( this.importePrecioSalidaBienConsumo ?? 0 )
-            .plus( this.importePrecioSalidaProduccion ?? 0 )
+            .plus( this.importeValorSalidaBienConsumo ?? 0 )
+            .plus( this.importeValorSalidaProduccion ?? 0 )
             .toNumber();
     }
 
     override get importeLiquidado() {
         return this.decimalImporteValorEntradaEfectivo
-            .plus( this.importeCostoEntradaBienConsumo ?? 0 )
+            .plus( this.importeValorEntradaBienConsumo ?? 0 )
             .toNumber();
     }
 
@@ -110,7 +110,7 @@ export class NotaVenta extends DocumentoTransaccion
 
         try {
             this.importeValorEntradaEfectivo = this.entradasEfectivo?.reduce(
-                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ),
+                ( decimal, entrada ) => decimal.plus( entrada.procesarInformacion().importeValorNeto ?? 0 ),
                 new Decimal( 0 )
             )
             .plus( prevImporteValorEntradaEfectivo ?? 0 )
@@ -129,7 +129,7 @@ export class NotaVenta extends DocumentoTransaccion
         super.procesarInformacionSalida();
 
         const prevImporteCostoSalidaBienConsumo = this.importeCostoSalidaBienConsumo;
-        const prevImportePrecioSalidaBienConsumo = this.importePrecioSalidaBienConsumo;
+        const prevImportePrecioSalidaBienConsumo = this.importeValorSalidaBienConsumo;
         
         try {
             const recordImportesSalidaBienConsumo = this.salidasBienConsumo?.reduce(
@@ -137,26 +137,26 @@ export class NotaVenta extends DocumentoTransaccion
                     salida.procesarInformacion();
                     return {
                         importeCostoNeto: importes.importeCostoNeto.plus( salida.importeCostoNeto ?? 0 ),
-                        importePrecioBruto: importes.importePrecioBruto.plus( salida.importePrecioBruto ?? 0 ),
-                        importePrecioDescuento: importes.importePrecioDescuento.plus( salida.importePrecioDescuento ?? 0 ),
-                        importePrecioNeto: importes.importePrecioNeto.plus( salida.importePrecioNeto ?? 0 )
+                        importeValorBruto: importes.importeValorBruto.plus( salida.importeValorBruto ?? 0 ),
+                        importeValorDescuento: importes.importeValorDescuento.plus( salida.importeValorDescuento ?? 0 ),
+                        importeValorNeto: importes.importeValorNeto.plus( salida.importeValorNeto ?? 0 )
                     };
                 },
                 {
                     importeCostoNeto: new Decimal( 0 ),
-                    importePrecioBruto: new Decimal( 0 ),
-                    importePrecioDescuento: new Decimal( 0 ),
-                    importePrecioNeto: new Decimal( 0 )
+                    importeValorBruto: new Decimal( 0 ),
+                    importeValorDescuento: new Decimal( 0 ),
+                    importeValorNeto: new Decimal( 0 )
                 }
             );
 
             this.set({
-                importeBruto: recordImportesSalidaBienConsumo?.importePrecioBruto.toNumber(),
-                importeDescuento: recordImportesSalidaBienConsumo?.importePrecioDescuento.toNumber(),
-                importeInicial: recordImportesSalidaBienConsumo?.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento ).toNumber(),
+                importeBruto: recordImportesSalidaBienConsumo?.importeValorBruto.toNumber(),
+                importeDescuento: recordImportesSalidaBienConsumo?.importeValorDescuento.toNumber(),
+                importeInicial: recordImportesSalidaBienConsumo?.importeValorBruto.minus( recordImportesSalidaBienConsumo.importeValorDescuento ).toNumber(),
 
                 importeCostoSalidaBienConsumo: recordImportesSalidaBienConsumo?.importeCostoNeto.plus( prevImporteCostoSalidaBienConsumo ?? 0 ).toNumber(),
-                importePrecioSalidaBienConsumo: recordImportesSalidaBienConsumo?.importePrecioBruto.minus( recordImportesSalidaBienConsumo.importePrecioDescuento )
+                importeValorSalidaBienConsumo: recordImportesSalidaBienConsumo?.importeValorBruto.minus( recordImportesSalidaBienConsumo.importeValorDescuento )
                     .plus( prevImportePrecioSalidaBienConsumo ?? 0 )
                     .toNumber()
             })
@@ -168,13 +168,13 @@ export class NotaVenta extends DocumentoTransaccion
                 importeInicial: 0,
 
                 importeCostoSalidaBienConsumo: prevImporteCostoSalidaBienConsumo,
-                importePrecioSalidaBienConsumo: prevImportePrecioSalidaBienConsumo
+                importeValorSalidaBienConsumo: prevImportePrecioSalidaBienConsumo
             })
         }
 
 
         const prevImporteCostoSalidaProduccion = this.importeCostoSalidaProduccion;
-        const prevImportePrecioSalidaProduccion = this.importePrecioSalidaProduccion;
+        const prevImportePrecioSalidaProduccion = this.importeValorSalidaProduccion;
 
         try {
             const recordImportesSalidaProduccion = this.salidasProduccionServicioReparacion?.reduce(
@@ -182,7 +182,7 @@ export class NotaVenta extends DocumentoTransaccion
                     salida.procesarInformacion();
                     return {
                         importeCostoSalidaProduccion: importes.importeCostoSalidaProduccion.plus( salida.importeCostoNeto ?? 0 ),
-                        importePrecioAdicional: importes.importePrecioAdicional.plus( salida.importePrecioNeto ?? 0 )
+                        importePrecioAdicional: importes.importePrecioAdicional.plus( salida.importeValorNeto ?? 0 )
                     }
                 },
                 {
@@ -196,7 +196,7 @@ export class NotaVenta extends DocumentoTransaccion
                 importeNeto: recordImportesSalidaProduccion?.importePrecioAdicional.plus( this.importeInicial ?? 0 ).toNumber(),
 
                 importeCostoSalidaProduccion: recordImportesSalidaProduccion?.importeCostoSalidaProduccion.plus( prevImporteCostoSalidaProduccion ?? 0 ).toNumber(),
-                importePrecioSalidaProduccion: recordImportesSalidaProduccion?.importePrecioAdicional.plus( prevImportePrecioSalidaProduccion ?? 0 ).toNumber()
+                importeValorSalidaProduccion: recordImportesSalidaProduccion?.importePrecioAdicional.plus( prevImportePrecioSalidaProduccion ?? 0 ).toNumber()
             })
         }
         catch ( error ) {
@@ -205,7 +205,7 @@ export class NotaVenta extends DocumentoTransaccion
                 importeNeto: this.importeInicial,
 
                 importeCostoSalidaProduccion: prevImporteCostoSalidaProduccion,
-                importePrecioSalidaProduccion: prevImportePrecioSalidaProduccion
+                importeValorSalidaProduccion: prevImportePrecioSalidaProduccion
             })
         }
 
@@ -428,7 +428,7 @@ export class NotaVenta extends DocumentoTransaccion
             }
             
             record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
-                movimientoUuid: sal.uuid,
+                uuid: sal.uuid,
                 movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA,
                 fecha: this.fechaEmision,
                 documentoFuenteCodigoSerie: this.codigoSerie,
@@ -454,7 +454,7 @@ export class NotaVenta extends DocumentoTransaccion
                 }
                 
                 record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
-                    movimientoUuid: recurso.uuid,
+                    uuid: recurso.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA_SERVICIO_REPARACION_RECURSO,
                     fecha: this.fechaEmision,
                     documentoFuenteCodigoSerie: this.codigoSerie,

@@ -1,14 +1,14 @@
-import { Genero, Prop, PropBehavior, Proveedor } from '../../../index';
+import { Genero, Persona, Prop, PropBehavior } from "../../../index";
 
 @Prop.Class()
-export class ProveedorNatural extends Proveedor
+export class PersonaNatural extends Persona
 {
-    static override type = 'ProveedorNatural';
-    override type: string = ProveedorNatural.type;
+    static override type = 'PersonaNatural';
+    override type: string = PersonaNatural.type;
 
     @Prop.Set() nombre?: string;
     @Prop.Set() apellido?: string;
-    @Prop.Set( PropBehavior.model, x => new Genero( x ) ) genero?: Genero;
+    @Prop.Set( PropBehavior.model, x => new Genero ( x ) ) genero?: Genero;
     @Prop.Set() domicilio?: string;
     @Prop.Set() celular?: number;
     @Prop.Set() celularRespaldo?: number;
@@ -17,11 +17,11 @@ export class ProveedorNatural extends Proveedor
         const nombreCompleto = `${this.nombre ?? ''} ${this.apellido ?? ''}`.trim();
         return nombreCompleto ? nombreCompleto : undefined;
     }
-    
 
-    constructor( item?: Partial<ProveedorNatural> )
+
+    constructor( json?: Partial<PersonaNatural> )
     {
         super();
-        Prop.initialize( this, item );
+        Prop.initialize( this, json );
     }
 }

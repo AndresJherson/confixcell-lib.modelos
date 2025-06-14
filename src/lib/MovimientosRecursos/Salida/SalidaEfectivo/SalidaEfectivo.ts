@@ -7,13 +7,7 @@ export class SalidaEfectivo extends SalidaRecurso
     static override type: string = 'SalidaEfectivo';
     override type: string = SalidaEfectivo.type;
 
-    @Prop.Set() importeValorNeto?: number;
-    get decimalImporteValorNeto(): Decimal {
-        return Prop.toDecimal( this.importeValorNeto );
-    }
-    override get importeNeto() {
-        return this.importeValorNeto;
-    }
+    @Prop.Set() override importeValorNeto?: number;
     
     constructor( item?: Partial<SalidaEfectivo> )
     {

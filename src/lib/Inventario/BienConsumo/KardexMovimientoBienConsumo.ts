@@ -9,8 +9,7 @@ export class KardexMovimientoBienConsumo extends Model
     override type: string = KardexMovimientoBienConsumo.type;
 
     @Prop.Set( PropBehavior.model, x => new KardexBienConsumo( x ) ) kardex?: KardexBienConsumo;
-    @Prop.Set() movimientoUuid?: string;
-    @Prop.Set() movimientoRefUuid?: string;
+    @Prop.Set() referenciaUuid?: string;
     @Prop.Set() movimientoTipo?: string;
 
     @Prop.Set( PropBehavior.datetime ) fecha?: string;
@@ -26,8 +25,8 @@ export class KardexMovimientoBienConsumo extends Model
     @Prop.Set() entradaCantidad?: number;
     @Prop.Set() entradaCostoUnitario?: number;
     @Prop.Set() entradaCostoTotal?: number;
-    @Prop.Set() entradaCantidadAcumulado: number = 0;
-    @Prop.Set() entradaCostoAcumulado: number = 0;
+    @Prop.Set() entradaCantidadAcumulado?: number;
+    @Prop.Set() entradaCostoAcumulado?: number;
 
     get decimalEntradaCantidad(): Decimal {
         return Prop.toDecimal( this.entradaCantidad );
@@ -48,8 +47,8 @@ export class KardexMovimientoBienConsumo extends Model
     @Prop.Set() salidaCantidad?: number;
     @Prop.Set() salidaCostoUnitario?: number;
     @Prop.Set() salidaCostoTotal?: number;
-    @Prop.Set() salidaCantidadAcumulado: number = 0;
-    @Prop.Set() salidaCostoAcumulado: number = 0;
+    @Prop.Set() salidaCantidadAcumulado?: number;
+    @Prop.Set() salidaCostoAcumulado?: number;
 
     get decimalSalidaCantidad(): Decimal {
         return Prop.toDecimal( this.entradaCantidad );
@@ -67,9 +66,9 @@ export class KardexMovimientoBienConsumo extends Model
         return Prop.toDecimal( this.salidaCostoAcumulado );
     }
 
-    @Prop.Set() saldoCantidad: number = 0;
-    @Prop.Set() saldoValorUnitario: number = 0;
-    @Prop.Set() saldoValorTotal: number = 0;
+    @Prop.Set() saldoCantidad?: number;
+    @Prop.Set() saldoValorUnitario?: number;
+    @Prop.Set() saldoValorTotal?: number;
 
     get decimalSaldoCantidad(): Decimal {
         return Prop.toDecimal( this.saldoCantidad );

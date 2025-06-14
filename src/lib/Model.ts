@@ -5,7 +5,6 @@ import 'reflect-metadata';
 export enum PropBehavior
 {
     string = 'string',
-    text = 'text',
     number = 'number',
     boolean = 'boolean',
     time = 'time',
@@ -17,7 +16,7 @@ export enum PropBehavior
 }
 
 type PropValue<T extends PropBehavior> =
-    T extends PropBehavior.string | PropBehavior.text |
+    T extends PropBehavior.string |
     PropBehavior.time | PropBehavior.date | PropBehavior.datetime ? ( value: any ) => String :
     T extends PropBehavior.number ? ( value: any ) => Number :
     T extends PropBehavior.boolean ? ( value: any ) => Boolean :
@@ -35,7 +34,7 @@ export class Prop
     {
         return ( target: any ) => {
             if ( target.type ) {
-                
+
                 const className = target.type;
 
                 Prop.classRegistry.set(className, target);
@@ -84,10 +83,19 @@ export class Prop
     {
         return ( target: any, propertyKey ) => {
             
-            const className = target.prototype?.constructor.type ?? target.constructor.type;
-            // console.log( target, '|', constructorName, '|', propertyKey );
+            const constructorName = target.prototype?.constructor.type ?? target.constructor.type;
             const propertyType = Reflect.getMetadata( 'design:type', target, propertyKey );
-            const newBehavior = behavior ?? String( propertyType.name ).toLowerCase();
+
+            let newBehavior: string | undefined;
+            try {
+                newBehavior = behavior
+                            ? behavior.toString()
+                            : String( propertyType.name ).toLowerCase();
+            }
+            catch ( error ) {
+                newBehavior = undefined;
+            }
+
 
             const propertyInfo: PropertyInfo<any> = {
                 name: propertyKey.toString(),
@@ -96,13 +104,13 @@ export class Prop
             };
 
             const typeInfo: TypeInfo = this.GetTypeInfo( target ) ?? {
-                name: className,
+                name: constructorName,
                 recordPropertyInfo: {}
             };
 
             typeInfo.recordPropertyInfo[ propertyKey.toString() ] = propertyInfo;
 
-            Prop.recordMetadata.set( className, typeInfo );
+            Prop.recordMetadata.set( constructorName, typeInfo );
 
         }
     }
@@ -118,7 +126,7 @@ export class Prop
         while ( prototype && Object.prototype !== prototype ) {
             
             const typeInfo = Prop.GetTypeInfo( prototype );
-            
+
             Object.entries( typeInfo?.recordPropertyInfo ?? {} ).forEach( ([ propertyName, propertyInfo ]) => {
 
                 if ( initializedProperties.has( propertyName ) ) return;
@@ -142,7 +150,7 @@ export class Prop
 
                 const behavior = propertyInfo.behavior;
 
-                if ( behavior === PropBehavior.string || behavior === PropBehavior.text ) {
+                if ( behavior === PropBehavior.string ) {
                     Reflect.set( 
                         target, 
                         propertyName, 
@@ -170,13 +178,13 @@ export class Prop
                     );
                 }
                 else if ( behavior === PropBehavior.model ) {
-                    const constructorFunction = Prop.GetClass( value );
+                    const ctor = Prop.GetClass( value );
 
                     Reflect.set( 
                         target, 
                         propertyName, 
-                        constructorFunction 
-                            ? new constructorFunction( value ) 
+                        ctor
+                            ? new ctor( value ) 
                         : propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
                         : undefined
@@ -188,14 +196,15 @@ export class Prop
                         propertyName,
                         Array.isArray( value )
                             ? value.map( item =>  {
-                                const constructorFunction = Prop.GetClass( item );
+                                const ctor = Prop.GetClass( item );
 
-                                return constructorFunction 
-                                    ? new constructorFunction( item ) 
+                                return ctor
+                                    ? new ctor( item ) 
                                 : propertyInfo.getValue 
                                     ? propertyInfo.getValue( item )
-                                : {}
+                                : undefined
                             } )
+                            .filter( item => item !== undefined )
                             : undefined
                     );
                 }
@@ -260,17 +269,15 @@ export class Prop
 
             const typeInfo = Prop.GetTypeInfo( prototype );
 
-            if ( typeInfo === undefined ) {
-                prototype = Object.getPrototypeOf( prototype );
-                continue;
-            }
-            
-            const properties = Object.keys( typeInfo.recordPropertyInfo )
+            const properties = new Set([
+                ...Object.getOwnPropertyNames( target ),
+                ...Object.keys(typeInfo?.recordPropertyInfo ?? {})
+            ])
 
             Object.entries( item ).forEach( ([ propertyName, value ]: [string,any]) => {
 
                 if ( initializedProperties.has( propertyName ) ) return;
-                if ( !properties.includes( propertyName ) ) return;
+                if ( !properties.has( propertyName ) ) return;
                 
                 const originalValue = ( target as any )[ propertyName ];
 
@@ -286,10 +293,17 @@ export class Prop
                     return;
                 }
 
-                const propertyInfo = typeInfo.recordPropertyInfo[ propertyName ];
-                const behavior = propertyInfo.behavior;
+                const propertyInfo = typeInfo?.recordPropertyInfo[ propertyName ];
+                
+                if ( !propertyInfo ) {
+                    Reflect.set( target, propertyName, value );
+                    initializedProperties.add( propertyName );
+                    return;
+                }
 
-                if ( behavior === PropBehavior.string || behavior === PropBehavior.text ) {
+                const behavior = propertyInfo.behavior;
+                
+                if ( behavior === PropBehavior.string ) {
                     Reflect.set( 
                         target, 
                         propertyName, 
@@ -317,13 +331,13 @@ export class Prop
                     );
                 }
                 else if ( behavior === PropBehavior.model ) {
-                    const constructorFunction = Prop.GetClass( value );
+                    const ctor = Prop.GetClass( value );
 
                     Reflect.set( 
                         target, 
                         propertyName, 
-                        constructorFunction 
-                            ? new constructorFunction( value ) 
+                        ctor
+                            ? new ctor( value ) 
                         : propertyInfo.getValue 
                             ? propertyInfo.getValue( value )
                         : undefined
@@ -335,14 +349,15 @@ export class Prop
                         propertyName,
                         Array.isArray( value )
                             ? value.map( item =>  {
-                                const constructorFunction = Prop.GetClass( item );
+                                const ctor = Prop.GetClass( item );
 
-                                return constructorFunction 
-                                    ? new constructorFunction( item ) 
+                                return ctor
+                                    ? new ctor( item ) 
                                 : propertyInfo.getValue 
                                     ? propertyInfo.getValue( item )
-                                : {}
+                                : undefined
                             } )
+                            .filter( item => item !== undefined )
                             : undefined
                     );
                 }
@@ -528,14 +543,14 @@ export class Prop
     }
 
 
-    static setObject( value: any ): Record<any,any>
+    static setObject( value: any ): Record<any,any> | undefined
     {
+        if ( value === undefined ||value === null ) return undefined;
+        
         try {
 
             if ( 
                 typeof value === 'object' &&
-                value !== undefined &&
-                value !== null &&
                 !Array.isArray( value )
             ) {
                 return {...value};
@@ -560,7 +575,7 @@ export interface PropertyInfo<T>
 {
     name: keyof T,
     getValue?: ( value: any ) => Object,
-    behavior: string,
+    behavior?: string,
 }
 
 

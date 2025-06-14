@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { ComprobanteTipo, DocumentoIdentificacion, DocumentoTransaccion, LiquidacionTipo, NotaTransaccionEntradaCredito, NotaTransaccionEntradaDetalle, Prop, PropBehavior, Proveedor } from '../../../../index';
+import { ComprobanteTipo, DocumentoIdentificacion, DocumentoTransaccion, LiquidacionTipo, NotaTransaccionEntradaCredito, NotaTransaccionEntradaDetalle, Persona, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
 export class NotaTransaccionEntrada extends DocumentoTransaccion
@@ -11,7 +11,7 @@ export class NotaTransaccionEntrada extends DocumentoTransaccion
     @Prop.Set() comprobanteCodigoSerie?: string;
     @Prop.Set() comprobanteCodigoNumero?: number;
 
-    @Prop.Set( PropBehavior.model, x => new Proveedor( x ) ) proveedor?: Proveedor;
+    @Prop.Set( PropBehavior.model, x => new Persona( x ) ) proveedor?: Persona;
     @Prop.Set( PropBehavior.model, x => new DocumentoIdentificacion( x ) ) proveedorDocumentoIdentificacion?: DocumentoIdentificacion;
     @Prop.Set() proveedorCodigo?: string;
     @Prop.Set() proveedorNombre?: string;
@@ -30,14 +30,14 @@ export class NotaTransaccionEntrada extends DocumentoTransaccion
 
     override get importeDevengado() {
         return this.decimalImporteValorEntradaEfectivo
-            .plus( this.importeCostoEntradaBienConsumo ?? 0 )
+            .plus( this.importeValorEntradaBienConsumo ?? 0 )
             .toNumber();
     }
 
     override get importeLiquidado() {
         return this.decimalImporteValorSalidaEfectivo
-            .plus( this.importePrecioSalidaBienConsumo ?? 0 )
-            .plus( this.importePrecioSalidaProduccion ?? 0 )
+            .plus( this.importeValorSalidaBienConsumo ?? 0 )
+            .plus( this.importeValorSalidaProduccion ?? 0 )
             .toNumber();
     }
 

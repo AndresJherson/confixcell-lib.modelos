@@ -158,16 +158,8 @@ export class DocumentoTransaccion extends DocumentoFuente
     actualizarDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): this
     {
         if ( this.docsEntradaEfectivo ) {
-            let i = this.docsEntradaEfectivo.findIndex( doc => doc.symbol === docEntradaEfectivo.symbol );
-    
-            i = i === -1
-                ? this.docsEntradaEfectivo.findIndex( doc => 
-                    ( doc.id === undefined || docEntradaEfectivo.id === undefined )
-                        ? false
-                        : ( doc.id === docEntradaEfectivo.id )
-                )
-                : i;
-    
+            const i = this.docsEntradaEfectivo.findIndex( doc => doc.isSameIdentity( docEntradaEfectivo ) );
+
             if ( i !== -1 ) {
                 this.docsEntradaEfectivo[ i ] = docEntradaEfectivo;
                 this.procesarInformacion();
@@ -180,15 +172,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): this
     {
-        this.docsEntradaEfectivo = this.docsEntradaEfectivo?.filter( doc => doc.symbol !== docEntradaEfectivo.symbol );
-        this.docsEntradaEfectivo = this.docsEntradaEfectivo?.filter( doc => 
-            ( doc.id === undefined || docEntradaEfectivo.id === undefined )
-                ? true
-                : ( doc.id !== docEntradaEfectivo.id )
-        )
-
+        this.docsEntradaEfectivo = this.docsEntradaEfectivo?.filter( doc => !doc.isSameIdentity( docEntradaEfectivo ) );
         this.procesarInformacion();
-
         return this;
     }
 
@@ -196,17 +181,7 @@ export class DocumentoTransaccion extends DocumentoFuente
     getDocEntradaEfectivo( docEntradaEfectivo: DocumentoEntradaEfectivo ): DocumentoEntradaEfectivo | undefined
     {
         if ( !this.docsEntradaEfectivo ) return undefined;
-
-        let i = this.docsEntradaEfectivo.findIndex( doc => doc.symbol === docEntradaEfectivo.symbol );
-
-        i = i === -1
-            ? this.docsEntradaEfectivo.findIndex( doc => 
-                ( doc.id === undefined || docEntradaEfectivo.id === undefined )
-                    ? false
-                    : ( doc.id === docEntradaEfectivo.id )
-            )
-            : i;
-
+        const i = this.docsEntradaEfectivo.findIndex( doc => doc.isSameIdentity( docEntradaEfectivo ) );
         return this.docsEntradaEfectivo[ i ];
     }
 
@@ -226,16 +201,7 @@ export class DocumentoTransaccion extends DocumentoFuente
     actualizarDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): this
     {
         if ( this.docsEntradaBienConsumo ) {
-            let i = this.docsEntradaBienConsumo.findIndex( doc => doc.symbol === docEntradaBienConsumo.symbol );
-    
-            i = i === -1
-                ? this.docsEntradaBienConsumo.findIndex( doc => 
-                    ( doc.id === undefined || docEntradaBienConsumo.id === undefined )
-                        ? false
-                        : ( doc.id === docEntradaBienConsumo.id )
-                )
-                : i;
-    
+            const i = this.docsEntradaBienConsumo.findIndex( doc => doc.isSameIdentity( docEntradaBienConsumo ) );
             if ( i !== -1 ) {
                 this.docsEntradaBienConsumo[ i ] = docEntradaBienConsumo;
                 this.procesarInformacion();
@@ -248,15 +214,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): this
     {
-        this.docsEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => doc.symbol !== docEntradaBienConsumo.symbol );
-        this.docsEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => 
-            ( doc.id === undefined || docEntradaBienConsumo.id === undefined )
-                ? true
-                : ( doc.id !== docEntradaBienConsumo.id )
-        )
-
+        this.docsEntradaBienConsumo = this.docsEntradaBienConsumo?.filter( doc => !doc.isSameIdentity( docEntradaBienConsumo ) );
         this.procesarInformacion();
-
         return this;
     }
 
@@ -264,17 +223,7 @@ export class DocumentoTransaccion extends DocumentoFuente
     getDocEntradaBienConsumo( docEntradaBienConsumo: DocumentoEntradaBienConsumo ): DocumentoEntradaBienConsumo | undefined
     {
         if ( !this.docsEntradaBienConsumo ) return undefined;
-
-        let i = this.docsEntradaBienConsumo.findIndex( doc => doc.symbol === docEntradaBienConsumo.symbol );
-
-        i = i === -1
-            ? this.docsEntradaBienConsumo.findIndex( doc => 
-                ( doc.id === undefined || docEntradaBienConsumo.id === undefined )
-                    ? false
-                    : ( doc.id === docEntradaBienConsumo.id )
-            )
-            : i;
-
+        const i = this.docsEntradaBienConsumo.findIndex( doc => doc.isSameIdentity( docEntradaBienConsumo ) );
         return this.docsEntradaBienConsumo[ i ];
     }
 
@@ -294,15 +243,7 @@ export class DocumentoTransaccion extends DocumentoFuente
     actualizarDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): this
     {
         if ( this.docsSalidaEfectivo ) {
-            let i = this.docsSalidaEfectivo.findIndex( doc => doc.symbol === docSalidaEfectivo.symbol );
-    
-            i = i === -1
-                ? this.docsSalidaEfectivo.findIndex( doc => 
-                    ( doc.id === undefined || docSalidaEfectivo.id === undefined )
-                        ? false
-                        : ( doc.id === docSalidaEfectivo.id )
-                )
-                : i;
+            const i = this.docsSalidaEfectivo.findIndex( doc => doc.isSameIdentity( docSalidaEfectivo ) );
     
             if ( i !== -1 ) {
                 this.docsSalidaEfectivo[ i ] = docSalidaEfectivo;
@@ -316,15 +257,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): this
     {
-        this.docsSalidaEfectivo = this.docsSalidaEfectivo?.filter( doc => doc.symbol !== docSalidaEfectivo.symbol );
-        this.docsSalidaEfectivo = this.docsSalidaEfectivo?.filter( doc => 
-            ( doc.id === undefined || docSalidaEfectivo.id === undefined )
-                ? true
-                : ( doc.id !== docSalidaEfectivo.id )
-        )
-
+        this.docsSalidaEfectivo = this.docsSalidaEfectivo?.filter( doc => !doc.isSameIdentity( docSalidaEfectivo ) );
         this.procesarInformacion();
-
         return this;
     }
 
@@ -332,17 +266,7 @@ export class DocumentoTransaccion extends DocumentoFuente
     getDocSalidaEfectivo( docSalidaEfectivo: DocumentoSalidaEfectivo ): DocumentoSalidaEfectivo | undefined
     {
         if ( !this.docsSalidaEfectivo ) return undefined;
-
-        let i = this.docsSalidaEfectivo.findIndex( doc => doc.symbol === docSalidaEfectivo.symbol );
-
-        i = i === -1
-            ? this.docsSalidaEfectivo.findIndex( doc => 
-                ( doc.id === undefined || docSalidaEfectivo.id === undefined )
-                    ? false
-                    : ( doc.id === docSalidaEfectivo.id )
-            )
-            : i;
-
+        const i = this.docsSalidaEfectivo.findIndex( doc => doc.isSameIdentity( docSalidaEfectivo ) );
         return this.docsSalidaEfectivo[ i ];
     }
 
@@ -362,16 +286,8 @@ export class DocumentoTransaccion extends DocumentoFuente
     actualizarDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): this
     {
         if ( this.docsSalidaBienConsumo ) {
-            let i = this.docsSalidaBienConsumo.findIndex( doc => doc.symbol === docSalidaBienConsumo.symbol );
-    
-            i = i === -1
-                ? this.docsSalidaBienConsumo.findIndex( doc => 
-                    ( doc.id === undefined || docSalidaBienConsumo.id === undefined )
-                        ? false
-                        : ( doc.id === docSalidaBienConsumo.id )
-                )
-                : i;
-    
+            const i = this.docsSalidaBienConsumo.findIndex( doc => doc.isSameIdentity( docSalidaBienConsumo ) );
+
             if ( i !== -1 ) {
                 this.docsSalidaBienConsumo[ i ] = docSalidaBienConsumo;
                 this.procesarInformacion();
@@ -384,15 +300,8 @@ export class DocumentoTransaccion extends DocumentoFuente
 
     eliminarDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): this
     {
-        this.docsSalidaBienConsumo = this.docsSalidaBienConsumo?.filter( doc => doc.symbol !== docSalidaBienConsumo.symbol );
-        this.docsSalidaBienConsumo = this.docsSalidaBienConsumo?.filter( doc => 
-            ( doc.id === undefined || docSalidaBienConsumo.id === undefined )
-                ? true
-                : ( doc.id !== docSalidaBienConsumo.id )
-        )
-
+        this.docsSalidaBienConsumo = this.docsSalidaBienConsumo?.filter( doc => !doc.isSameIdentity( docSalidaBienConsumo ) );
         this.procesarInformacion();
-
         return this;
     }
 
@@ -400,23 +309,8 @@ export class DocumentoTransaccion extends DocumentoFuente
     getDocSalidaBienConsumo( docSalidaBienConsumo: DocumentoSalidaBienConsumo ): DocumentoSalidaBienConsumo | undefined
     {
         if ( !this.docsSalidaBienConsumo ) return undefined;
-
-        let i = this.docsSalidaBienConsumo.findIndex( doc => doc.symbol === docSalidaBienConsumo.symbol );
-
-        i = i === -1
-            ? this.docsSalidaBienConsumo.findIndex( doc => 
-                ( doc.id === undefined || docSalidaBienConsumo.id === undefined )
-                    ? false
-                    : ( doc.id === docSalidaBienConsumo.id )
-            )
-            : i;
-
-        if ( i !== -1 ) {
-            return this.docsSalidaBienConsumo[ i ];
-        }
-        else {
-            throw new Error( 'Documento de salida de Bien de Consumo no existe' );
-        }
+        const i = this.docsSalidaBienConsumo.findIndex( doc => doc.isSameIdentity( docSalidaBienConsumo ) );
+        return this.docsSalidaBienConsumo[ i ];
     }
 
 

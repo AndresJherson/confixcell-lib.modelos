@@ -1,10 +1,10 @@
-import { Bien, BienConsumo, Prop, PropBehavior } from '../../../../index';
+import { Bien, BienConsumo, ModelType, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
-export class BienCapital extends Bien
-{
-    static override type = 'BienCapital';
-    override type: string = BienCapital.type;
+export class BienCapital extends Bien {
+
+    static override type = ModelType.BienCapital;
+    override type = ModelType.BienCapital;
 
     @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
     @Prop.Set() numero?: number;
@@ -20,9 +20,13 @@ export class BienCapital extends Bien
     }
 
 
-    constructor( item?: Partial<BienCapital> )
-    {
+    constructor( item?: Partial<BienCapital> ) {
         super();
         Prop.initialize( this, item );
+    }
+
+
+    override set( item: Partial<BienCapital> ): this {
+        return super.set( item as Partial<this> );
     }
 }

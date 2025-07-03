@@ -68,15 +68,7 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     actualizarSalida( salida: SalidaEfectivo ): this
     {
         if ( this.salidas ) {
-            let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
-    
-            i = i === -1
-                ? this.salidas.findIndex( sal => 
-                    ( sal.id === undefined || salida.id === undefined )
-                        ? false
-                        : ( sal.id === salida.id )
-                )
-                : i;
+            const i = this.salidas.findIndex( sal => sal.isSameIdentity( salida ) );
     
             if ( i !== -1 ) {
                 this.salidas[ i ] = salida;
@@ -90,15 +82,8 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
 
     eliminarSalida( salida: SalidaEfectivo ): this
     {
-        this.salidas = this.salidas?.filter( sal => sal.symbol !== salida.symbol );
-        this.salidas = this.salidas?.filter( sal => 
-            ( sal.id === undefined || salida.id === undefined )
-                ? true
-                : ( sal.id !== salida.id )
-        )
-
+        this.salidas = this.salidas?.filter( sal => !sal.isSameIdentity( salida ) );
         this.procesarInformacion();
-
         return this;
     }
 
@@ -106,17 +91,7 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     getSalida( salida: SalidaEfectivo ): SalidaEfectivo | undefined
     {
         if ( !this.salidas ) return undefined;
-
-        let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
-
-        i = i === -1
-            ? this.salidas.findIndex( sal => 
-                ( sal.id === undefined || salida.id === undefined )
-                    ? false
-                    : ( sal.id === salida.id )
-            )
-            : i;
-
+        const i = this.salidas.findIndex( sal => sal.isSameIdentity( salida ) );
         return this.salidas[ i ];
     }
 }

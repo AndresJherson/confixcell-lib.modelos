@@ -2,41 +2,37 @@ import Decimal from 'decimal.js';
 import { Prop, PropBehavior, SalidaProduccionServicio, SalidaProduccionServicioActividad } from '../../../../../../index';
 
 @Prop.Class()
-export class SalidaProduccionServicioStandar extends SalidaProduccionServicio
-{
+export class SalidaProduccionServicioStandar extends SalidaProduccionServicio {
     static override type: string = 'SalidaProduccionServicioStandar';
     override type: string = SalidaProduccionServicioStandar.type;
 
     @Prop.Set( PropBehavior.array, x => new SalidaProduccionServicioActividad( x ) ) actividades?: SalidaProduccionServicioActividad[];
 
-    constructor( item?: Partial<SalidaProduccionServicioStandar> )
-    {
+    constructor( item?: Partial<SalidaProduccionServicioStandar> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set(item: Partial<SalidaProduccionServicioStandar>): this 
-    {
+    override set( item: Partial<SalidaProduccionServicioStandar> ): this {
         return super.set( item as Partial<this> );
     }
 
 
-    override setRelation(): this 
-    {
+    override setRelation(): this {
         super.setRelation();
 
-        this.actividades?.forEach( act => 
-            act.set({
-                salidaProduccionServicioStandar: new SalidaProduccionServicioStandar({ id: this.id, uuid: this.uuid, symbol: this.symbol }),
-                recursosBienConsumo: act.recursosBienConsumo?.map( recurso => 
-                    recurso.set({
-                        actividad: new SalidaProduccionServicioActividad({ id: act.id, uuid: act.uuid, symbol: act.symbol })
-                    })
-                    .setRelation()
+        this.actividades?.forEach( act =>
+            act.set( {
+                salidaProduccionServicioStandar: new SalidaProduccionServicioStandar( { id: this.id, uuid: this.uuid, symbol: this.symbol } ),
+                recursosBienConsumo: act.recursosBienConsumo?.map( recurso =>
+                    recurso.set( {
+                        actividad: new SalidaProduccionServicioActividad( { id: act.id, uuid: act.uuid, symbol: act.symbol } )
+                    } )
+                        .setRelation()
                 )
-            })
-            .setRelation()
+            } )
+                .setRelation()
         );
 
         return this;
@@ -44,15 +40,14 @@ export class SalidaProduccionServicioStandar extends SalidaProduccionServicio
 
 
     // calcular valores netos
-    override procesarInformacion(): this 
-    {
+    override procesarInformacion(): this {
         try {
 
             this.importeCostoNeto = this.actividades?.reduce(
-                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().importeCostoNeto ?? 0 ),
+                ( decimal, actividad ) => decimal.plus( actividad.procesarInformacion().decimalImporteCostoNeto ),
                 new Decimal( 0 )
             )
-            .toNumber();
+                .toNumber();
 
         }
         catch ( error ) {
@@ -65,5 +60,38 @@ export class SalidaProduccionServicioStandar extends SalidaProduccionServicio
     }
 
 
-    // CRUD ARRAY actividades
+    // actividades
+    agregarActividad( salida: SalidaProduccionServicioActividad ): this {
+        this.actividades?.unshift( salida );
+        this.procesarInformacion();
+        return this;
+    }
+
+
+    actualizarActividad( salida: SalidaProduccionServicioActividad ): this {
+        if ( this.actividades ) {
+            const i = this.actividades.findIndex( item => item.isSameIdentity( salida ) );
+
+            if ( i !== -1 ) {
+                this.actividades[i] = salida;
+                this.procesarInformacion();
+            }
+        }
+
+        return this;
+    }
+
+
+    eliminarActividad( salida: SalidaProduccionServicioActividad ): this {
+        this.actividades = this.actividades?.filter( item => !item.isSameIdentity( salida ) );
+        this.procesarInformacion();
+        return this;
+    }
+
+
+    getActividad( salida: SalidaProduccionServicioActividad ): SalidaProduccionServicioActividad | undefined {
+        if ( !this.actividades ) return undefined
+        const i = this.actividades.findIndex( item => item.isSameIdentity( salida ) );
+        return this.actividades[i];
+    }
 }

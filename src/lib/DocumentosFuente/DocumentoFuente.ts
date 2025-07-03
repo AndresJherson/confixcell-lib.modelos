@@ -91,13 +91,7 @@ export class DocumentoFuente extends Model
 
     eliminarNota( nota: Nota ): this
     {
-        this.notas = this.notas?.filter( n => n.symbol !== nota.symbol );
-        this.notas = this.notas?.filter( n =>
-            ( n.id === undefined || nota.id === undefined )
-            ? true
-            : ( n.id !== nota.id )
-        );
-
+        this.notas = this.notas?.filter( n => !n.isSameIdentity( nota ) );
         return this;
     }
 

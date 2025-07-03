@@ -2,8 +2,7 @@ import Decimal from 'decimal.js';
 import { DocumentoSalida, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, Prop, PropBehavior, SalidaBienConsumo, SalidaBienConsumoValorEntrada, SalidaBienConsumoValorNuevo } from '../../../../index';
 
 @Prop.Class()
-export class DocumentoSalidaBienConsumo extends DocumentoSalida
-{
+export class DocumentoSalidaBienConsumo extends DocumentoSalida {
     static override type: string = 'DocumentoSalidaBienConsumo';
     override type: string = DocumentoSalidaBienConsumo.type;
 
@@ -15,37 +14,34 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     }
 
 
-    constructor( item?: Partial<DocumentoSalidaBienConsumo> )
-    {
+    constructor( item?: Partial<DocumentoSalidaBienConsumo> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set(item: Partial<DocumentoSalidaBienConsumo>): this {
+    override set( item: Partial<DocumentoSalidaBienConsumo> ): this {
         return super.set( item as Partial<this> );
     }
 
 
-    override setRelation(): this 
-    {
+    override setRelation(): this {
         super.setRelation();
 
-        this.salidas?.forEach( salida => 
-            salida.set({
-                documentoFuente: new DocumentoSalidaBienConsumo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-            })
-            .setRelation()
+        this.salidas?.forEach( salida =>
+            salida.set( {
+                documentoFuente: new DocumentoSalidaBienConsumo( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } ),
+            } )
+                .setRelation()
         );
 
         return this;
     }
 
 
-    override procesarInformacion(): this
-    {
+    override procesarInformacion(): this {
         super.procesarInformacion();
-        
+
         try {
             const recordImportes = this.salidas?.reduce(
                 ( importes, salida ) => {
@@ -61,17 +57,17 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
                 }
             );
 
-            this.importeCostoNeto = recordImportes?.importeCostoNeto.toNumber();
-            this.set({
+            
+            this.set( {
                 importeCostoNeto: recordImportes?.importeCostoNeto.toNumber(),
                 importeNeto: recordImportes?.importeValorNeto.toNumber()
-            })
+            } )
         }
         catch ( error ) {
-            this.set({
+            this.set( {
                 importeCostoNeto: 0,
                 importeNeto: 0
-            })
+            } )
         }
 
         return this;
@@ -79,29 +75,19 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
 
 
     // Salida de Bien de Consumo
-    agregarSalida( salida: SalidaBienConsumo ): this
-    {
+    agregarSalida( salida: SalidaBienConsumo ): this {
         this.salidas?.unshift( salida );
         this.procesarInformacion();
         return this;
     }
 
 
-    actualizarSalida( salida: SalidaBienConsumo ): this
-    {
+    actualizarSalida( salida: SalidaBienConsumo ): this {
         if ( this.salidas ) {
-            let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
-    
-            i = i === -1
-                ? this.salidas.findIndex( sal => 
-                    ( sal.id === undefined || salida.id === undefined )
-                        ? false
-                        : ( sal.id === salida.id )
-                )
-                : i;
-    
+            const i = this.salidas.findIndex( sal => sal.isSameIdentity( salida ) );
+
             if ( i !== -1 ) {
-                this.salidas[ i ] = salida;
+                this.salidas[i] = salida;
                 this.procesarInformacion();
             }
         }
@@ -110,57 +96,38 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
     }
 
 
-    eliminarSalida( salida: SalidaBienConsumo ): this
-    {
-        this.salidas = this.salidas?.filter( sal => sal.symbol !== salida.symbol );
-        this.salidas = this.salidas?.filter( sal => 
-            ( sal.id === undefined || salida.id === undefined )
-                ? true
-                : ( sal.id !== salida.id )
-        )
-
+    eliminarSalida( salida: SalidaBienConsumo ): this {
+        this.salidas = this.salidas?.filter( sal => !sal.isSameIdentity( salida ) );
         this.procesarInformacion();
-
         return this;
     }
 
 
-    getSalida( salida: SalidaBienConsumo ): SalidaBienConsumo | undefined
-    {
+    getSalida( salida: SalidaBienConsumo ): SalidaBienConsumo | undefined {
         if ( !this.salidas ) return undefined
 
-        let i = this.salidas.findIndex( sal => sal.symbol === salida.symbol );
-
-        i = i === -1
-            ? this.salidas.findIndex( sal => 
-                ( sal.id === undefined || salida.id === undefined )
-                    ? false
-                    : ( sal.id === salida.id )
-            )
-            : i;
-
-            return this.salidas[ i ];
+        const i = this.salidas.findIndex( sal => sal.isSameIdentity( salida ) );
+        return this.salidas[i];
     }
 
 
-    override toRecordKardexBienConsumo(record: Record<string, KardexBienConsumo> = {}): Record<string, KardexBienConsumo>
-    {
+    override toRecordKardexBienConsumo( record: Record<string, KardexBienConsumo> = {} ): Record<string, KardexBienConsumo> {
         for ( const sal of this.salidas ?? [] ) {
             const almacenUuid = sal.almacen?.uuid
             const bienConsumoUuid = sal.bienConsumo?.uuid;
             if ( almacenUuid === undefined || bienConsumoUuid === undefined ) continue;
-            
+
             const clave = `${almacenUuid}|${bienConsumoUuid}`
             if ( !( clave in record ) ) {
-                record[clave] = new KardexBienConsumo({
+                record[clave] = new KardexBienConsumo( {
                     almacen: sal.almacen,
                     bienConsumo: sal.bienConsumo,
                     movimientos: []
-                })
+                } )
             }
-            
+
             if ( sal instanceof SalidaBienConsumoValorNuevo ) {
-                record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
+                record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
                     uuid: sal.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_NUEVO,
                     fecha: this.fechaEmision,
@@ -168,10 +135,10 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
                     documentoFuenteCodigoNumero: this.codigoNumero,
                     concepto: this.concepto,
                     salidaCantidad: sal.cantidadSaliente
-                }))
+                } ) )
             }
             else if ( sal instanceof SalidaBienConsumoValorEntrada ) {
-                record[clave].movimientos?.push(new KardexMovimientoBienConsumo({
+                record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
                     uuid: sal.uuid,
                     referenciaUuid: sal.entrada?.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_ENTRADA,
@@ -180,10 +147,10 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida
                     documentoFuenteCodigoNumero: this.codigoNumero,
                     concepto: this.concepto,
                     salidaCantidad: sal.cantidadSaliente
-                }))
-            }   
+                } ) )
+            }
         }
-        
+
         return record;
     }
 }

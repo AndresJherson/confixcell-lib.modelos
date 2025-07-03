@@ -38,7 +38,7 @@ export class SalidaProduccionBienRecursoBienConsumo extends Model
         try {
             
             this.importeCostoNeto = this.decimalImporteCostoUnitario
-                                    .mul( this.cantidad ?? 0 )
+                                    .mul( this.decimalCantidad )
                                     .toNumber();
 
         }

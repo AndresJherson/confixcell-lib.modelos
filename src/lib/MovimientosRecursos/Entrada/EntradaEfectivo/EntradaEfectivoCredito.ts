@@ -1,103 +1,43 @@
 import Decimal from 'decimal.js';
-import { Credito, EntradaEfectivo, EntradaEfectivoCuota, ICredito, Prop, PropBehavior, Proporcion, TipoProporcion } from '../../../../index';
+import { Credito, Cuota, EntradaEfectivo, EntradaEfectivoCuota, ICredito, ModelType, Prop, PropBehavior, Proporcion, TipoProporcion } from '../../../../index';
 
 @Prop.Class()
-export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito
-{
-    static override type: string = 'EntradaEfectivoCredito';
-    override type: string = EntradaEfectivoCredito.type;
+// export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito {
+export class EntradaEfectivoCredito extends Credito( EntradaEfectivo ) {
 
-    @Prop.Set() tasaInteresDiario?: number;
-    @Prop.Set() importeInteres?: number;
-    @Prop.Set() porcentajeInteres?: number;
-    @Prop.Set() importeValorFinal?:number;
-    
-    get decimalTasaInteresDiario(): Decimal {
-        return Prop.toDecimal( this.tasaInteresDiario );
-    }
-    get decimalImporteInteres(): Decimal {
-        return Prop.toDecimal( this.importeInteres );
-    }
-    get decimalPorcentajeInteres(): Decimal {
-        return Prop.toDecimal( this.porcentajeInteres );
-    }
-    get decimalImporteValorFinal(): Decimal {
-        return Prop.toDecimal( this.importeValorFinal );
-    }
+    static override type: string = ModelType.EntradaEfectivoCredito;
+    override type = ModelType.EntradaEfectivoCredito;
 
-    @Prop.Set( PropBehavior.array, x => new EntradaEfectivoCuota( x ) ) cuotas?: EntradaEfectivoCuota[];
+    @Prop.Set() override tasaInteresDiario?: number;
+    @Prop.Set() override importeInteres?: number;
+    @Prop.Set() override porcentajeInteres?: number;
+    @Prop.Set() override importeValorFinal?: number;
 
-    @Prop.Set() duracionMinutos?: number;
-    interesXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
-    amortizacionXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
-    cuotaXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
-    credito = new Credito();
-    
-    get decimalDuracionMinutos(): Decimal {
-        return Prop.toDecimal( this.duracionMinutos );
-    }
+    @Prop.Set( PropBehavior.array, x => new EntradaEfectivoCuota( x ) ) override cuotas?: EntradaEfectivoCuota[];
 
 
-    constructor( item?: Partial<EntradaEfectivoCredito> )
-    {
+    constructor( item?: Partial<EntradaEfectivoCredito> ) {
         super()
         Prop.initialize( this, item );
     }
 
-    
-    override set(item: Partial<EntradaEfectivoCredito>): this 
-    {
+
+    override set( item: Partial<EntradaEfectivoCredito> ): this {
         return super.set( item as Partial<this> );
     }
 
 
-    override setRelation(): this 
-    {
+    override setRelation(): this {
         super.setRelation();
 
         this.cuotas?.forEach( cuota =>
-            cuota.set({
-                credito: new EntradaEfectivoCredito({ id: this.id, uuid: this.uuid, symbol: this.symbol })
-            })
-            .setRelation()
+            cuota.set( {
+                credito: new EntradaEfectivoCredito( { id: this.id, uuid: this.uuid, symbol: this.symbol } )
+            } )
+                .setRelation()
         );
 
         return this;
     }
-
-
-    agregarCuota( cuota: EntradaEfectivoCuota ): this
-    {
-        return this.credito.agregarCuota( this, cuota );
-    }
-
-
-    actualizarCuota( cuota: EntradaEfectivoCuota ): this
-    {
-        return this.credito.actualizarCuota( this, cuota );
-    }
-
-
-    eliminarCuota( cuota: EntradaEfectivoCuota ): this
-    {
-        return this.credito.eliminarCuota( this, cuota );
-    }
-
-
-    getCuota( cuota: EntradaEfectivoCuota ): EntradaEfectivoCuota | undefined
-    {
-        return this.credito.getCuota( this, cuota );
-    }
-    
-
-    override procesarInformacion(): this 
-    {
-        return this.credito.procesarInformacion( this );
-    }
-
-
-    procesarPagos( importeCobrado: number ): this
-    {
-        return this.credito.procesarPagos( this, importeCobrado );
-    }
 }
+

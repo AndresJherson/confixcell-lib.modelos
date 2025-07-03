@@ -60,7 +60,7 @@ export class EntradaBienConsumo extends EntradaRecurso
         try {
             this.set({
                 importeValorNeto: this.decimalImporteValorUnitario
-                                    .mul( this.cantidadEntrante ?? 0 )
+                                    .mul( this.decimalCantidadEntrante )
                                     .toNumber()
             });
         }

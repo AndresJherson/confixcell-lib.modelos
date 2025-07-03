@@ -1,14 +1,14 @@
-import { Genero, Persona, Prop, PropBehavior } from "../../../index";
+import { Genero, ModelType, Persona, Prop, PropBehavior } from "../../../index";
 
 @Prop.Class()
-export class PersonaNatural extends Persona
-{
-    static override type = 'PersonaNatural';
-    override type: string = PersonaNatural.type;
+export class PersonaNatural extends Persona {
+
+    static override type = ModelType.PersonaNatural;
+    override type = ModelType.PersonaNatural;
 
     @Prop.Set() nombre?: string;
     @Prop.Set() apellido?: string;
-    @Prop.Set( PropBehavior.model, x => new Genero ( x ) ) genero?: Genero;
+    @Prop.Set( PropBehavior.model, x => new Genero( x ) ) genero?: Genero;
     @Prop.Set() domicilio?: string;
     @Prop.Set() celular?: number;
     @Prop.Set() celularRespaldo?: number;
@@ -19,9 +19,13 @@ export class PersonaNatural extends Persona
     }
 
 
-    constructor( json?: Partial<PersonaNatural> )
-    {
+    constructor( json?: Partial<PersonaNatural> ) {
         super();
         Prop.initialize( this, json );
+    }
+
+
+    override set( item: Partial<PersonaNatural> ): this {
+        return super.set( item as Partial<this> );
     }
 }

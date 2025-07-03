@@ -1,22 +1,19 @@
-import { Prop, PropBehavior, Recurso, ServicioCategoria } from "../../../index";
+import { ModelType, Prop, Recurso } from "../../../index";
 
 @Prop.Class()
-export class Servicio extends Recurso
-{
-    static override type = 'Servicio';
-    override type: string = Servicio.type;
+export class Servicio extends Recurso {
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set( PropBehavior.model, x => new ServicioCategoria( x ) ) categoria?: ServicioCategoria;
+    static override type = ModelType.Servicio;
+    override type = ModelType.Servicio;
 
-    override get nombreCompleto() {
-        return this.nombre;
+
+    constructor( json?: Partial<Servicio> ) {
+        super();
+        Prop.initialize( this, json );
     }
 
 
-    constructor( json?: Partial<Servicio> )
-    {
-        super();
-        Prop.initialize( this, json );
+    override set( item: Partial<Servicio> ): this {
+        return super.set( item as Partial<this> );
     }
 }

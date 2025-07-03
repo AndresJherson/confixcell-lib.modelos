@@ -1,6 +1,21 @@
 export * from './lib/Model';
+
+// Utils
+export * from './lib/utils/types';
+export * from './lib/utils/consts/ModelType';
 export * from './lib/utils/Proporcion';
 export * from './lib/utils/Credito/Credito';
+export * from './lib/utils/consts/PresetConst';
+
+
+// Usuarios
+export * from './lib/Usuarios/Usuario';
+export * from './lib/Usuarios/SuperUsuario/SuperUsuario';
+export * from './lib/Usuarios/SuperUsuario/SuperUsuarioEmpresa';
+export * from './lib/Usuarios/SubUsuario/SubUsuario';
+export * from './lib/Usuarios/SubUsuario/Rol';
+export * from './lib/Usuarios/SubUsuario/Permiso';
+
 
 // Recursos
 export * from './lib/Recursos/Recurso';
@@ -21,7 +36,9 @@ export * from './lib/Recursos/Bien/BienCapital/BienCapital';
 export * from './lib/Recursos/Bien/BienCapital/Almacen';
 
 export * from './lib/Recursos/Servicio/Servicio';
-export * from './lib/Recursos/Servicio/ServicioCategoria';
+export * from './lib/Recursos/Servicio/ServicioEstandar/ServicioEstandar';
+export * from './lib/Recursos/Servicio/ServicioEstandar/ServicioEstandarCategoria';
+export * from './lib/Recursos/Servicio/ServicioReparacion/ServicioReparacion';
 
 
 // Personas
@@ -31,15 +48,12 @@ export * from './lib/Personas/DocumentoIdentificacion';
 
 export * from './lib/Personas/PersonaNatural/PersonaNatural';
 export * from './lib/Personas/PersonaJuridica/PersonaJuridica';
-export * from './lib/Personas/Usuario/Usuario';
-export * from './lib/Personas/Empresa/Empresa';
-export * from './lib/Personas/Empresa/PoliticaComercial';
+export * from './lib/DocumentosFuente/PoliticaComercial';
 
 
 // Movimientos de Recursos
 export * from './lib/MovimientosRecursos/MovimientoRecurso';
 export * from './lib/MovimientosRecursos/MedioTransferencia';
-
 
 export * from './lib/MovimientosRecursos/Entrada/EntradaRecurso';
 
@@ -47,11 +61,13 @@ export * from './lib/MovimientosRecursos/Entrada/EntradaEfectivo/EntradaEfectivo
 export * from './lib/MovimientosRecursos/Entrada/EntradaEfectivo/EntradaEfectivoContado';
 export * from './lib/MovimientosRecursos/Entrada/EntradaEfectivo/EntradaEfectivoCredito';
 export * from './lib/MovimientosRecursos/Entrada/EntradaEfectivo/EntradaEfectivoCuota';
+export * from './lib/MovimientosRecursos/Entrada/EntradaEfectivo/NotaEgresoCredito';
+export * from './lib/MovimientosRecursos/Entrada/EntradaEfectivo/NotaEgresoCuota';
+export * from './lib/MovimientosRecursos/Entrada/EntradaEfectivo/NotaVentaEntradaEfectivo';
 
 export * from './lib/MovimientosRecursos/Entrada/EntradaBienConsumo/EntradaBienConsumo';
 export * from './lib/MovimientosRecursos/Entrada/EntradaBienConsumo/EntradaBienConsumoValorNuevo';
 export * from './lib/MovimientosRecursos/Entrada/EntradaBienConsumo/EntradaBienConsumoValorSalida';
-
 
 export * from './lib/MovimientosRecursos/Salida/SalidaRecurso';
 
@@ -59,11 +75,13 @@ export * from './lib/MovimientosRecursos/Salida/SalidaEfectivo/SalidaEfectivo';
 export * from './lib/MovimientosRecursos/Salida/SalidaEfectivo/SalidaEfectivoContado';
 export * from './lib/MovimientosRecursos/Salida/SalidaEfectivo/SalidaEfectivoCredito';
 export * from './lib/MovimientosRecursos/Salida/SalidaEfectivo/SalidaEfectivoCuota';
+export * from './lib/MovimientosRecursos/Salida/SalidaEfectivo/NotaIngresoCredito';
+export * from './lib/MovimientosRecursos/Salida/SalidaEfectivo/NotaIngresoCuota';
 
 export * from './lib/MovimientosRecursos/Salida/SalidaBienConsumo/SalidaBienConsumo';
 export * from './lib/MovimientosRecursos/Salida/SalidaBienConsumo/SalidaBienConsumoValorNuevo';
 export * from './lib/MovimientosRecursos/Salida/SalidaBienConsumo/SalidaBienConsumoValorEntrada';
-
+export * from './lib/MovimientosRecursos/Salida/SalidaBienConsumo/NotaVentaSalidaBienConsumo';
 
 export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/SalidaProduccion';
 
@@ -80,6 +98,10 @@ export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/Standa
 export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/Standar/SalidaProduccionServicioRecursoBienConsumo';
 export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/Standar/SalidaProduccionServicioRecursoBienCapital';
 export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/Standar/SalidaProduccionServicioRecursoServicio';
+
+export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/SalidaProduccionServicioReparacion/NotaVentaSalidaProduccionServicioReparacion';
+export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/SalidaProduccionServicioReparacion/NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo';
+export * from './lib/MovimientosRecursos/Salida/SalidaProduccion/Servicio/SalidaProduccionServicioReparacion/NotaVentaSalidaProduccionServicioReparacionRecursoServicio';
 
 
 
@@ -102,26 +124,17 @@ export * from './lib/DocumentosFuente/DocumentoMovimiento/Salida/DocumentoSalida
 export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoTransaccion';
 export * from './lib/DocumentosFuente/DocumentoTransaccion/LiquidacionTipo';
 
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionEntrada/ComprobanteTipo';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionEntrada/NotaTransaccionEntrada';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionEntrada/NotaTransaccionEntradaDetalle';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionEntrada/NotaTransaccionEntradaCredito';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionEntrada/NotaTransaccionEntradaCuota';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoEgreso/NotaEgreso/ComprobanteTipo';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoEgreso/NotaEgreso/NotaTransaccionEntrada';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoEgreso/NotaEgreso/NotaTransaccionEntradaDetalle';
 
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionSalida/NotaTransaccionSalida';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionSalida/NotaTransaccionSalidaDetalle';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionSalida/NotaTransaccionSalidaCredito';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaTransaccionSalida/NotaTransaccionSalidaCuota';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoIngreso/NotaIngreso/NotaTransaccionSalida';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoIngreso/NotaIngreso/NotaTransaccionSalidaDetalle';
 
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/NotaVenta';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/NotaVentaPrioridad';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/NotaVentaEstado';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/NotaVentaCategoriaReparacion';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/SalidaBienConsumo/NotaVentaSalidaBienConsumo';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/SalidaProduccionServicioReparacion/NotaVentaSalidaProduccionServicioReparacion';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/SalidaProduccionServicioReparacion/NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/SalidaProduccionServicioReparacion/NotaVentaSalidaProduccionServicioReparacionRecursoServicio';
-export * from './lib/DocumentosFuente/DocumentoTransaccion/NotaVenta/EntradaEfectivo/NotaVentaEntradaEfectivo';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoIngreso/NotaVenta/NotaVenta';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoIngreso/NotaVenta/NotaVentaPrioridad';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoIngreso/NotaVenta/NotaVentaEstado';
+export * from './lib/DocumentosFuente/DocumentoTransaccion/DocumentoIngreso/NotaVenta/NotaVentaCategoriaReparacion';
 
 
 // Inventario y Kardex

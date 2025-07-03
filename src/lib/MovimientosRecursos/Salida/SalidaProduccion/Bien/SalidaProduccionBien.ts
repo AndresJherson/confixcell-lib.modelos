@@ -2,8 +2,7 @@ import Decimal from 'decimal.js';
 import { BienConsumo, Prop, PropBehavior, SalidaProduccion } from '../../../../../index';
 
 @Prop.Class()
-export class SalidaProduccionBien extends SalidaProduccion
-{
+export class SalidaProduccionBien extends SalidaProduccion {
     static override type: string = 'SalidaProduccionBien';
     override type: string = SalidaProduccionBien.type;
 
@@ -27,7 +26,7 @@ export class SalidaProduccionBien extends SalidaProduccion
     get decimalCantidadEntrante(): Decimal {
         return Prop.toDecimal( this.cantidadEntrante );
     }
-    
+
     get cantidadDisponible(): number {
         return this.decimalCantidadSaliente
             .minus( this.cantidadEntrante ?? 0 )
@@ -36,52 +35,48 @@ export class SalidaProduccionBien extends SalidaProduccion
     get decimalCantidadDisponible(): Decimal {
         return Prop.toDecimal( this.cantidadDisponible );
     }
-    
 
-    constructor( item?: Partial<SalidaProduccionBien> )
-    {
+
+    constructor( item?: Partial<SalidaProduccionBien> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set(item: Partial<SalidaProduccionBien>): this 
-    {
+    override set( item: Partial<SalidaProduccionBien> ): this {
         return super.set( item as Partial<this> );
     }
 
 
-    static override initialize( data: Partial<SalidaProduccionBien>[] ): SalidaProduccionBien[]
-    {
-        return data.map( item => 
+    static override initialize( data: Partial<SalidaProduccionBien>[] ): SalidaProduccionBien[] {
+        return data.map( item =>
             new (
                 Prop.GetClass<SalidaProduccionBien>( item )
                 ?? SalidaProduccionBien
-            ) ( item )
+            )( item )
         )
     }
 
 
     // calcular valores netos
-    override procesarInformacion(): this 
-    {
+    override procesarInformacion(): this {
         try {
 
-            this.set({
+            this.set( {
                 importeCostoNeto: this.decimalImporteCostoUnitario
-                    .mul( this.cantidadSaliente ?? 0 )
+                    .mul( this.decimalCantidadSaliente )
                     .toNumber(),
                 importeValorNeto: this.decimalImporteValorUnitario
-                    .mul( this.cantidadSaliente ?? 0 )
+                    .mul( this.decimalCantidadSaliente )
                     .toNumber()
-            });
+            } );
 
         }
         catch ( error ) {
-            this.set({
+            this.set( {
                 importeCostoNeto: 0,
                 importeValorNeto: 0
-            });
+            } );
         }
 
 

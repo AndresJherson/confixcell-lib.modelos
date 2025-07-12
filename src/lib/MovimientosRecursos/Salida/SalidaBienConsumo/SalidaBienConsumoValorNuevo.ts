@@ -1,19 +1,25 @@
-import { Prop, SalidaBienConsumo } from '../../../../index';
+import { ModelType, OptionalModel, Prop, SalidaBienConsumo } from '../../../../index';
 
 @Prop.Class()
 export class SalidaBienConsumoValorNuevo extends SalidaBienConsumo {
-    static override type: string = 'SalidaBienConsumoValorNuevo';
-    override type: string = SalidaBienConsumoValorNuevo.type;
+
+    static override type = ModelType.SalidaBienConsumoValorNuevo;
+    override type = ModelType.SalidaBienConsumoValorNuevo;
 
 
-    constructor( item?: Partial<SalidaBienConsumoValorNuevo> ) {
+    constructor( item?: OptionalModel<SalidaBienConsumoValorNuevo> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<SalidaBienConsumoValorNuevo> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<SalidaBienConsumoValorNuevo> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<SalidaBienConsumoValorNuevo> ): this {
+        return super.assign( item as OptionalModel<this> );
     }
 
 

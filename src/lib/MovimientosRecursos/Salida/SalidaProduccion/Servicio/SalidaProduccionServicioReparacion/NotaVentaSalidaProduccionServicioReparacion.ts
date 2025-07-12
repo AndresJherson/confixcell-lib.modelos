@@ -1,59 +1,64 @@
 import Decimal from 'decimal.js';
-import { NotaVenta, NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo, NotaVentaSalidaProduccionServicioReparacionRecursoServicio, PantallaModelo, Prop, PropBehavior, SalidaProduccion, SalidaProduccionServicio, Servicio } from '../../../../../../index';
+import { ExecutionContext, ModelType, NotaVenta, NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo, NotaVentaSalidaProduccionServicioReparacionRecursoServicio, OptionalModel, PantallaModelo, Prop, PropBehavior, SalidaProduccion, SalidaProduccionServicio, Servicio } from '../../../../../../index';
 
 @Prop.Class()
 export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccionServicio {
-    static override type: string = 'NotaVentaSalidaProduccionServicioReparacion';
-    override type: string = NotaVentaSalidaProduccionServicioReparacion.type;
 
-    @Prop.Set( PropBehavior.model, x => new NotaVenta( x ) ) declare documentoFuente?: NotaVenta;
-    @Prop.Set( PropBehavior.model, x => new Servicio( x ) ) declare servicio?: Servicio;
-    @Prop.Set( PropBehavior.model, x => new PantallaModelo( x ) ) pantallaModelo?: PantallaModelo;
+    static override type = ModelType.NotaVentaSalidaProduccionServicioReparacion;
+    override type = ModelType.NotaVentaSalidaProduccionServicioReparacion;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) override servicio?: Servicio;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaModelo( x ) } ) pantallaModelo?: PantallaModelo;
     @Prop.Set() imei?: string;
     @Prop.Set() patron?: number;
     @Prop.Set() contrasena?: string;
     @Prop.Set() diagnostico?: string;
 
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo( x ) ) recursosBienConsumo?: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo[];
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacionRecursoServicio( x ) ) recursosServicio?: NotaVentaSalidaProduccionServicioReparacionRecursoServicio[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo( x ) } ) recursosBienConsumo?: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacionRecursoServicio( x ) } ) recursosServicio?: NotaVentaSalidaProduccionServicioReparacionRecursoServicio[];
 
 
-    constructor( item?: Partial<NotaVentaSalidaProduccionServicioReparacion> ) {
+    constructor( item?: OptionalModel<NotaVentaSalidaProduccionServicioReparacion> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<NotaVentaSalidaProduccionServicioReparacion> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<NotaVentaSalidaProduccionServicioReparacion> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
-
-        this.recursosServicio?.forEach( recurso =>
-            recurso.set( {
-                salidaProduccion: new NotaVentaSalidaProduccionServicioReparacion( { id: this.id, symbol: this.symbol } )
-            } )
-                .setRelation()
-        );
+    override assign( item: OptionalModel<NotaVentaSalidaProduccionServicioReparacion> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
 
-        this.recursosBienConsumo?.forEach( recurso =>
-            recurso.set( {
-                salidaProduccion: new NotaVentaSalidaProduccionServicioReparacion( { id: this.id, symbol: this.symbol } )
-            } )
-                .setRelation()
-        );
+    override setRelation( context = new ExecutionContext() ): this {
 
+        super.setRelation( context );
+
+        context.execute( this, NotaVentaSalidaProduccionServicioReparacion.type, () => {
+
+            this.pantallaModelo?.setRelation( context );
+
+            this.recursosBienConsumo?.forEach( recurso => recurso.assign( {
+                salidaProduccion: this
+            } ).setRelation( context ) )
+
+            this.recursosServicio?.forEach( recurso => recurso.assign( {
+                salidaProduccion: this
+            } ).setRelation( context ) )
+
+        } );
 
         return this;
     }
 
 
     override procesarInformacion(): this {
-        
+
         try {
             const importeCostoNetoBienConsumo = this.recursosBienConsumo?.reduce(
                 ( decimal, recurso ) => decimal.plus( recurso.procesarInformacion().importeCostoNeto ?? 0 ),
@@ -101,6 +106,7 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
 
     // recursos bien consumo
     agregarRecursoBienConsumo( recurso: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo ): this {
+        this.recursosBienConsumo ??= [];
         this.recursosBienConsumo?.unshift( recurso );
         this.procesarInformacion();
         return this;
@@ -136,6 +142,7 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
 
 
     agregarRecursoServicio( recurso: NotaVentaSalidaProduccionServicioReparacionRecursoServicio ): this {
+        this.recursosServicio ??= [];
         this.recursosServicio?.unshift( recurso );
         this.procesarInformacion();
         return this;

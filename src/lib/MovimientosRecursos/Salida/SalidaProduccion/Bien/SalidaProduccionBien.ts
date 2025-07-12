@@ -1,57 +1,61 @@
 import Decimal from 'decimal.js';
-import { BienConsumo, Prop, PropBehavior, SalidaProduccion } from '../../../../../index';
+import { BienConsumo, Cast, ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaProduccion } from '../../../../../index';
 
 @Prop.Class()
 export class SalidaProduccionBien extends SalidaProduccion {
-    static override type: string = 'SalidaProduccionBien';
-    override type: string = SalidaProduccionBien.type;
 
-    @Prop.Set( PropBehavior.model, x => new BienConsumo( x ) ) bienConsumo?: BienConsumo;
+    static override type = ModelType.SalidaProduccionBien;
+    override type = ModelType.SalidaProduccionBien;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo;
 
     @Prop.Set() cantidadSaliente?: number;
     @Prop.Set() importeCostoUnitario?: number;
     @Prop.Set() importeValorUnitario?: number;
 
-    get decimalCantidadSaliente(): Decimal {
-        return Prop.toDecimal( this.cantidadSaliente );
-    }
-    get decimalImporteCostoUnitario(): Decimal {
-        return Prop.toDecimal( this.importeCostoUnitario );
-    }
-    get decimalImporteValorUnitario(): Decimal {
-        return Prop.toDecimal( this.importeValorUnitario );
-    }
+    get decimalCantidadSaliente(): Decimal { return Cast.toDecimal( this.cantidadSaliente ); }
+    get decimalImporteCostoUnitario(): Decimal { return Cast.toDecimal( this.importeCostoUnitario ); }
+    get decimalImporteValorUnitario(): Decimal { return Cast.toDecimal( this.importeValorUnitario ); }
 
     @Prop.Set() cantidadEntrante?: number;
-    get decimalCantidadEntrante(): Decimal {
-        return Prop.toDecimal( this.cantidadEntrante );
-    }
+    get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
 
-    get cantidadDisponible(): number {
-        return this.decimalCantidadSaliente
-            .minus( this.cantidadEntrante ?? 0 )
-            .toNumber();
-    };
-    get decimalCantidadDisponible(): Decimal {
-        return Prop.toDecimal( this.cantidadDisponible );
-    }
+    get cantidadDisponible(): number { return this.decimalCantidadSaliente.minus( this.cantidadEntrante ?? 0 ).toNumber(); }
+    get decimalCantidadDisponible(): Decimal { return Cast.toDecimal( this.cantidadDisponible ); }
 
 
-    constructor( item?: Partial<SalidaProduccionBien> ) {
+    constructor( item?: OptionalModel<SalidaProduccionBien> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<SalidaProduccionBien> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<SalidaProduccionBien> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    static override initialize( data: Partial<SalidaProduccionBien>[] ): SalidaProduccionBien[] {
+    override assign( item: OptionalModel<SalidaProduccionBien> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, SalidaProduccionBien.type, () => {
+            this.bienConsumo?.setRelation( context );
+        } )
+
+        return this;
+    }
+
+
+    static override initialize( data: OptionalModel<SalidaProduccionBien>[] ): SalidaProduccionBien[] {
         return data.map( item =>
             new (
-                Prop.GetClass<SalidaProduccionBien>( item )
+                Prop.getClass<SalidaProduccionBien>( item )
                 ?? SalidaProduccionBien
             )( item )
         )

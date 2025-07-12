@@ -1,4 +1,4 @@
-import { Bien, ModelType, Prop } from '../../../../index';
+import { Bien, ModelType, OptionalModel, Prop } from '../../../../index';
 
 @Prop.Class()
 export class BienConsumo extends Bien {
@@ -7,18 +7,23 @@ export class BienConsumo extends Bien {
     override type = ModelType.BienConsumo;
 
 
-    constructor( item?: Partial<BienConsumo> ) {
+    constructor( item?: OptionalModel<BienConsumo> ) {
         super();
         Prop.initialize( this, item );
     }
 
     
-    override set( item: Partial<BienConsumo> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<BienConsumo> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    static override initialize( data: Partial<BienConsumo>[] ): BienConsumo[] {
-        return data.map( item => new ( Prop.GetClass<BienConsumo>( item ) ?? BienConsumo )( item ) )
+    override assign( item: OptionalModel<BienConsumo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    static override initialize( data: OptionalModel<BienConsumo>[] ): BienConsumo[] {
+        return data.map( item => new ( Prop.getClass<BienConsumo>( item ) ?? BienConsumo )( item ) )
     }
 }

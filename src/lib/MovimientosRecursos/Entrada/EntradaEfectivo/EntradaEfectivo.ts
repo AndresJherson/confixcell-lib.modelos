@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { EntradaRecurso, ModelType, Prop } from '../../../../index';
+import { EntradaRecurso, ModelType, OptionalModel, Prop } from '../../../../index';
 
 @Prop.Class()
 export class EntradaEfectivo extends EntradaRecurso {
@@ -10,18 +10,23 @@ export class EntradaEfectivo extends EntradaRecurso {
     @Prop.Set() override importeValorNeto?: number;
 
 
-    constructor( item?: Partial<EntradaEfectivo> ) {
+    constructor( item?: OptionalModel<EntradaEfectivo> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<EntradaEfectivo> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<EntradaEfectivo> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    static override initialize( data: Partial<EntradaEfectivo>[] ): EntradaEfectivo[] {
-        return data.map( item => new ( Prop.GetClass<EntradaEfectivo>( item ) ?? EntradaEfectivo )( item ) )
+    override assign( item: OptionalModel<EntradaEfectivo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    static override initialize( data: OptionalModel<EntradaEfectivo>[] ): EntradaEfectivo[] {
+        return data.map( item => new ( Prop.getClass<EntradaEfectivo>( item ) ?? EntradaEfectivo )( item ) )
     }
 }

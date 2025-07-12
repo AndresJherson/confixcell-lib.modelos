@@ -46,6 +46,7 @@ export enum ModelType {
     // Movimientos Recursos
     MovimientoRecurso = 'MovimientoRecurso',
     MedioTransferencia = 'MedioTransferencia',
+    Credito = 'Credito',
     Cuota = 'Cuota',
 
     EntradaRecurso = 'EntradaRecurso',
@@ -100,8 +101,11 @@ export enum ModelType {
     // Documentos Fuente
     DocumentoFuente = 'DocumentoFuente',
     Nota = 'Nota',
+    PoliticaComercial = 'PoliticaComercial',
 
     DocumentoMovimiento = 'DocumentoMovimiento',
+    DocumentoEntrada = 'DocumentoEntrada',
+    DocumentoSalida = 'DocumentoSalida',
     DocumentoEntradaEfectivo = 'DocumentoEntradaEfectivo',
     DocumentoEntradaBienConsumo = 'DocumentoEntradaBienConsumo',
     DocumentoEntradaBienCapital = 'DocumentoEntradaBienCapital',
@@ -112,7 +116,7 @@ export enum ModelType {
     DocumentoSalidaServicio = 'DocumentoSalidaServicio',
     DocumentoSalidaProduccion = 'DocumentoSalidaServicio',
 
-    DocumentoTrasaccion = 'DocumentoTransaccion',
+    DocumentoTransaccion = 'DocumentoTransaccion',
     LiquidacionTipo = 'LiquidacionTipo',
 
     DocumentoEgreso = 'DocumentoEgreso',
@@ -130,8 +134,14 @@ export enum ModelType {
 
     // Inventarios
     KardexLock = 'KardexLock',
+    
+    InventarioBienConsumo = 'InventarioBienConsumo',
     KardexBienConsumo = 'KardexBienConsumo',
     KardexMovimientoBienConsumo = 'KardexMovimientoBienConsumo',
     EventoPendienteKardexBienConsumo = 'EventoPendienteKardexBienConsumo',
-    ErrorKardexBienConsumo = 'ErrorKardexBienConsumo'
+    ErrorKardexBienConsumo = 'ErrorKardexBienConsumo',
+
+
+    // Preset
+    DbPreset = 'DbPreset'
 }

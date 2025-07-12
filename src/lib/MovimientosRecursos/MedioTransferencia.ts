@@ -1,4 +1,4 @@
-import { Model, ModelType, Prop } from "../../index";
+import { Model, ModelType, OptionalModel, Prop } from "../../index";
 
 @Prop.Class()
 export class MedioTransferencia extends Model {
@@ -17,5 +17,10 @@ export class MedioTransferencia extends Model {
 
     override set( item: Partial<MedioTransferencia> ): this {
         return super.set( item as Partial<this> );
+    }
+
+
+    override assign( item: OptionalModel<MedioTransferencia> ): this {
+        return super.assign( item as OptionalModel<this> );
     }
 }

@@ -1,4 +1,4 @@
-import { ModelType, MovimientoRecurso, Prop } from '../../../index';
+import { ModelType, MovimientoRecurso, OptionalModel, Prop } from '../../../index';
 
 @Prop.Class()
 export class EntradaRecurso extends MovimientoRecurso {
@@ -7,18 +7,23 @@ export class EntradaRecurso extends MovimientoRecurso {
     override type = ModelType.EntradaRecurso;
 
 
-    constructor( item?: Partial<EntradaRecurso> ) {
+    constructor( item?: OptionalModel<EntradaRecurso> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<EntradaRecurso> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<EntradaRecurso> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    static override initialize( data: Partial<EntradaRecurso>[] ): EntradaRecurso[] {
-        return data.map( item => new ( Prop.GetClass<EntradaRecurso>( item ) ?? EntradaRecurso )( item ) )
+    override assign( item: OptionalModel<EntradaRecurso> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    static override initialize( data: OptionalModel<EntradaRecurso>[] ): EntradaRecurso[] {
+        return data.map( item => new ( Prop.getClass<EntradaRecurso>( item ) ?? EntradaRecurso )( item ) )
     }
 }

@@ -1,17 +1,26 @@
-import { Cuota, NotaEgresoCredito, Prop, PropBehavior } from '../../../../index';
+import { Cuota, ModelType, NotaEgresoCredito, OptionalModel, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
-export class NotaEgresoCuota extends Cuota
-{
-    static override type: string = 'NotaEgresoCuota';
-    override type = NotaEgresoCuota.type;
+export class NotaEgresoCuota extends Cuota {
 
-    @Prop.Set( PropBehavior.model, x => new NotaEgresoCredito( x ) ) credito?: NotaEgresoCredito;
+    static override type = ModelType.NotaEgresoCuota;
+    override type = ModelType.NotaEgresoCuota;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaEgresoCredito( x ) } ) declare credito?: NotaEgresoCredito;
 
 
-    constructor( item?: Partial<NotaEgresoCuota> )
-    {
+    constructor( item?: OptionalModel<NotaEgresoCuota> ) {
         super();
         Prop.initialize( this, item );
+    }
+
+
+    override set( item: OptionalModel<NotaEgresoCuota> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<NotaEgresoCuota> ): this {
+        return super.assign( item as OptionalModel<this> );
     }
 }

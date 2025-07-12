@@ -1,24 +1,47 @@
 import Decimal from 'decimal.js';
-import { BienCapital, Model, Prop, PropBehavior, SalidaProduccionBienActividad } from '../../../../../../index';
+import { BienCapital, Cast, ExecutionContext, Model, ModelType, OptionalModel, Prop, PropBehavior, SalidaProduccionBienActividad } from '../../../../../../index';
 
 @Prop.Class()
-export class SalidaProduccionBienRecursoBienCapital extends Model
-{
-    static override type: string = 'SalidaProduccionBienRecursoBienCapital';
-    override type: string = SalidaProduccionBienRecursoBienCapital.type;
+export class SalidaProduccionBienRecursoBienCapital extends Model {
 
-    @Prop.Set( PropBehavior.model, x => new SalidaProduccionBienActividad( x ) ) actividad?: SalidaProduccionBienActividad;
-    @Prop.Set( PropBehavior.model, x => new BienCapital( x ) ) bienCapital?: BienCapital;
+    static override type = ModelType.SalidaProduccionBienRecursoBienCapital;
+    override type = ModelType.SalidaProduccionBienRecursoBienCapital;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividad?: SalidaProduccionBienActividad;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienCapital( x ) } ) bienCapital?: BienCapital;
 
     @Prop.Set() importeCostoNeto?: number;
-    get decimalImporteCostoNeto(): Decimal {
-        return Prop.toDecimal( this.importeCostoNeto );
+    get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
+
+
+    constructor( item?: OptionalModel<SalidaProduccionBienRecursoBienCapital> ) {
+        super();
+        Prop.initialize( this, item );
     }
 
 
-    constructor( item?: Partial<SalidaProduccionBienRecursoBienCapital> )
-    {
-        super();
-        Prop.initialize( this, item );
+    override set( item: OptionalModel<SalidaProduccionBienRecursoBienCapital> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<SalidaProduccionBienRecursoBienCapital> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, SalidaProduccionBienRecursoBienCapital.type, () => {
+
+            this.actividad?.setRelation( context );
+
+            this.bienCapital?.setRelation( context );
+
+        } );
+
+        return this;
     }
 }

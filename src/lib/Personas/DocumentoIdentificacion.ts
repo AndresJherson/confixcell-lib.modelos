@@ -1,4 +1,4 @@
-import { Model, ModelType, Prop } from '../../index';
+import { Model, ModelType, OptionalModel, Prop } from '../../index';
 
 @Prop.Class()
 export class DocumentoIdentificacion extends Model {
@@ -9,13 +9,18 @@ export class DocumentoIdentificacion extends Model {
     @Prop.Set() nombre?: string;
 
     
-    constructor( item?: Partial<DocumentoIdentificacion> ) {
+    constructor( item?: OptionalModel<DocumentoIdentificacion> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<DocumentoIdentificacion> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoIdentificacion> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<DocumentoIdentificacion> ): this {
+        return super.assign( item as OptionalModel<this> );
     }
 }

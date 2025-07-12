@@ -1,28 +1,26 @@
 import Decimal from 'decimal.js';
-import { DocumentoIdentificacion, DocumentoTransaccion, LiquidacionTipo, NotaTransaccionSalidaCredito, NotaTransaccionSalidaDetalle, Persona, Prop, PropBehavior } from '../../../../../index';
+import { Cast, DocumentoIdentificacion, DocumentoTransaccion, ExecutionContext, LiquidacionTipo, ModelType, NotaIngresoCredito, NotaIngresoDetalle, OptionalModel, Persona, Prop, PropBehavior } from '../../../../../index';
 
 @Prop.Class()
-export class NotaTransaccionSalida extends DocumentoTransaccion
-{
-    static override type: string = 'NotaTransaccionSalida';
-    override type: string = NotaTransaccionSalida.type;
+export class NotaIngreso extends DocumentoTransaccion {
 
-    @Prop.Set( PropBehavior.model, x => new Persona( x ) ) cliente?: Persona;
-    @Prop.Set( PropBehavior.model, x => new DocumentoIdentificacion( x ) ) clienteDocumentoIdentificacion?: DocumentoIdentificacion;
+    static override type = ModelType.NotaIngreso;
+    override type = ModelType.NotaIngreso;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) clienteDocumentoIdentificacion?: DocumentoIdentificacion;
     @Prop.Set() clienteCodigo?: string;
     @Prop.Set() clienteNombre?: string;
     @Prop.Set() clienteCelular?: number;
-    @Prop.Set( PropBehavior.model, x => new LiquidacionTipo( x ) ) liquidacion?: LiquidacionTipo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new LiquidacionTipo( x ) } ) liquidacion?: LiquidacionTipo;
 
-    @Prop.Set( PropBehavior.array, x => new NotaTransaccionSalidaDetalle( x ) ) detalles?: NotaTransaccionSalidaDetalle[];
-    @Prop.Set( PropBehavior.model, x => new NotaTransaccionSalidaCredito ) credito?: NotaTransaccionSalidaCredito;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaIngresoDetalle( x ) } ) detalles?: NotaIngresoDetalle[];
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaIngresoCredito( x ) } ) credito?: NotaIngresoCredito;
 
     @Prop.Set() override importeBruto?: number;
     @Prop.Set() importeDescuento?: number;
     @Prop.Set() override importeNeto?: number;
-    get decimalImportePrecioDescuento(): Decimal {
-        return Prop.toDecimal( this.importeDescuento );
-    }
+    get decimalImportePrecioDescuento(): Decimal { return Cast.toDecimal( this.importeDescuento ); }
 
 
     override get importeDevengado() {
@@ -39,54 +37,63 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
     }
 
 
-    constructor( item?: Partial<NotaTransaccionSalida> )
-    {
+    constructor( item?: OptionalModel<NotaIngreso> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set(item: Partial<NotaTransaccionSalida>): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<NotaIngreso> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this 
-    {
-        super.setRelation();
+    override assign( item: OptionalModel<NotaIngreso> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.detalles?.forEach( detalle => 
-            detalle.set({
-                notaTransaccionSalida: new NotaTransaccionSalida({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-            })
-            .setRelation()
-        )
 
-        this.credito?.set({
-            documentoFuente: new NotaTransaccionSalida({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-        });
-        
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, NotaIngreso.type, () => {
+
+            this.cliente?.setRelation( context );
+
+            this.clienteDocumentoIdentificacion?.setRelation( context );
+
+            this.liquidacion?.setRelation( context );
+
+            this.detalles?.forEach( item => item.assign( {
+                notaIngreso: this
+            } ).setRelation( context ) );
+
+            this.credito?.assign( {
+                documentoFuente: this
+            } ).setRelation( context )
+
+        } );
 
         return this;
     }
 
 
     // Detalles
-    agregarDetalle( detalle: NotaTransaccionSalidaDetalle ): this
-    {
+    agregarDetalle( detalle: NotaIngresoDetalle ): this {
+        this.detalles ??= [];
         this.detalles?.push( detalle );
         this.procesarInformacion();
         return this;
     }
 
 
-    actualizarDetalle( detalle: NotaTransaccionSalidaDetalle ): this
-    {
+    actualizarDetalle( detalle: NotaIngresoDetalle ): this {
         if ( this.detalles ) {
             const i = this.detalles.findIndex( x => x.isSameIdentity( detalle ) );
 
             if ( i !== -1 ) {
-                this.detalles[ i ] = detalle;
+                this.detalles[i] = detalle;
                 this.procesarInformacion();
             }
         }
@@ -95,24 +102,21 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
     }
 
 
-    eliminarDetalle( detalle: NotaTransaccionSalidaDetalle ): this
-    {
+    eliminarDetalle( detalle: NotaIngresoDetalle ): this {
         this.detalles = this.detalles?.filter( x => !x.isSameIdentity( detalle ) );
         this.procesarInformacion();
         return this;
     }
 
 
-    getDetalle( detalle: NotaTransaccionSalidaDetalle ): NotaTransaccionSalidaDetalle | undefined
-    {
+    getDetalle( detalle: NotaIngresoDetalle ): NotaIngresoDetalle | undefined {
         if ( !this.detalles ) return undefined;
         const i = this.detalles.findIndex( x => x.isSameIdentity( detalle ) );
-        return this.detalles[ i ];
+        return this.detalles[i];
     }
 
 
-    override procesarInformacion(): this 
-    {
+    override procesarInformacion(): this {
         super.procesarInformacion();
 
         try {
@@ -130,18 +134,18 @@ export class NotaTransaccionSalida extends DocumentoTransaccion
                 }
             );
 
-            this.set({
+            this.set( {
                 importeBruto: recordImportes?.importeBruto.toNumber(),
                 importeDescuento: recordImportes?.importeDescuento.toNumber(),
                 importeNeto: recordImportes?.importeBruto.minus( recordImportes.importeDescuento ).toNumber()
-            });
+            } );
         }
         catch ( error ) {
-            this.set({
+            this.set( {
                 importeBruto: 0,
                 importeDescuento: 0,
                 importeNeto: 0
-            });
+            } );
         }
 
         return this;

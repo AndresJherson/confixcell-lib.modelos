@@ -87,8 +87,8 @@ export class Proporcion
     // Método para verificar si esta proporción es equivalente a otra
     esEquivalente( otra: Proporcion ): boolean 
     {
-        const valorDecimal1 = this.antecedente / this.consecuente;
-        const valorDecimal2 = otra.antecedente / otra.consecuente;
+        const valorDecimal1 = new Decimal( this.antecedente ).div( this.consecuente ).toNumber();
+        const valorDecimal2 = new Decimal( otra.antecedente ).div( otra.consecuente ).toNumber();
         return valorDecimal1 === valorDecimal2 && this.tipo === otra.tipo;
     }
 

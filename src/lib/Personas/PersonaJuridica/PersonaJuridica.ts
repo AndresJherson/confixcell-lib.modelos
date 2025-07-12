@@ -1,4 +1,4 @@
-import { ModelType, Persona, Prop } from "../../../index";
+import { ModelType, OptionalModel, Persona, Prop } from "../../../index";
 
 @Prop.Class()
 export class PersonaJuridica extends Persona {
@@ -15,13 +15,18 @@ export class PersonaJuridica extends Persona {
     }
 
 
-    constructor( json?: Partial<PersonaJuridica> ) {
+    constructor( json?: OptionalModel<PersonaJuridica> ) {
         super();
         Prop.initialize( this, json );
     }
 
 
-    override set( item: Partial<PersonaJuridica> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<PersonaJuridica> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<PersonaJuridica> ): this {
+        return super.assign( item as OptionalModel<this> );
     }
 }

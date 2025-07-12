@@ -1,34 +1,42 @@
 import Decimal from 'decimal.js';
-import { DocumentoEntrada, EntradaEfectivo, Prop, PropBehavior } from '../../../../index';
+import { DocumentoEntrada, EntradaEfectivo, ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
 export class DocumentoEntradaEfectivo extends DocumentoEntrada {
-    static override type: string = 'DocumentoEntradaEfectivo';
-    override type: string = DocumentoEntradaEfectivo.type;
 
-    @Prop.Set( PropBehavior.array, x => new EntradaEfectivo( x ) ) entradas?: EntradaEfectivo[];
+    static override type = ModelType.DocumentoEntradaEfectivo;
+    override type = ModelType.DocumentoEntradaEfectivo;
+
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => EntradaEfectivo.initialize( [x] )[0] } ) entradas?: EntradaEfectivo[];
 
 
-    constructor( item?: Partial<DocumentoEntradaEfectivo> ) {
+    constructor( item?: OptionalModel<DocumentoEntradaEfectivo> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<DocumentoEntradaEfectivo> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoEntradaEfectivo> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<DocumentoEntradaEfectivo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.entradas?.forEach( entrada =>
-            entrada.set( {
-                documentoFuente: new DocumentoEntradaEfectivo( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } ),
-            } )
-                .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, DocumentoEntradaEfectivo.type, () => {
+
+            this.entradas?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) )
+
+        } );
 
         return this;
     }
@@ -54,6 +62,7 @@ export class DocumentoEntradaEfectivo extends DocumentoEntrada {
 
     // Entrada de Efectivo
     agregarEntrada( entrada: EntradaEfectivo ): this {
+        this.entradas ??= [];
         this.entradas?.unshift( entrada );
         this.procesarInformacion();
         return this;

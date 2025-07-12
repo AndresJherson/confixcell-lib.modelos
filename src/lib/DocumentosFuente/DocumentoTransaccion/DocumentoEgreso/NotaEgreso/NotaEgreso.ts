@@ -1,0 +1,159 @@
+import Decimal from 'decimal.js';
+import { Cast, ComprobanteTipo, DocumentoIdentificacion, DocumentoTransaccion, ExecutionContext, LiquidacionTipo, ModelType, NotaEgresoCredito, NotaEgresoDetalle, OptionalModel, Persona, Prop, PropBehavior } from '../../../../../index';
+
+@Prop.Class()
+export class NotaEgreso extends DocumentoTransaccion {
+
+    static override type = ModelType.NotaEgreso;
+    override type = ModelType.NotaEgreso;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ComprobanteTipo( x ) } ) comprobanteTipo?: ComprobanteTipo;
+    @Prop.Set() comprobanteCodigoSerie?: string;
+    @Prop.Set() comprobanteCodigoNumero?: number;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) proveedor?: Persona;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) proveedorDocumentoIdentificacion?: DocumentoIdentificacion;
+    @Prop.Set() proveedorCodigo?: string;
+    @Prop.Set() proveedorNombre?: string;
+    @Prop.Set() proveedorCelular?: number;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new LiquidacionTipo( x ) } ) liquidacion?: LiquidacionTipo;
+
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaEgresoDetalle( x ) } ) detalles?: NotaEgresoDetalle[];
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaEgresoCredito( x ) } ) credito?: NotaEgresoCredito;
+
+    @Prop.Set() override importeBruto?: number;
+    @Prop.Set() importeDescuento?: number;
+    get decimalImporteDescuento(): Decimal { return Cast.toDecimal( this.importeDescuento ); }
+
+
+    override get importeDevengado() {
+        return this.decimalImporteValorEntradaEfectivo
+            .plus( this.importeValorEntradaBienConsumo ?? 0 )
+            .toNumber();
+    }
+
+    override get importeLiquidado() {
+        return this.decimalImporteValorSalidaEfectivo
+            .plus( this.importeValorSalidaBienConsumo ?? 0 )
+            .plus( this.importeValorSalidaProduccion ?? 0 )
+            .toNumber();
+    }
+
+
+    constructor( item?: OptionalModel<NotaEgreso> ) {
+        super();
+        Prop.initialize( this, item );
+    }
+
+
+    override set( item: OptionalModel<NotaEgreso> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<NotaEgreso> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, NotaEgreso.type, () => {
+
+            this.comprobanteTipo?.setRelation( context );
+
+            this.proveedor?.setRelation( context );
+
+            this.proveedorDocumentoIdentificacion?.setRelation( context );
+
+            this.liquidacion?.setRelation( context );
+
+            this.detalles?.forEach( item => item.assign( {
+                notaEgreso: this
+            } ).setRelation( context ) )
+
+            this.credito?.assign( {
+                documentoFuente: this
+            } ).setRelation( context );
+
+        } );
+
+        return this;
+    }
+
+
+    // Detalles
+    agregarDetalle( detalle: NotaEgresoDetalle ): this {
+        this.detalles ??= [];
+        this.detalles?.push( detalle );
+        this.procesarInformacion();
+        return this;
+    }
+
+
+    actualizarDetalle( detalle: NotaEgresoDetalle ): this {
+        if ( this.detalles ) {
+            const i = this.detalles.findIndex( x => x.isSameIdentity( detalle ) );
+
+            if ( i !== -1 ) {
+                this.detalles[i] = detalle;
+                this.procesarInformacion();
+            }
+        }
+
+        return this;
+    }
+
+
+    eliminarDetalle( detalle: NotaEgresoDetalle ): this {
+        this.detalles = this.detalles?.filter( x => !x.isSameIdentity( detalle ) );
+        this.procesarInformacion();
+        return this;
+    }
+
+
+    getDetalle( detalle: NotaEgresoDetalle ): NotaEgresoDetalle | undefined {
+        if ( !this.detalles ) return undefined;
+        const i = this.detalles.findIndex( x => x.isSameIdentity( detalle ) );
+        return this.detalles[i];
+    }
+
+
+    override procesarInformacion(): this {
+        super.procesarInformacion();
+
+        try {
+            const recordImportes = this.detalles?.reduce(
+                ( importes, detalle ) => {
+                    detalle.procesarInformacion();
+                    return {
+                        importeBruto: importes.importeBruto.plus( detalle.importeBruto ?? 0 ),
+                        importeDescuento: importes.importeDescuento.plus( detalle.importeDescuento ?? 0 )
+                    };
+                },
+                {
+                    importeBruto: new Decimal( 0 ),
+                    importeDescuento: new Decimal( 0 )
+                }
+            );
+
+            this.set( {
+                importeBruto: recordImportes?.importeBruto.toNumber(),
+                importeDescuento: recordImportes?.importeDescuento.toNumber(),
+                importeNeto: recordImportes?.importeBruto.minus( recordImportes.importeDescuento ).toNumber()
+            } );
+        }
+        catch ( error ) {
+            this.set( {
+                importeBruto: 0,
+                importeDescuento: 0,
+                importeNeto: 0
+            } );
+        }
+
+        return this;
+    }
+
+}

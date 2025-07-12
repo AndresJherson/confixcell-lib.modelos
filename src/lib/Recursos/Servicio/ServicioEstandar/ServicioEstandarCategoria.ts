@@ -1,4 +1,4 @@
-import { Model, ModelType, Prop } from "../../../../index";
+import { Model, ModelType, OptionalModel, Prop } from "../../../../index";
 
 @Prop.Class()
 export class ServicioEstandarCategoria extends Model {
@@ -9,13 +9,18 @@ export class ServicioEstandarCategoria extends Model {
     @Prop.Set() nombre?: string;
 
 
-    constructor( json?: Partial<ServicioEstandarCategoria> ) {
+    constructor( json?: OptionalModel<ServicioEstandarCategoria> ) {
         super();
         Prop.initialize( this, json );
     }
 
 
-    override set( item: Partial<ServicioEstandarCategoria> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<ServicioEstandarCategoria> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<ServicioEstandarCategoria> ): this {
+        return super.assign( item as OptionalModel<this> );
     }
 }

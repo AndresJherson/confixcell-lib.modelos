@@ -1,8 +1,8 @@
-import { ModelType, Prop, PropBehavior, SuperUsuario, Usuario } from '../../../index';
+import { ExecutionContext, Model, ModelType, OptionalModel, Prop, PropBehavior, SuperUsuario } from '../../../index';
 
 @Prop.Class()
-export class SuperUsuarioEmpresa extends Usuario {
-    
+export class SuperUsuarioEmpresa extends Model {
+
     static override type: string = ModelType.SuperUsuarioEmpresa;
     override type: string = ModelType.SuperUsuarioEmpresa;
 
@@ -10,16 +10,36 @@ export class SuperUsuarioEmpresa extends Usuario {
     @Prop.Set() ruc?: string;
     @Prop.Set() celular?: number;
     @Prop.Set() domicilio?: string;
-    @Prop.Set( PropBehavior.model, x => new SuperUsuario( x ) ) superUsuario?: SuperUsuario;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuario( x ) } ) superUsuario?: SuperUsuario;
 
 
-    constructor( item?: Partial<SuperUsuarioEmpresa> ) {
+    constructor( item?: OptionalModel<SuperUsuarioEmpresa> ) {
         super();
         Prop.initialize( this, item );
     }
 
-    
-    override set( item: Partial<SuperUsuarioEmpresa> ): this {
-        return super.set( item as Partial<this> );
+
+    override set( item: OptionalModel<SuperUsuarioEmpresa> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+    override assign( item: OptionalModel<SuperUsuarioEmpresa> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+        
+        context.execute( this, SuperUsuarioEmpresa.type, () => {
+
+            this.superUsuario?.assign( {
+                empresa: this
+            } ).setRelation( context )
+
+        } );
+
+        return this;
     }
 }

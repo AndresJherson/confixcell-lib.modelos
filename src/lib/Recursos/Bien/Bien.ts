@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { ModelType, Prop, Recurso } from "../../../index";
+import { Cast, ModelType, OptionalModel, Prop, Recurso } from "../../../index";
 
 @Prop.Class()
 export class Bien extends Recurso {
@@ -8,23 +8,26 @@ export class Bien extends Recurso {
     override type = ModelType.Bien;
 
     @Prop.Set() precioUnitario?: number;
-    get decimalPrecioUnitario(): Decimal {
-        return Prop.toDecimal( this.precioUnitario );
-    }
+    get decimalPrecioUnitario(): Decimal { return Cast.toDecimal( this.precioUnitario ); }
 
 
-    constructor( json?: Partial<Bien> ) {
+    constructor( json?: OptionalModel<Bien> ) {
         super();
         Prop.initialize( this, json );
     }
 
 
-    override set( item: Partial<Bien> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<Bien> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    static override initialize( data: Partial<Bien>[] ): Bien[] {
-        return data.map( item => new ( Prop.GetClass<Bien>( item ) ?? Bien )( item ) )
+    override assign( item: OptionalModel<Bien> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    static override initialize( data: OptionalModel<Bien>[] ): Bien[] {
+        return data.map( item => new ( Prop.getClass<Bien>( item ) ?? Bien )( item ) )
     }
 }

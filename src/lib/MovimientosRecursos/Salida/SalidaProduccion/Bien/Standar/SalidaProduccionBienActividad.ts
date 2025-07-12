@@ -1,38 +1,69 @@
 import Decimal from 'decimal.js';
-import { Model, Prop, PropBehavior, SalidaProduccionBienRecursoBienCapital, SalidaProduccionBienRecursoBienConsumo, SalidaProduccionBienRecursoServicio, SalidaProduccionBienStandar } from '../../../../../../index';
+import { Cast, ExecutionContext, Model, ModelType, OptionalModel, Prop, PropBehavior, SalidaProduccionBienRecursoBienCapital, SalidaProduccionBienRecursoBienConsumo, SalidaProduccionBienRecursoServicio, SalidaProduccionBienStandar } from '../../../../../../index';
 import { DateTime } from 'luxon';
 
 @Prop.Class()
 export class SalidaProduccionBienActividad extends Model {
-    static override type: string = 'SalidaProduccionBienActividad';
-    override type: string = SalidaProduccionBienActividad.type;
 
-    @Prop.Set( PropBehavior.model, x => new SalidaProduccionBienStandar( x ) ) salidaProduccionBienStandar?: SalidaProduccionBienStandar;
+    static override type = ModelType.SalidaProduccionBienActividad;
+    override type = ModelType.SalidaProduccionBienActividad;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionBienStandar( x ) } ) salidaProduccionBienStandar?: SalidaProduccionBienStandar;
     @Prop.Set() nombre?: string;
 
-    @Prop.Set( PropBehavior.datetime ) fechaInicio?: string;
-    @Prop.Set( PropBehavior.datetime ) fechaFinal?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaFinal?: string;
 
-    get dateTimeInicio(): DateTime {
-        return Prop.toDateTime( this.fechaInicio );
-    }
-    get dateTimeFinal(): DateTime {
-        return Prop.toDateTime( this.fechaFinal );
-    }
+    get dateTimeInicio(): DateTime { return Cast.toDateTime( this.fechaInicio ); }
+    get dateTimeFinal(): DateTime { return Cast.toDateTime( this.fechaFinal ); }
 
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoBienConsumo( x ) ) recursosBienConsumo?: SalidaProduccionBienRecursoBienConsumo[];
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoBienCapital( x ) ) recursosBienCapital?: SalidaProduccionBienRecursoBienCapital[];
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienRecursoServicio( x ) ) recursosServicio?: SalidaProduccionBienRecursoServicio[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionBienRecursoBienConsumo( x ) } ) recursosBienConsumo?: SalidaProduccionBienRecursoBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionBienRecursoBienCapital( x ) } ) recursosBienCapital?: SalidaProduccionBienRecursoBienCapital[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionBienRecursoServicio( x ) } ) recursosServicio?: SalidaProduccionBienRecursoServicio[];
 
     @Prop.Set() importeCostoNeto?: number;
-    get decimalImporteCostoNeto(): Decimal {
-        return Prop.toDecimal( this.importeCostoNeto );
+    get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
+
+
+    constructor( item?: OptionalModel<SalidaProduccionBienActividad> ) {
+        super();
+        Prop.initialize( this, item );
     }
 
 
-    constructor( item?: Partial<SalidaProduccionBienActividad> ) {
-        super();
-        Prop.initialize( this, item );
+    override set( item: OptionalModel<SalidaProduccionBienActividad> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<SalidaProduccionBienActividad> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, SalidaProduccionBienActividad.type, () => {
+
+            this.salidaProduccionBienStandar?.setRelation( context );
+
+            this.recursosBienConsumo?.forEach( recurso => recurso.assign( {
+                actividad: this
+            } ).setRelation( context ) )
+
+            this.recursosBienCapital?.forEach( recurso => recurso.assign( {
+                actividad: this
+            } ).setRelation( context ) )
+
+            this.recursosServicio?.forEach( recurso => recurso.assign( {
+                actividad: this
+            } ).setRelation( context ) )
+
+        } );
+
+        return this;
     }
 
 
@@ -73,6 +104,7 @@ export class SalidaProduccionBienActividad extends Model {
 
     // recursos bien consumo
     agregarRecursoBienConsumo( recurso: SalidaProduccionBienRecursoBienConsumo ): this {
+        this.recursosBienConsumo ??= [];
         this.recursosBienConsumo?.unshift( recurso );
         this.procesarInformacion();
         return this;
@@ -109,6 +141,7 @@ export class SalidaProduccionBienActividad extends Model {
 
     // recursos bien capital
     agregarRecursoBienCapital( recurso: SalidaProduccionBienRecursoBienCapital ): this {
+        this.recursosBienCapital ??= [];
         this.recursosBienCapital?.unshift( recurso );
         this.procesarInformacion();
         return this;
@@ -145,6 +178,7 @@ export class SalidaProduccionBienActividad extends Model {
 
     // recursos servicio
     agregarRecursoServicio( recurso: SalidaProduccionBienRecursoServicio ): this {
+        this.recursosServicio ??= [];
         this.recursosServicio?.unshift( recurso );
         this.procesarInformacion();
         return this;

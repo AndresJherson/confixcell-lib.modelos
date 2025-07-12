@@ -1,92 +1,97 @@
 import Decimal from 'decimal.js';
-import { Credito, ICredito, Prop, PropBehavior, Proporcion, SalidaEfectivo, SalidaEfectivoCuota, TipoProporcion } from '../../../../index';
+import { Credito, ExecutionContext, ICredito, ModelType, OptionalModel, Prop, PropBehavior, SalidaEfectivo, SalidaEfectivoCuota } from '../../../../index';
 
 @Prop.Class()
-export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito {
-    static override type: string = 'SalidaEfectivoCredito';
-    override type: string = SalidaEfectivoCredito.type;
+export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<SalidaEfectivoCuota> {
 
-    @Prop.Set() tasaInteresDiario?: number;
-    @Prop.Set() importeInteres?: number;
-    @Prop.Set() porcentajeInteres?: number;
-    @Prop.Set() importeValorFinal?: number;
+    static override type = ModelType.SalidaEfectivoCredito;
+    override type = ModelType.SalidaEfectivoCredito;
 
-    get decimalTasaInteresDiario(): Decimal {
-        return Prop.toDecimal( this.tasaInteresDiario );
-    }
-    get decimalImporteInteres(): Decimal {
-        return Prop.toDecimal( this.importeInteres );
-    }
-    get decimalPorcentajeInteres(): Decimal {
-        return Prop.toDecimal( this.porcentajeInteres );
-    }
-    get decimalImporteValorFinal(): Decimal {
-        return Prop.toDecimal( this.importeValorFinal );
-    }
+    protected readonly credito: Credito<SalidaEfectivoCuota> = new Credito<SalidaEfectivoCuota>();
 
-    @Prop.Set( PropBehavior.array, x => new SalidaEfectivoCuota( x ) ) cuotas?: SalidaEfectivoCuota[];
+    @Prop.Set() tasaInteresDiario?: number | undefined;
+    @Prop.Set() importeInteres?: number | undefined;
+    @Prop.Set() porcentajeInteres?: number | undefined;
+    @Prop.Set() importeValorFinal?: number | undefined;
 
-    @Prop.Set() duracionMinutos?: number;
-    interesXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
-    amortizacionXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
-    cuotaXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
-    credito: Credito = new Credito();
+    override get decimalImporteValorNeto(): Decimal { return this.credito.decimalImporteValorNeto }
+    get decimalTasaInteresDiario(): Decimal { return this.credito.decimalTasaInteresDiario }
+    get decimalImporteInteres(): Decimal { return this.credito.decimalImporteInteres }
+    get decimalPorcentajeInteres(): Decimal { return this.credito.decimalPorcentajeInteres }
+    get decimalImporteValorFinal(): Decimal { return this.credito.decimalImporteValorFinal }
 
-    get decimalDuracionMinutos(): Decimal {
-        return Prop.toDecimal( this.duracionMinutos );
-    }
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaEfectivoCuota( x ) } ) declare cuotas?: SalidaEfectivoCuota[];
 
-    constructor( item?: Partial<SalidaEfectivoCredito> ) {
+    get decimalDuracionMinutos() { return this.credito.decimalDuracionMinutos; }
+    get interesXminuto() { return this.credito.interesXminuto; }
+    get amortizacionXminuto() { return this.credito.amortizacionXminuto; }
+    get cuotaXminuto() { return this.credito.cuotaXminuto; }
+
+
+
+    constructor( item?: OptionalModel<SalidaEfectivoCredito> ) {
         super()
         Prop.initialize( this, item );
+        Prop.extends( this, 'credito', this.credito );
     }
 
 
-    override set( item: Partial<SalidaEfectivoCredito> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<SalidaEfectivoCredito> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<SalidaEfectivoCredito> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.cuotas?.forEach( cuota =>
-            cuota.set( {
-                credito: new SalidaEfectivoCredito( { id: this.id, uuid: this.uuid, symbol: this.symbol } )
-            } )
-                .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        this.credito.setRelation( context );
 
         return this;
     }
 
 
     agregarCuota( cuota: SalidaEfectivoCuota ): this {
-        return this.credito.agregarCuota( this, cuota );
+        this.credito.agregarCuota( cuota );
+        return this;
     }
 
 
     actualizarCuota( cuota: SalidaEfectivoCuota ): this {
-        return this.credito.actualizarCuota( this, cuota );
+        this.credito.actualizarCuota( cuota );
+        return this;
     }
 
 
     eliminarCuota( cuota: SalidaEfectivoCuota ): this {
-        return this.credito.eliminarCuota( this, cuota );
+        this.credito.eliminarCuota( cuota );
+        return this;
     }
 
 
     getCuota( cuota: SalidaEfectivoCuota ): SalidaEfectivoCuota | undefined {
-        return this.credito.getCuota( this, cuota );
+        return this.credito.getCuota( cuota );
     }
 
 
     override procesarInformacion(): this {
-        return this.credito.procesarInformacion( this );
+        return this.procesarCredito();
+    }
+
+
+    procesarCredito(): this {
+        this.credito.procesarCredito();
+        return this;
     }
 
 
     procesarPagos( importeCobrado: number ): this {
-        return this.credito.procesarPagos( this, importeCobrado );
+        this.procesarPagos( importeCobrado );
+        return this;
     }
 }

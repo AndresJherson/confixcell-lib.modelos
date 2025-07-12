@@ -1,34 +1,42 @@
 import Decimal from 'decimal.js';
-import { DocumentoEntrada, EntradaBienConsumo, EntradaBienConsumoValorNuevo, EntradaBienConsumoValorSalida, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, Prop, PropBehavior } from '../../../../index';
+import { DocumentoEntrada, EntradaBienConsumo, EntradaBienConsumoValorNuevo, EntradaBienConsumoValorSalida, ExecutionContext, KardexBienConsumo, KardexMovimientoBienConsumo, ModelType, MovimientoTipoBienConsumo, OptionalModel, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
 export class DocumentoEntradaBienConsumo extends DocumentoEntrada {
-    static override type: string = 'DocumentoEntradaBienConsumo';
-    override type: string = DocumentoEntradaBienConsumo.type;
 
-    @Prop.Set( PropBehavior.array, x => new EntradaBienConsumo( x ) ) entradas?: EntradaBienConsumo[];
+    static override type = ModelType.DocumentoEntradaBienConsumo;
+    override type = ModelType.DocumentoEntradaBienConsumo;
+
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => EntradaBienConsumo.initialize( [x] ) } ) entradas?: EntradaBienConsumo[];
 
 
-    constructor( item?: Partial<DocumentoEntradaBienConsumo> ) {
+    constructor( item?: OptionalModel<DocumentoEntradaBienConsumo> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<DocumentoEntradaBienConsumo> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoEntradaBienConsumo> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<DocumentoEntradaBienConsumo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.entradas?.forEach( entrada =>
-            entrada.set( {
-                documentoFuente: new DocumentoEntradaBienConsumo( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } ),
-            } )
-                .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, DocumentoEntradaBienConsumo.type, () => {
+
+            this.entradas?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) )
+
+        } );
 
         return this;
     }
@@ -54,6 +62,7 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada {
 
     // Entrada de Bien de Consumo
     agregarEntrada( entrada: EntradaBienConsumo ): this {
+        this.entradas ??= [];
         this.entradas?.unshift( entrada );
         this.procesarInformacion();
         return this;
@@ -81,7 +90,7 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada {
     }
 
 
-    getEntrada( entrada: EntradaBienConsumo ) {
+    getEntrada( entrada: EntradaBienConsumo ): EntradaBienConsumo | undefined {
         if ( !this.entradas ) return undefined;
         const i = this.entradas.findIndex( ent => ent.isSameIdentity( entrada ) )
         return this.entradas[i];

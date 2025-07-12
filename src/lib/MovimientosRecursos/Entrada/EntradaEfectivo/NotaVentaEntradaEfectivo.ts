@@ -1,31 +1,46 @@
 import { DateTime } from 'luxon';
-import { EntradaEfectivo, MedioTransferencia, NotaVenta, Prop, PropBehavior } from '../../../../index';
+import { Cast, EntradaEfectivo, ExecutionContext, MedioTransferencia, ModelType, NotaVenta, OptionalModel, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
-export class NotaVentaEntradaEfectivo extends EntradaEfectivo
-{
-    static override type: string = 'NotaVentaEntradaEfectivo';
-    override type: string = NotaVentaEntradaEfectivo.type;
+export class NotaVentaEntradaEfectivo extends EntradaEfectivo {
 
-    @Prop.Set( PropBehavior.model, x => new NotaVenta( x ) ) declare documentoFuente?: NotaVenta;
+    static override type = ModelType.NotaVentaEntradaEfectivo;
+    override type = ModelType.NotaVentaEntradaEfectivo;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta;
     @Prop.Set() numero?: number;
-    @Prop.Set( PropBehavior.model, x => new MedioTransferencia( x ) ) medioTransferencia?: MedioTransferencia;
-    
-    @Prop.Set( PropBehavior.datetime ) fecha?: string;
-    get dateTimeFecha(): DateTime {
-        return Prop.toDateTime( this.fecha );
-    }
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia;
 
-    
-    constructor( item?: Partial<NotaVentaEntradaEfectivo> )
-    {
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
+    get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
+
+
+    constructor( item?: OptionalModel<NotaVentaEntradaEfectivo> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set(item: Partial<NotaVentaEntradaEfectivo>): this 
-    {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<NotaVentaEntradaEfectivo> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<NotaVentaEntradaEfectivo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, NotaVentaEntradaEfectivo.type, () => {
+
+            this.medioTransferencia?.setRelation( context );
+
+        } );
+
+        return this;
     }
 }

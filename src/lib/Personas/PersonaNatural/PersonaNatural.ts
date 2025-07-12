@@ -1,4 +1,4 @@
-import { Genero, ModelType, Persona, Prop, PropBehavior } from "../../../index";
+import { ExecutionContext, Genero, ModelType, OptionalModel, Persona, Prop, PropBehavior } from "../../../index";
 
 @Prop.Class()
 export class PersonaNatural extends Persona {
@@ -8,7 +8,7 @@ export class PersonaNatural extends Persona {
 
     @Prop.Set() nombre?: string;
     @Prop.Set() apellido?: string;
-    @Prop.Set( PropBehavior.model, x => new Genero( x ) ) genero?: Genero;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Genero( x ) } ) genero?: Genero;
     @Prop.Set() domicilio?: string;
     @Prop.Set() celular?: number;
     @Prop.Set() celularRespaldo?: number;
@@ -19,13 +19,30 @@ export class PersonaNatural extends Persona {
     }
 
 
-    constructor( json?: Partial<PersonaNatural> ) {
+    constructor( json?: OptionalModel<PersonaNatural> ) {
         super();
         Prop.initialize( this, json );
     }
 
 
-    override set( item: Partial<PersonaNatural> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<PersonaNatural> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<PersonaNatural> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, PersonaNatural.type, () => {
+            this.genero?.setRelation( context );
+        } );
+
+        return this;
     }
 }

@@ -1,28 +1,48 @@
-import { Prop, PropBehavior, SalidaProduccion, Servicio } from '../../../../../index';
+import { ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaProduccion, Servicio } from '../../../../../index';
 
 @Prop.Class()
 export class SalidaProduccionServicio extends SalidaProduccion {
-    static override type: string = 'SalidaProduccionServicio';
-    override type: string = SalidaProduccionServicio.type;
 
-    @Prop.Set( PropBehavior.model, x => new Servicio( x ) ) servicio?: Servicio;
+    static override type = ModelType.SalidaProduccionServicio;
+    override type = ModelType.SalidaProduccionServicio;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) servicio?: Servicio;
 
 
-    constructor( item?: Partial<SalidaProduccionServicio> ) {
+    constructor( item?: OptionalModel<SalidaProduccionServicio> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<SalidaProduccionServicio> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<SalidaProduccionServicio> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    static override initialize( data: Partial<SalidaProduccionServicio>[] ): SalidaProduccionServicio[] {
+    override assign( item: OptionalModel<SalidaProduccionServicio> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, SalidaProduccionServicio.type, () => {
+
+            this.servicio?.setRelation( context );
+
+        } );
+
+        return this;
+    }
+
+
+    static override initialize( data: OptionalModel<SalidaProduccionServicio>[] ): SalidaProduccionServicio[] {
         return data.map( item =>
             new (
-                Prop.GetClass<SalidaProduccionServicio>( item )
+                Prop.getClass<SalidaProduccionServicio>( item )
                 ?? SalidaProduccionServicio
             )( item )
         )

@@ -1,4 +1,4 @@
-import { BienConsumo, Calidad, ModelType, PantallaModelo, Prop, PropBehavior } from "../../../../../index";
+import { BienConsumo, Calidad, ExecutionContext, ModelType, OptionalModel, PantallaModelo, Prop, PropBehavior } from "../../../../../index";
 
 @Prop.Class()
 export class PantallaModeloCalidad extends BienConsumo {
@@ -6,9 +6,9 @@ export class PantallaModeloCalidad extends BienConsumo {
     static override type = ModelType.PantallaModeloCalidad;
     override type = ModelType.PantallaModeloCalidad;
 
-    @Prop.Set( PropBehavior.model, x => new PantallaModelo( x ) ) modelo?: PantallaModelo;
-    @Prop.Set( PropBehavior.model, x => new Calidad( x ) ) calidad?: Calidad;
-    @Prop.Set( PropBehavior.boolean, () => true ) override esSalida?: boolean = true;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaModelo( x ) } ) modelo?: PantallaModelo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Calidad( x ) } ) calidad?: Calidad;
+    @Prop.Set( { behavior: PropBehavior.boolean, getValue: () => true } ) override esSalida?: boolean = true;
 
     override get nombreCompleto() {
         const nombreCompleto = `${this.modelo?.nombreCompleto ?? ''} ${this.calidad?.nombre ?? ''}`.trim();
@@ -16,13 +16,33 @@ export class PantallaModeloCalidad extends BienConsumo {
     }
 
 
-    constructor( json?: Partial<PantallaModeloCalidad> ) {
+    constructor( json?: OptionalModel<PantallaModeloCalidad> ) {
         super();
         Prop.initialize( this, json );
     }
 
 
-    override set( item: Partial<PantallaModeloCalidad> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<PantallaModeloCalidad> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<PantallaModeloCalidad> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, PantallaModeloCalidad.type, () => {
+
+            this.modelo?.setRelation( context );
+            this.calidad?.setRelation( context );
+
+        } );
+
+        return this;
     }
 }

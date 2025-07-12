@@ -1,19 +1,37 @@
-import { MedioTransferencia, Prop, PropBehavior, SalidaEfectivo } from '../../../../index';
+import { ExecutionContext, MedioTransferencia, ModelType, OptionalModel, Prop, PropBehavior, SalidaEfectivo } from '../../../../index';
 
 @Prop.Class()
 export class SalidaEfectivoContado extends SalidaEfectivo {
-    static override type: string = 'SalidaEfectivoContado';
-    override type: string = SalidaEfectivoContado.type;
 
-    @Prop.Set( PropBehavior.model, x => new MedioTransferencia( x ) ) medioTransferencia?: MedioTransferencia;
+    static override type = ModelType.SalidaEfectivoContado;
+    override type = ModelType.SalidaEfectivoContado;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia;
 
 
-    constructor( item?: Partial<SalidaEfectivoContado> ) {
+    constructor( item?: OptionalModel<SalidaEfectivoContado> ) {
         super()
         Prop.initialize( this, item );
     }
 
-    override set( item: Partial<SalidaEfectivoContado> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<SalidaEfectivoContado> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<SalidaEfectivoContado> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, SalidaEfectivoContado.type, () => {
+            this.medioTransferencia?.setRelation( context );
+        } );
+
+        return this;
     }
 }

@@ -1,40 +1,45 @@
 import Decimal from 'decimal.js';
-import { DocumentoSalida, Prop, PropBehavior, SalidaProduccion } from '../../../../index';
+import { Cast, DocumentoSalida, ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaProduccion } from '../../../../index';
 
 @Prop.Class()
 export class DocumentoSalidaProduccion extends DocumentoSalida {
-    static override type: string = 'DocumentoSalidaProduccion';
-    override type: string = DocumentoSalidaProduccion.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccion( x ) ) salidas?: SalidaProduccion[];
+    static override type = ModelType.DocumentoSalidaProduccion;
+    override type = ModelType.DocumentoSalidaProduccion;
+
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaProduccion.initialize( [x] )[0] } ) salidas?: SalidaProduccion[];
 
     @Prop.Set() importeCostoNeto?: number;
-    get decimalImporteCostoNeto(): Decimal {
-        return Prop.toDecimal( this.importeCostoNeto );
-    }
+    get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
 
 
-
-    constructor( item?: Partial<DocumentoSalidaProduccion> ) {
+    constructor( item?: OptionalModel<DocumentoSalidaProduccion> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<DocumentoSalidaProduccion> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoSalidaProduccion> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<DocumentoSalidaProduccion> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.salidas?.forEach( salida =>
-            salida.set( {
-                documentoFuente: new DocumentoSalidaProduccion( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } ),
-            } )
-                .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, DocumentoSalidaProduccion.type, () => {
+
+            this.salidas?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) )
+
+        } );
 
         return this;
     }
@@ -76,6 +81,7 @@ export class DocumentoSalidaProduccion extends DocumentoSalida {
 
     // Salida de Producción
     agregarSalida( salida: SalidaProduccion ): this {
+        this.salidas ??= [];
         this.salidas?.unshift( salida );
         this.procesarInformacion();
         return this;

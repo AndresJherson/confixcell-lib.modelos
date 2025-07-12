@@ -1,39 +1,45 @@
 import Decimal from 'decimal.js';
-import { DocumentoSalida, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, Prop, PropBehavior, SalidaBienConsumo, SalidaBienConsumoValorEntrada, SalidaBienConsumoValorNuevo } from '../../../../index';
+import { Cast, DocumentoSalida, ExecutionContext, KardexBienConsumo, KardexMovimientoBienConsumo, ModelType, MovimientoTipoBienConsumo, OptionalModel, Prop, PropBehavior, SalidaBienConsumo, SalidaBienConsumoValorEntrada, SalidaBienConsumoValorNuevo } from '../../../../index';
 
 @Prop.Class()
 export class DocumentoSalidaBienConsumo extends DocumentoSalida {
-    static override type: string = 'DocumentoSalidaBienConsumo';
-    override type: string = DocumentoSalidaBienConsumo.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaBienConsumo( x ) ) salidas?: SalidaBienConsumo[];
+    static override type = ModelType.DocumentoSalidaBienConsumo;
+    override type = ModelType.DocumentoSalidaBienConsumo;
+
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaBienConsumo.initialize( [x] )[0] } ) salidas?: SalidaBienConsumo[];
 
     @Prop.Set() importeCostoNeto?: number;
-    get decimalImporteCostoNeto(): Decimal {
-        return Prop.toDecimal( this.importeCostoNeto );
-    }
+    get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
 
 
-    constructor( item?: Partial<DocumentoSalidaBienConsumo> ) {
+    constructor( item?: OptionalModel<DocumentoSalidaBienConsumo> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<DocumentoSalidaBienConsumo> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoSalidaBienConsumo> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<DocumentoSalidaBienConsumo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.salidas?.forEach( salida =>
-            salida.set( {
-                documentoFuente: new DocumentoSalidaBienConsumo( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } ),
-            } )
-                .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, DocumentoSalidaBienConsumo.type, () => {
+
+            this.salidas?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) )
+
+        } );
 
         return this;
     }
@@ -57,7 +63,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida {
                 }
             );
 
-            
+
             this.set( {
                 importeCostoNeto: recordImportes?.importeCostoNeto.toNumber(),
                 importeNeto: recordImportes?.importeValorNeto.toNumber()
@@ -76,6 +82,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida {
 
     // Salida de Bien de Consumo
     agregarSalida( salida: SalidaBienConsumo ): this {
+        this.salidas ??= [];
         this.salidas?.unshift( salida );
         this.procesarInformacion();
         return this;

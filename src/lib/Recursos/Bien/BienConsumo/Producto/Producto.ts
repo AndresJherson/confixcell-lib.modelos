@@ -1,4 +1,4 @@
-import { BienConsumo, Magnitud, ModelType, ProductoCategoria, ProductoMarca, Prop, PropBehavior } from "../../../../../index";
+import { BienConsumo, ExecutionContext, Magnitud, ModelType, OptionalModel, ProductoCategoria, ProductoMarca, Prop, PropBehavior } from "../../../../../index";
 
 @Prop.Class()
 export class Producto extends BienConsumo {
@@ -7,9 +7,9 @@ export class Producto extends BienConsumo {
     override type = ModelType.Producto;
 
     @Prop.Set() nombre?: string;
-    @Prop.Set( PropBehavior.model, x => new ProductoMarca( x ) ) marca?: ProductoMarca;
-    @Prop.Set( PropBehavior.model, x => new Magnitud( x ) ) magnitud?: Magnitud;
-    @Prop.Set( PropBehavior.model, x => new ProductoCategoria( x ) ) categoria?: ProductoCategoria;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ProductoMarca( x ) } ) marca?: ProductoMarca;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Magnitud( x ) } ) magnitud?: Magnitud;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ProductoCategoria( x ) } ) categoria?: ProductoCategoria;
 
     override get nombreCompleto() {
         const nombreCompleto = `${this.nombre ?? ''} ${this.marca?.nombre ?? ''} ${this.magnitud?.nombre ?? ''}`.trim()
@@ -17,13 +17,34 @@ export class Producto extends BienConsumo {
     }
 
 
-    constructor( json?: Partial<Producto> ) {
+    constructor( json?: OptionalModel<Producto> ) {
         super();
         Prop.initialize( this, json );
     }
 
 
-    override set( item: Partial<Producto> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<Producto> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<Producto> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+    
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, Producto.type, () => {
+
+            this.marca?.setRelation( context );
+            this.magnitud?.setRelation( context );
+            this.categoria?.setRelation( context );
+
+        } );
+
+        return this;
     }
 }

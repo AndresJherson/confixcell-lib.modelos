@@ -1,4 +1,4 @@
-import { Model, ModelType, Prop } from "../../../../../index";
+import { Model, ModelType, OptionalModel, Prop } from "../../../../../index";
 
 @Prop.Class()
 export class PantallaMarca extends Model {
@@ -9,13 +9,18 @@ export class PantallaMarca extends Model {
     @Prop.Set() nombre?: string;
 
 
-    constructor( json?: Partial<PantallaMarca> ) {
+    constructor( json?: OptionalModel<PantallaMarca> ) {
         super();
         Prop.initialize( this, json );
     }
 
 
-    override set( item: Partial<PantallaMarca> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<PantallaMarca> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+    
+    override assign( item: OptionalModel<PantallaMarca> ): this {
+        return super.assign( item as OptionalModel<this> );
     }
 }

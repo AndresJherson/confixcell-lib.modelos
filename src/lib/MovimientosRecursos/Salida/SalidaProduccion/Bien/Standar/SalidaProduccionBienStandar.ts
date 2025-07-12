@@ -1,41 +1,47 @@
 import Decimal from 'decimal.js';
-import { Prop, PropBehavior, SalidaProduccionBien, SalidaProduccionBienActividad } from '../../../../../../index';
+import { ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaProduccionBien, SalidaProduccionBienActividad } from '../../../../../../index';
 
 @Prop.Class()
 export class SalidaProduccionBienStandar extends SalidaProduccionBien {
-    static override type: string = 'SalidaProduccionBienStandar';
-    override type: string = SalidaProduccionBienStandar.type;
+    static override type = ModelType.SalidaProduccionBienStandar;
+    override type = ModelType.SalidaProduccionBienStandar;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionBienActividad( x ) ) actividades?: SalidaProduccionBienActividad[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividades?: SalidaProduccionBienActividad[];
 
-    constructor( item?: Partial<SalidaProduccionBienStandar> ) {
+    constructor( item?: OptionalModel<SalidaProduccionBienStandar> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<SalidaProduccionBienStandar> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<SalidaProduccionBienStandar> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<SalidaProduccionBienStandar> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.actividades?.forEach( act =>
-            act.set( {
-                salidaProduccionBienStandar: new SalidaProduccionBienStandar( { id: this.id, uuid: this.uuid, symbol: this.symbol } ),
-                recursosBienConsumo: act.recursosBienConsumo?.map( recurso =>
-                    recurso.set( {
-                        actividad: new SalidaProduccionBienActividad( { id: act.id, uuid: act.uuid, symbol: act.symbol } )
-                    } )
-                        .setRelation()
-                )
-            } )
-                .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, SalidaProduccionBienStandar.type, () => {
+
+            this.actividades?.forEach( act => {
+
+                act.assign( {
+                    salidaProduccionBienStandar: this
+                } ).setRelation( context )
+
+            } );
+
+        } );
 
         return this;
+
     }
 
 
@@ -61,6 +67,7 @@ export class SalidaProduccionBienStandar extends SalidaProduccionBien {
 
     // actividades
     agregarActividad( salida: SalidaProduccionBienActividad ): this {
+        this.actividades ??= [];
         this.actividades?.unshift( salida );
         this.procesarInformacion();
         return this;

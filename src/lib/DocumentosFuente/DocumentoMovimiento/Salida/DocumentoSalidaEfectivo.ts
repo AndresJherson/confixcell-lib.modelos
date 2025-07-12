@@ -1,52 +1,56 @@
 import Decimal from 'decimal.js';
-import { DocumentoSalida, Prop, PropBehavior, SalidaEfectivo } from '../../../../index';
+import { DocumentoSalida, ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaEfectivo } from '../../../../index';
 
 @Prop.Class()
-export class DocumentoSalidaEfectivo extends DocumentoSalida
-{
-    static override type: string = 'DocumentoSalidaEfectivo';
-    override type: string = DocumentoSalidaEfectivo.type;
+export class DocumentoSalidaEfectivo extends DocumentoSalida {
 
-    @Prop.Set( PropBehavior.array, x => new SalidaEfectivo( x ) ) salidas?: SalidaEfectivo[];
+    static override type = ModelType.DocumentoSalidaEfectivo;
+    override type = ModelType.DocumentoSalidaEfectivo;
 
-    
-    constructor( item?: Partial<DocumentoSalidaEfectivo> )
-    {
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaEfectivo.initialize( [x] )[0] } ) salidas?: SalidaEfectivo[];
+
+
+    constructor( item?: OptionalModel<DocumentoSalidaEfectivo> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set(item: Partial<DocumentoSalidaEfectivo>): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoSalidaEfectivo> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this 
-    {
-        super.setRelation();
+    override assign( item: OptionalModel<DocumentoSalidaEfectivo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.salidas?.forEach( salida => 
-            salida.set({
-                documentoFuente: new DocumentoSalidaEfectivo({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero }),
-            })
-            .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, DocumentoSalidaEfectivo.type, () => {
+
+            this.salidas?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) )
+
+        } );
 
         return this;
     }
 
 
-    override procesarInformacion(): this
-    {
+    override procesarInformacion(): this {
         super.procesarInformacion();
-        
+
         try {
             this.importeNeto = this.salidas?.reduce(
                 ( decimal, salida ) => decimal.plus( salida.procesarInformacion().importeValorNeto ?? 0 ),
                 new Decimal( 0 )
             )
-            .toNumber();
+                .toNumber();
         }
         catch ( error ) {
             this.importeNeto = 0;
@@ -57,21 +61,20 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
 
 
     // Salida de Efectivo
-    agregarSalida( salida: SalidaEfectivo ): this
-    {
+    agregarSalida( salida: SalidaEfectivo ): this {
+        this.salidas ??= [];
         this.salidas?.unshift( salida );
         this.procesarInformacion();
         return this;
     }
 
 
-    actualizarSalida( salida: SalidaEfectivo ): this
-    {
+    actualizarSalida( salida: SalidaEfectivo ): this {
         if ( this.salidas ) {
             const i = this.salidas.findIndex( sal => sal.isSameIdentity( salida ) );
-    
+
             if ( i !== -1 ) {
-                this.salidas[ i ] = salida;
+                this.salidas[i] = salida;
                 this.procesarInformacion();
             }
         }
@@ -80,18 +83,16 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida
     }
 
 
-    eliminarSalida( salida: SalidaEfectivo ): this
-    {
+    eliminarSalida( salida: SalidaEfectivo ): this {
         this.salidas = this.salidas?.filter( sal => !sal.isSameIdentity( salida ) );
         this.procesarInformacion();
         return this;
     }
 
 
-    getSalida( salida: SalidaEfectivo ): SalidaEfectivo | undefined
-    {
+    getSalida( salida: SalidaEfectivo ): SalidaEfectivo | undefined {
         if ( !this.salidas ) return undefined;
         const i = this.salidas.findIndex( sal => sal.isSameIdentity( salida ) );
-        return this.salidas[ i ];
+        return this.salidas[i];
     }
 }

@@ -1,42 +1,59 @@
 import { DateTime } from 'luxon';
-import { Model, NotaVentaCategoriaReparacion, NotaVentaSalidaProduccionServicioReparacion, Prop, PropBehavior } from '../../../../../../index';
+import { Cast, ExecutionContext, Model, ModelType, NotaVentaSalidaProduccionServicioReparacion, OptionalModel, Prop, PropBehavior, ServicioReparacion } from '../../../../../../index';
 import Decimal from 'decimal.js';
 
 @Prop.Class()
-export class NotaVentaSalidaProduccionServicioReparacionRecursoServicio extends Model
-{
-    static override type: string = 'NotaVentaSalidaProduccionServicioReparacionRecursoServicio';
-    override type: string = NotaVentaSalidaProduccionServicioReparacionRecursoServicio.type;
+export class NotaVentaSalidaProduccionServicioReparacionRecursoServicio extends Model {
 
-    @Prop.Set( PropBehavior.model, x => new NotaVentaSalidaProduccionServicioReparacion( x ) ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion;
-    @Prop.Set( PropBehavior.model, x => new NotaVentaCategoriaReparacion( x ) ) categoriaReparacion?: NotaVentaCategoriaReparacion;
+    static override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
+    override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ServicioReparacion( x ) } ) servicioReparacion?: ServicioReparacion;
     @Prop.Set() descripcion?: string;
-    
-    @Prop.Set( PropBehavior.datetime ) fechaInicio?: string;
-    @Prop.Set( PropBehavior.datetime ) fechaFinal?: string;
-    
-    get dateTimeInicio(): DateTime {
-        return Prop.toDateTime( this.fechaInicio );
-    }
-    get dateTimeFinal(): DateTime {
-        return Prop.toDateTime( this.fechaFinal );
-    }
-    
+
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaFinal?: string;
+
+    get dateTimeInicio(): DateTime { return Cast.toDateTime( this.fechaInicio ); }
+    get dateTimeFinal(): DateTime { return Cast.toDateTime( this.fechaFinal ); }
+
     @Prop.Set() importeCostoNeto?: number;
     @Prop.Set() importeValorNeto?: number;
 
-    get decimalImporteCostoNeto(): Decimal {
-        return Prop.toDecimal( this.importeCostoNeto );
-    }
-    get decimalImporteValorNeto(): Decimal {
-        return Prop.toDecimal( this.importeValorNeto );
-    }
+    get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
+    get decimalImporteValorNeto(): Decimal { return Cast.toDecimal( this.importeValorNeto ); }
 
 
 
-    constructor( item?: Partial<NotaVentaSalidaProduccionServicioReparacionRecursoServicio> )
-    {
+    constructor( item?: OptionalModel<NotaVentaSalidaProduccionServicioReparacionRecursoServicio> ) {
         super();
         Prop.initialize( this, item );
+    }
+
+
+    override set( item: OptionalModel<NotaVentaSalidaProduccionServicioReparacionRecursoServicio> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<NotaVentaSalidaProduccionServicioReparacionRecursoServicio> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+     
+        super.setRelation( context );
+
+        context.execute( this, NotaVentaSalidaProduccionServicioReparacionRecursoServicio.type, () => {
+
+            this.salidaProduccion?.setRelation( context );
+
+            this.servicioReparacion?.setRelation( context );
+
+        } );
+
+        return this;
     }
 }

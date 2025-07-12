@@ -1,23 +1,24 @@
 import Decimal from 'decimal.js';
-import { DocumentoTransaccion, KardexBienConsumo, KardexMovimientoBienConsumo, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo, Persona, Prop, PropBehavior, Usuario } from '../../../../../index';
+import { Cast, DocumentoTransaccion, EntradaBienConsumo, EntradaEfectivo, ExecutionContext, KardexBienConsumo, KardexMovimientoBienConsumo, ModelType, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, OptionalModel, Persona, Prop, PropBehavior, SalidaBienConsumo, SalidaEfectivo, SalidaProduccion, Usuario } from '../../../../../index';
 import { DateTime } from 'luxon';
 
 @Prop.Class()
 export class NotaVenta extends DocumentoTransaccion {
-    static override type: string = 'NotaVenta';
-    override type: string = NotaVenta.type;
 
-    @Prop.Set( PropBehavior.datetime ) fechaCompromiso?: string;
-    @Prop.Set( PropBehavior.model, x => new Persona( x ) ) cliente?: Persona;
-    @Prop.Set( PropBehavior.model, x => new NotaVentaPrioridad( x ) ) prioridad?: NotaVentaPrioridad;
-    @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuarioTecnico?: Usuario;
-    @Prop.Set( PropBehavior.model, x => new NotaVentaEstado( x ) ) estado?: NotaVentaEstado;
+    static override type = ModelType.NotaVenta;
+    override type = ModelType.NotaVenta;
 
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaBienConsumo( x ) ) salidasBienConsumo?: NotaVentaSalidaBienConsumo[];
-    @Prop.Set( PropBehavior.array, x => new NotaVentaSalidaProduccionServicioReparacion( x ) ) salidasProduccionServicioReparacion?: NotaVentaSalidaProduccionServicioReparacion[];
-    @Prop.Set( PropBehavior.array, x => new NotaVentaEntradaEfectivo( x ) ) entradasEfectivo?: NotaVentaEntradaEfectivo[];
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCompromiso?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaPrioridad( x ) } ) prioridad?: NotaVentaPrioridad;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuarioTecnico?: Usuario;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaEstado( x ) } ) estado?: NotaVentaEstado;
 
-    override get movimientos() {
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaBienConsumo( x ) } ) salidasBienConsumo?: NotaVentaSalidaBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidasProduccionServicioReparacion?: NotaVentaSalidaProduccionServicioReparacion[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaEntradaEfectivo( x ) } ) entradasEfectivo?: NotaVentaEntradaEfectivo[];
+
+    override get movimientos(): ( EntradaEfectivo | EntradaBienConsumo | SalidaEfectivo | SalidaBienConsumo | SalidaProduccion )[] {
         return [
             ...super.movimientos,
             ...this.salidasBienConsumo ?? [],
@@ -32,15 +33,9 @@ export class NotaVenta extends DocumentoTransaccion {
     @Prop.Set() importeAdicional?: number;
     @Prop.Set() override importeNeto?: number;
 
-    get decimalImporteDescuento(): Decimal {
-        return Prop.toDecimal( this.importeDescuento );
-    }
-    get decimalImporteInicial(): Decimal {
-        return Prop.toDecimal( this.importeInicial );
-    }
-    get decimalImporteAdicional(): Decimal {
-        return Prop.toDecimal( this.importeAdicional );
-    }
+    get decimalImporteDescuento(): Decimal { return Cast.toDecimal( this.importeDescuento ); }
+    get decimalImporteInicial(): Decimal { return Cast.toDecimal( this.importeInicial ); }
+    get decimalImporteAdicional(): Decimal { return Cast.toDecimal( this.importeAdicional ); }
 
     override get importeDevengado() {
         return this.decimalImporteValorSalidaEfectivo
@@ -55,45 +50,52 @@ export class NotaVenta extends DocumentoTransaccion {
             .toNumber();
     }
 
-    get dateTimeCompromiso(): DateTime {
-        return Prop.toDateTime( this.fechaCompromiso );
-    }
+    get dateTimeCompromiso(): DateTime { return Cast.toDateTime( this.fechaCompromiso ); }
 
 
-    constructor( item?: Partial<NotaVenta> ) {
+    constructor( item?: OptionalModel<NotaVenta> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<NotaVenta> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<NotaVenta> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<NotaVenta> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.salidasBienConsumo?.forEach( salida =>
-            salida.set( {
-                documentoFuente: new NotaVenta( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } )
-            } )
-                .setRelation()
-        );
 
-        this.salidasProduccionServicioReparacion?.forEach( salida =>
-            salida.set( {
-                documentoFuente: new NotaVenta( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } )
-            } )
-                .setRelation()
-        );
+    override setRelation( context = new ExecutionContext() ): this {
 
-        this.entradasEfectivo?.forEach( entrada =>
-            entrada.set( {
-                documentoFuente: new NotaVenta( { id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero } )
-            } )
-                .setRelation()
-        );
+        super.setRelation( context );
+
+        context.execute( this, NotaVenta.type, () => {
+
+            this.cliente?.setRelation( context );
+
+            this.prioridad?.setRelation( context );
+
+            this.usuarioTecnico?.setRelation( context );
+
+            this.estado?.setRelation( context );
+
+            this.salidasBienConsumo?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) );
+
+            this.salidasProduccionServicioReparacion?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) );
+
+            this.entradasEfectivo?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) );
+
+        } );
 
         return this;
     }
@@ -212,6 +214,7 @@ export class NotaVenta extends DocumentoTransaccion {
 
     // Salida Bien de Consumo
     agregarSalidaBienConsumo( salidaBienConsumo: NotaVentaSalidaBienConsumo ): this {
+        this.salidasBienConsumo ??= [];
         this.salidasBienConsumo?.unshift( salidaBienConsumo );
         this.procesarInformacion();
         return this;
@@ -248,6 +251,7 @@ export class NotaVenta extends DocumentoTransaccion {
 
     // Salida Produccion de Servicio de Reparacion
     agregarSalidaProduccionServicioReparacion( salidaProduccionServicioReparacion: NotaVentaSalidaProduccionServicioReparacion ): this {
+        this.salidasProduccionServicioReparacion ??= [];
         this.salidasProduccionServicioReparacion?.unshift( salidaProduccionServicioReparacion );
         this.procesarInformacion();
         return this;
@@ -284,6 +288,7 @@ export class NotaVenta extends DocumentoTransaccion {
 
     // Entrada de Efectivo
     agregarEntradaEfectivo( entradaEfectivo: NotaVentaEntradaEfectivo ): this {
+        this.entradasEfectivo ??= [];
         this.entradasEfectivo?.unshift( entradaEfectivo );
         this.procesarInformacion();
         return this;

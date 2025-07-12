@@ -1,17 +1,42 @@
-import { KardexBienConsumo, Model, Prop, PropBehavior } from '../../../index';
+import { ExecutionContext, KardexBienConsumo, Model, ModelType, OptionalModel, Prop, PropBehavior } from '../../../index';
 
 @Prop.Class()
-export class InventarioBienConsumo extends Model
-{
-    static override type = 'InventarioBienConsumo';
-    override type: string = InventarioBienConsumo.type;
-    
-    @Prop.Set( PropBehavior.array, x => new KardexBienConsumo( x ) ) kardexs?: KardexBienConsumo[];
+export class InventarioBienConsumo extends Model {
+
+    static override type = ModelType.InventarioBienConsumo;
+    override type: string = ModelType.InventarioBienConsumo;
+
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new KardexBienConsumo( x ) } ) kardexs?: KardexBienConsumo[];
 
 
-    constructor( item?: Partial<InventarioBienConsumo> )
-    {
+    constructor( item?: OptionalModel<InventarioBienConsumo> ) {
         super();
         Prop.initialize( this, item );
+    }
+
+
+    override set( item: OptionalModel<InventarioBienConsumo> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<InventarioBienConsumo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, InventarioBienConsumo.type, () => {
+
+            this.kardexs?.forEach( item => item.assign( {
+                inventario: this
+            } ).setRelation( context ) );
+
+        } );
+
+        return this;
     }
 }

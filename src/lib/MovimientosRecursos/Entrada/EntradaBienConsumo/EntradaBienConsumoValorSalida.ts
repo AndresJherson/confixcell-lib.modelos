@@ -1,20 +1,38 @@
-import { EntradaBienConsumo, Prop, PropBehavior, SalidaBienConsumo } from '../../../../index';
+import { EntradaBienConsumo, ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaBienConsumo } from '../../../../index';
 
 @Prop.Class()
 export class EntradaBienConsumoValorSalida extends EntradaBienConsumo {
-    static override type: string = 'EntradaBienConsumoValorSalida';
-    override type: string = EntradaBienConsumoValorSalida.type;
 
-    @Prop.Set( PropBehavior.model, x => new SalidaBienConsumo( x ) ) salida?: SalidaBienConsumo;
+    static override type = ModelType.EntradaBienConsumoValorSalida;
+    override type = ModelType.EntradaBienConsumoValorSalida;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => SalidaBienConsumo.initialize( [x] )[0] } ) salida?: SalidaBienConsumo;
 
 
-    constructor( item?: Partial<EntradaBienConsumoValorSalida> ) {
+    constructor( item?: OptionalModel<EntradaBienConsumoValorSalida> ) {
         super()
         Prop.initialize( this, item );
     }
 
-    override set( item: Partial<EntradaBienConsumoValorSalida> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<EntradaBienConsumoValorSalida> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<EntradaBienConsumoValorSalida> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation();
+
+        context.execute( this, EntradaBienConsumoValorSalida.type, () => {
+            this.salida?.setRelation( context );
+        } );
+
+        return this;
     }
 
 

@@ -1,39 +1,41 @@
 import Decimal from 'decimal.js';
-import { Prop, PropBehavior, SalidaProduccionServicio, SalidaProduccionServicioActividad } from '../../../../../../index';
+import { ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaProduccionServicio, SalidaProduccionServicioActividad } from '../../../../../../index';
 
 @Prop.Class()
 export class SalidaProduccionServicioStandar extends SalidaProduccionServicio {
-    static override type: string = 'SalidaProduccionServicioStandar';
-    override type: string = SalidaProduccionServicioStandar.type;
 
-    @Prop.Set( PropBehavior.array, x => new SalidaProduccionServicioActividad( x ) ) actividades?: SalidaProduccionServicioActividad[];
+    static override type = ModelType.SalidaProduccionServicioStandar;
+    override type = ModelType.SalidaProduccionServicioStandar;
 
-    constructor( item?: Partial<SalidaProduccionServicioStandar> ) {
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioActividad( x ) } ) actividades?: SalidaProduccionServicioActividad[];
+
+    constructor( item?: OptionalModel<SalidaProduccionServicioStandar> ) {
         super()
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<SalidaProduccionServicioStandar> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<SalidaProduccionServicioStandar> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this {
-        super.setRelation();
+    override assign( item: OptionalModel<SalidaProduccionServicioStandar> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.actividades?.forEach( act =>
-            act.set( {
-                salidaProduccionServicioStandar: new SalidaProduccionServicioStandar( { id: this.id, uuid: this.uuid, symbol: this.symbol } ),
-                recursosBienConsumo: act.recursosBienConsumo?.map( recurso =>
-                    recurso.set( {
-                        actividad: new SalidaProduccionServicioActividad( { id: act.id, uuid: act.uuid, symbol: act.symbol } )
-                    } )
-                        .setRelation()
-                )
-            } )
-                .setRelation()
-        );
+
+    override setRelation( context = new ExecutionContext() ): this {
+        
+        super.setRelation( context );
+
+        context.execute( this, SalidaProduccionServicioStandar.type, () => {
+            
+            this.actividades?.forEach( act => act.assign({
+                salidaProduccionServicioStandar: this
+            }).setRelation( context ) )
+
+        } );
 
         return this;
     }
@@ -62,6 +64,7 @@ export class SalidaProduccionServicioStandar extends SalidaProduccionServicio {
 
     // actividades
     agregarActividad( salida: SalidaProduccionServicioActividad ): this {
+        this.actividades ??= [];
         this.actividades?.unshift( salida );
         this.procesarInformacion();
         return this;

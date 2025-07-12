@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon';
-import { KardexBienConsumo, Model, Nota, Prop, PropBehavior, Usuario } from '../../index';
+import { Cast, ExecutionContext, KardexBienConsumo, Model, ModelType, Nota, OptionalModel, Prop, PropBehavior, Usuario } from '../../index';
 import Decimal from 'decimal.js';
 
 @Prop.Class()
-export class DocumentoFuente extends Model
-{
-    static override type: string = 'DocumentoFuente';
-    override type: string = DocumentoFuente.type;
+export class DocumentoFuente extends Model {
+
+    static override type = ModelType.DocumentoFuente;
+    override type = ModelType.DocumentoFuente;
 
     @Prop.Set() codigoSerie?: string;
     @Prop.Set() codigoNumero?: number;
@@ -16,90 +16,86 @@ export class DocumentoFuente extends Model
         const codigoSerie = this.codigoSerie ?? '';
         const codigoNumero = this.codigoNumero !== undefined ? this.codigoNumero.toString() : '';
         const separator = codigoSerie && codigoNumero ? ' - ' : '';
-        
+
         const nombreCompleto = `${codigoSerie}${separator}${codigoNumero}`.trim();
         return nombreCompleto ? nombreCompleto : undefined;
     }
 
-    @Prop.Set( PropBehavior.datetime ) fechaCreacion?: string;
-    @Prop.Set( PropBehavior.datetime ) fechaActualizacion?: string;
-    @Prop.Set( PropBehavior.datetime ) fechaEmision?: string;
-    @Prop.Set( PropBehavior.datetime ) fechaAnulacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaEmision?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaAnulacion?: string;
 
-    get dateTimeCreacion(): DateTime {
-        return Prop.toDateTime( this.fechaCreacion );
-    }
-    get dateTimeActualizacion(): DateTime {
-        return Prop.toDateTime( this.fechaActualizacion );
-    }
-    get dateTimeEmision(): DateTime {
-        return Prop.toDateTime( this.fechaEmision );
-    }
-    get dateTimeAnulacion(): DateTime {
-        return Prop.toDateTime( this.fechaAnulacion );
-    }
+    get dateTimeCreacion(): DateTime { return Cast.toDateTime( this.fechaCreacion ); }
+    get dateTimeActualizacion(): DateTime { return Cast.toDateTime( this.fechaActualizacion ); }
+    get dateTimeEmision(): DateTime { return Cast.toDateTime( this.fechaEmision ); }
+    get dateTimeAnulacion(): DateTime { return Cast.toDateTime( this.fechaAnulacion ); }
 
-    
-    @Prop.Set( PropBehavior.model, x => new Usuario( x ) ) usuario?: Usuario;
-    @Prop.Set( PropBehavior.array, x => new Nota( x ) ) notas?: Nota[];
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuario?: Usuario;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Nota( x ) } ) notas?: Nota[];
 
     @Prop.Set() importeNeto?: number;
-    get decimalImporteNeto(): Decimal {
-        return Prop.toDecimal( this.importeNeto );
-    }
+    get decimalImporteNeto(): Decimal { return Cast.toDecimal( this.importeNeto ); }
 
-    constructor( item?: Partial<DocumentoFuente> )
-    {
+
+    constructor( item?: OptionalModel<DocumentoFuente> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    static initialize( data: Partial<DocumentoFuente>[] ): DocumentoFuente[]
-    {
-        return data.map( item => new ( Prop.GetClass<DocumentoFuente>( item ) ?? DocumentoFuente ) ( item ) )
+    static initialize( data: OptionalModel<DocumentoFuente>[] ): DocumentoFuente[] {
+        return data.map( item => new ( Prop.getClass<DocumentoFuente>( item ) ?? DocumentoFuente )( item ) )
     }
 
 
-    override set(item: Partial<DocumentoFuente>): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoFuente> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    override setRelation(): this
-    {
-        super.setRelation();
+    override assign( item: OptionalModel<DocumentoFuente> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
 
-        this.set({
-            notas: this.notas?.map( nota => nota.set({
-                documentoFuente: new DocumentoFuente({ id: this.id, uuid: this.uuid, symbol: this.symbol, codigoSerie: this.codigoSerie, codigoNumero: this.codigoNumero })
-            }) )
-        });
-        
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, DocumentoFuente.type, () => {
+
+            this.usuario?.setRelation( context );
+
+            this.notas?.forEach( item => item.assign( {
+                documentoFuente: this
+            } ).setRelation( context ) );
+
+        } );
+
         return this;
     }
 
 
     // Notas
-    agregarNota( nota: Nota ): this
-    {
-        nota.fecha = nota.fecha ?? Prop.toDateTimeNow().toSQL();
+    agregarNota( nota: Nota ): this {
+        this.notas ??= [];
+        nota.fecha = nota.fecha ?? DateTime.local().toSQL();
         this.notas?.unshift( nota );
         return this;
     }
 
 
-    eliminarNota( nota: Nota ): this
-    {
+    eliminarNota( nota: Nota ): this {
         this.notas = this.notas?.filter( n => !n.isSameIdentity( nota ) );
         return this;
     }
 
 
     // ESTADOS
-    crearYemitir(): this
-    {
-        const dateTimeEmision = Prop.toDateTimeNow();
+    crearYemitir(): this {
+        const dateTimeEmision = DateTime.local();
         this.fechaCreacion = dateTimeEmision.toSQL();
         this.fechaActualizacion = dateTimeEmision.toSQL();
         this.fechaEmision = dateTimeEmision.toSQL();
@@ -108,9 +104,8 @@ export class DocumentoFuente extends Model
         return this;
     }
 
-    anular(): this
-    {
-        const dateTimeAnulacion = Prop.toDateTimeNow()
+    anular(): this {
+        const dateTimeAnulacion = DateTime.local()
         this.fechaAnulacion = dateTimeAnulacion.toSQL();
         this.fechaActualizacion = dateTimeAnulacion.toSQL();
 
@@ -120,29 +115,26 @@ export class DocumentoFuente extends Model
 
 
     // PROCESAMIENTO
-    procesarInformacion(): this
-    {
+    procesarInformacion(): this {
         this.procesarEstado()
             .setRelation();
-            
+
         return this;
     }
 
 
-    protected procesarEstado(): this
-    {
+    protected procesarEstado(): this {
         this.fechaAnulacion = ( this.dateTimeEmision.isValid && this.dateTimeAnulacion.isValid ) &&
-                            this.dateTimeEmision > this.dateTimeAnulacion
-                                ? ( this.dateTimeEmision.toSQL() ?? undefined )
-                                : this.fechaAnulacion;
+            this.dateTimeEmision > this.dateTimeAnulacion
+            ? ( this.dateTimeEmision.toSQL() ?? undefined )
+            : this.fechaAnulacion;
 
         return this;
     }
 
 
     // CONVERSION
-    toRecordKardexBienConsumo( record: Record<string,KardexBienConsumo> = {} ): Record<string,KardexBienConsumo>
-    {
+    toRecordKardexBienConsumo( record: Record<string, KardexBienConsumo> = {} ): Record<string, KardexBienConsumo> {
         return record;
     }
 }

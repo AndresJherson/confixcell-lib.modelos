@@ -1,23 +1,29 @@
-import { DocumentoMovimiento, Prop } from '../../../../index';
+import { DocumentoMovimiento, ModelType, OptionalModel, Prop } from '../../../../index';
 
 @Prop.Class()
 export class DocumentoEntrada extends DocumentoMovimiento {
-    static override type: string = 'DocumentoEntrada';
-    override type: string = DocumentoEntrada.type;
+
+    static override type = ModelType.DocumentoEntrada;
+    override type = ModelType.DocumentoEntrada;
 
 
-    constructor( item?: Partial<DocumentoEntrada> ) {
+    constructor( item?: OptionalModel<DocumentoEntrada> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set(item: Partial<DocumentoEntrada>): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<DocumentoEntrada> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 
-    static override initialize( data: Partial<DocumentoEntrada>[] ): DocumentoEntrada[] {
-        return data.map( item => new ( Prop.GetClass<DocumentoEntrada>( item ) ?? DocumentoEntrada )( item ) )
+    override assign( item: OptionalModel<DocumentoEntrada> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    static override initialize( data: OptionalModel<DocumentoEntrada>[] ): DocumentoEntrada[] {
+        return data.map( item => new ( Prop.getClass<DocumentoEntrada>( item ) ?? DocumentoEntrada )( item ) )
     }
 }

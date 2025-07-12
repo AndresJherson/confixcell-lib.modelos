@@ -1,24 +1,45 @@
 import { DateTime } from 'luxon';
-import { KardexBienConsumo, Model, Prop, PropBehavior } from '../../../index';
+import { Cast, ExecutionContext, KardexBienConsumo, Model, ModelType, OptionalModel, Prop, PropBehavior } from '../../../index';
 
 @Prop.Class()
-export class ErrorKardexBienConsumo extends Model
-{
-    static override type: string = 'ErrorKardexBienConsumo';
-    override type: string = ErrorKardexBienConsumo.type;
+export class ErrorKardexBienConsumo extends Model {
 
-    @Prop.Set( PropBehavior.model, x => new KardexBienConsumo( x ) ) kardex?: KardexBienConsumo;
+    static override type = ModelType.ErrorKardexBienConsumo;
+    override type = ModelType.ErrorKardexBienConsumo;
+
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo;
     @Prop.Set() mensaje?: string;
-    
-    @Prop.Set( PropBehavior.datetime ) fecha?: string;
-    get dateTimeFecha(): DateTime {
-        return Prop.toDateTime( this.fecha );
-    }
-    
 
-    constructor( item?: Partial<ErrorKardexBienConsumo> )
-    {
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
+    get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
+
+
+    constructor( item?: OptionalModel<ErrorKardexBienConsumo> ) {
         super();
         Prop.initialize( this, item );
+    }
+
+
+    override set( item: OptionalModel<ErrorKardexBienConsumo> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<ErrorKardexBienConsumo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+
+
+    override setRelation( context = new ExecutionContext() ): this {
+
+        super.setRelation( context );
+
+        context.execute( this, ErrorKardexBienConsumo.type, () => {
+
+            this.kardex?.setRelation( context );
+
+        } );
+
+        return this;
     }
 }

@@ -6,7 +6,7 @@ export class Calidad extends Model {
     static override type = ModelType.Calidad;
     override type = ModelType.Calidad;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
     constructor( json?: OptionalModel<Calidad> ) {

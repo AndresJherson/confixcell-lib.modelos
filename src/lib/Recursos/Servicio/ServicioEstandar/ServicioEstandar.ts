@@ -7,14 +7,14 @@ export class ServicioEstandar extends Recurso {
     static override type = ModelType.ServicioEstandar;
     override type = ModelType.ServicioEstandar;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ServicioEstandarCategoria( x ) } ) categoria?: ServicioEstandarCategoria;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ServicioEstandarCategoria( x ) } ) categoria?: ServicioEstandarCategoria | null;
 
     override get nombreCompleto() {
         return this.nombre;
     }
 
-    @Prop.Set() precioUnitario?: number;
+    @Prop.Set() precioUnitario?: number | null;
     get decimalPrecioUnitario(): Decimal { return Cast.toDecimal( this.precioUnitario ); }
 
 

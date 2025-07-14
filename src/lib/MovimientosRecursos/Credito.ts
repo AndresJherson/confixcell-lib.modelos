@@ -5,11 +5,11 @@ import { DateTime, Interval } from "luxon";
 
 export interface ICredito<TCuota extends Cuota> extends Model {
 
-    importeValorNeto?: number;
-    tasaInteresDiario?: number;
-    importeInteres?: number;
-    porcentajeInteres?: number;
-    importeValorFinal?: number;
+    importeValorNeto?: number | null;
+    tasaInteresDiario?: number | null;
+    importeInteres?: number | null;
+    porcentajeInteres?: number | null;
+    importeValorFinal?: number | null;
 
     get decimalImporteValorNeto(): Decimal;
     get decimalTasaInteresDiario(): Decimal;
@@ -17,7 +17,7 @@ export interface ICredito<TCuota extends Cuota> extends Model {
     get decimalPorcentajeInteres(): Decimal;
     get decimalImporteValorFinal(): Decimal;
 
-    cuotas?: TCuota[];
+    cuotas?: TCuota[] | null;
 
     get decimalDuracionMinutos(): Decimal;
     get interesXminuto(): Proporcion;
@@ -40,11 +40,11 @@ export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCu
     static override type = ModelType.Credito;
     override type = ModelType.Credito;
 
-    @Prop.Set( { extends: true } ) importeValorNeto?: number;
-    @Prop.Set( { extends: true } ) tasaInteresDiario?: number;
-    @Prop.Set( { extends: true } ) importeInteres?: number;
-    @Prop.Set( { extends: true } ) porcentajeInteres?: number;
-    @Prop.Set( { extends: true } ) importeValorFinal?: number;
+    @Prop.Set( { extends: true } ) importeValorNeto?: number | null;
+    @Prop.Set( { extends: true } ) tasaInteresDiario?: number | null;
+    @Prop.Set( { extends: true } ) importeInteres?: number | null;
+    @Prop.Set( { extends: true } ) porcentajeInteres?: number | null;
+    @Prop.Set( { extends: true } ) importeValorFinal?: number | null;
 
     @Prop.Set( { extends: true } ) get decimalImporteValorNeto(): Decimal { return Cast.toDecimal( this.importeValorNeto ) }
     @Prop.Set( { extends: true } ) get decimalTasaInteresDiario(): Decimal { return Cast.toDecimal( this.tasaInteresDiario ) }
@@ -52,7 +52,7 @@ export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCu
     @Prop.Set( { extends: true } ) get decimalPorcentajeInteres(): Decimal { return Cast.toDecimal( this.porcentajeInteres ) }
     @Prop.Set( { extends: true } ) get decimalImporteValorFinal(): Decimal { return Cast.toDecimal( this.importeValorFinal ) }
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => Cuota.initialize( [x] )[0], extends: true } ) cuotas?: TCuota[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => Cuota.initialize( [x] )[0], extends: true } ) cuotas?: TCuota[] | null;
 
     #decimalDuracionMinutos = new Decimal( 0 );
     #interesXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );

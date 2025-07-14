@@ -6,7 +6,7 @@ export class ComprobanteTipo extends Model {
     static override type = ModelType.ComprobanteTipo;
     override type = ModelType.ComprobanteTipo;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
     constructor( item?: OptionalModel<ComprobanteTipo> ) {

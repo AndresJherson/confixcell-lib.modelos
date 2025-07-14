@@ -7,21 +7,21 @@ export class SalidaBienConsumo extends SalidaRecurso {
     static override type = ModelType.SalidaBienConsumo;
     override type = ModelType.SalidaBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 
-    @Prop.Set() cantidadSaliente?: number;
-    @Prop.Set() importeCostoUnitario?: number;
-    @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() importeValorUnitario?: number;
-    @Prop.Set() override importeValorNeto?: number;
+    @Prop.Set() cantidadSaliente?: number | null;
+    @Prop.Set() importeCostoUnitario?: number | null;
+    @Prop.Set() importeCostoNeto?: number | null;
+    @Prop.Set() importeValorUnitario?: number | null;
+    @Prop.Set() override importeValorNeto?: number | null;
 
     get decimalCantidadSaliente(): Decimal { return Cast.toDecimal( this.cantidadSaliente ); }
     get decimalImporteCostoUnitario(): Decimal { return Cast.toDecimal( this.importeCostoUnitario ); }
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
     get decimalImporteValorUnitario(): Decimal { return Cast.toDecimal( this.importeValorUnitario ); }
 
-    @Prop.Set() cantidadEntrante?: number;
+    @Prop.Set() cantidadEntrante?: number | null;
     get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
 
     get cantidadDisponible(): number | undefined { return this.decimalCantidadSaliente.minus( this.decimalCantidadEntrante ).toNumber(); };

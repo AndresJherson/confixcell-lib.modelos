@@ -6,9 +6,9 @@ export class PantallaModeloCalidad extends BienConsumo {
     static override type = ModelType.PantallaModeloCalidad;
     override type = ModelType.PantallaModeloCalidad;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaModelo( x ) } ) modelo?: PantallaModelo;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Calidad( x ) } ) calidad?: Calidad;
-    @Prop.Set( { behavior: PropBehavior.boolean, getValue: () => true } ) override esSalida?: boolean = true;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaModelo( x ) } ) modelo?: PantallaModelo | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Calidad( x ) } ) calidad?: Calidad | null;
+    @Prop.Set( { behavior: PropBehavior.boolean, getValue: () => true } ) override esSalida?: boolean | null = true;
 
     override get nombreCompleto() {
         const nombreCompleto = `${this.modelo?.nombreCompleto ?? ''} ${this.calidad?.nombre ?? ''}`.trim();

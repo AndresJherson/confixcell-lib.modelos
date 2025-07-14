@@ -6,7 +6,7 @@ export class SalidaBienConsumoValorEntrada extends SalidaBienConsumo {
     static override type = ModelType.SalidaBienConsumoValorEntrada;
     override type = ModelType.SalidaBienConsumoValorEntrada;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => EntradaBienConsumo.initialize( [x] )[0] } ) entrada?: EntradaBienConsumo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => EntradaBienConsumo.initialize( [x] )[0] } ) entrada?: EntradaBienConsumo | null;
 
 
     constructor( item?: OptionalModel<SalidaBienConsumoValorEntrada> ) {
@@ -38,7 +38,7 @@ export class SalidaBienConsumoValorEntrada extends SalidaBienConsumo {
 
 
     override procesarInformacion(): this {
-        if ( this.entrada !== undefined ) {
+        if ( this.entrada != null ) {
 
             try {
                 this.set( {

@@ -7,16 +7,16 @@ export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccio
     static override type = ModelType.NotaVentaSalidaProduccionServicioReparacion;
     override type = ModelType.NotaVentaSalidaProduccionServicioReparacion;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) override servicio?: Servicio;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaModelo( x ) } ) pantallaModelo?: PantallaModelo;
-    @Prop.Set() imei?: string;
-    @Prop.Set() patron?: number;
-    @Prop.Set() contrasena?: string;
-    @Prop.Set() diagnostico?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) override servicio?: Servicio | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaModelo( x ) } ) pantallaModelo?: PantallaModelo | null;
+    @Prop.Set() imei?: string | null;
+    @Prop.Set() patron?: number | null;
+    @Prop.Set() contrasena?: string | null;
+    @Prop.Set() diagnostico?: string | null;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo( x ) } ) recursosBienConsumo?: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacionRecursoServicio( x ) } ) recursosServicio?: NotaVentaSalidaProduccionServicioReparacionRecursoServicio[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo( x ) } ) recursosBienConsumo?: NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacionRecursoServicio( x ) } ) recursosServicio?: NotaVentaSalidaProduccionServicioReparacionRecursoServicio[] | null;
 
 
     constructor( item?: OptionalModel<NotaVentaSalidaProduccionServicioReparacion> ) {

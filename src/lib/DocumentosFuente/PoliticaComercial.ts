@@ -6,8 +6,8 @@ export class PoliticaComercial extends Model {
     static override type = ModelType.PoliticaComercial;
     override type: string = ModelType.PoliticaComercial;
 
-    @Prop.Set() descripcion?: string;
-    @Prop.Set() esActivo?: boolean;
+    @Prop.Set() descripcion?: string | null;
+    @Prop.Set() esActivo?: boolean | null;
 
 
     constructor( item?: OptionalModel<PoliticaComercial> ) {

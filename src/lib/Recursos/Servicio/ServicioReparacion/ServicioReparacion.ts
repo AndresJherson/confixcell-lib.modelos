@@ -6,8 +6,8 @@ export class ServicioReparacion extends Recurso {
     static override type = ModelType.ServicioReparacion;
     override type = ModelType.ServicioReparacion;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set( { behavior: PropBehavior.boolean, getValue: () => true } ) override esSalida?: boolean = true;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set( { behavior: PropBehavior.boolean, getValue: () => true } ) override esSalida?: boolean | null = true;
 
     override get nombreCompleto() {
         return this.nombre;

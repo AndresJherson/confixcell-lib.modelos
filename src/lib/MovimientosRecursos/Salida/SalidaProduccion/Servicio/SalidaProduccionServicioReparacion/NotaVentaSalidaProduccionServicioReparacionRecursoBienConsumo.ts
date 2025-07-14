@@ -8,18 +8,18 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo exten
     static override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo;
     override type = NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo.type;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
     get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo;
-    @Prop.Set() cantidad?: number;
-    @Prop.Set() importeCostoUnitario?: number;
-    @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() importeValorUnitario?: number;
-    @Prop.Set() importeValorNeto?: number;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
+    @Prop.Set() cantidad?: number | null;
+    @Prop.Set() importeCostoUnitario?: number | null;
+    @Prop.Set() importeCostoNeto?: number | null;
+    @Prop.Set() importeValorUnitario?: number | null;
+    @Prop.Set() importeValorNeto?: number | null;
 
     get decimalCantidad(): Decimal { return Cast.toDecimal( this.cantidad ); }
     get decimalImporteCostoUnitario(): Decimal { return Cast.toDecimal( this.importeCostoUnitario ); }

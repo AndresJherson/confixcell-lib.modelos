@@ -6,7 +6,7 @@ export class ProductoCategoria extends Model {
     static override type = ModelType.ProductoCategoria;
     override type = ModelType.ProductoCategoria;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
     constructor( json?: OptionalModel<ProductoCategoria> ) {
         super();

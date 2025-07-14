@@ -7,16 +7,16 @@ export class Recurso extends Model {
     static override type = ModelType.Recurso;
     override type = ModelType.Recurso;
 
-    @Prop.Set() codigo?: string;
-    @Prop.Set() esActualizable?: boolean;
-    @Prop.Set() esSalida?: boolean;
+    @Prop.Set() codigo?: string | null;
+    @Prop.Set() esActualizable?: boolean | null;
+    @Prop.Set() esSalida?: boolean | null;
 
-    get nombreCompleto(): string | undefined {
+    get nombreCompleto(): string | undefined | null {
         return undefined;
     }
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string | null;
 
     get dateTimeCreacion(): DateTime { return Cast.toDateTime( this.fechaCreacion ); }
     get dateTimeActualizacion(): DateTime { return Cast.toDateTime( this.fechaActualizacion ); }

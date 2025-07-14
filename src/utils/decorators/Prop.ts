@@ -39,7 +39,7 @@ export class Prop {
     }
 
 
-    static getClass<T extends Model>( instance?: Object ) {
+    static getClass<T extends Model>( instance?: Object | null ) {
         return PropImplementation.getClass<T>( instance );
     }
 

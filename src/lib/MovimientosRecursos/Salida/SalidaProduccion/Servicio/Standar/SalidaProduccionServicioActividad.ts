@@ -8,20 +8,20 @@ export class SalidaProduccionServicioActividad extends Model {
     static override type = ModelType.SalidaProduccionServicioActividad;
     override type = ModelType.SalidaProduccionServicioActividad;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionServicioStandar( x ) } ) salidaProduccionServicioStandar?: SalidaProduccionServicioStandar;
-    @Prop.Set() nombre?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionServicioStandar( x ) } ) salidaProduccionServicioStandar?: SalidaProduccionServicioStandar | null;
+    @Prop.Set() nombre?: string | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaFinal?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaFinal?: string | null;
 
     get dateTimeInicio(): DateTime { return Cast.toDateTime( this.fechaInicio ); }
     get dateTimeFinal(): DateTime { return Cast.toDateTime( this.fechaFinal ); }
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioRecursoBienConsumo( x ) } ) recursosBienConsumo?: SalidaProduccionServicioRecursoBienConsumo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioRecursoBienCapital( x ) } ) recursosBienCapital?: SalidaProduccionServicioRecursoBienCapital[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioRecursoServicio( x ) } ) recursosServicio?: SalidaProduccionServicioRecursoServicio[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioRecursoBienConsumo( x ) } ) recursosBienConsumo?: SalidaProduccionServicioRecursoBienConsumo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioRecursoBienCapital( x ) } ) recursosBienCapital?: SalidaProduccionServicioRecursoBienCapital[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioRecursoServicio( x ) } ) recursosServicio?: SalidaProduccionServicioRecursoServicio[] | null;
 
-    @Prop.Set() importeCostoNeto?: number;
+    @Prop.Set() importeCostoNeto?: number | null;
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
 
 

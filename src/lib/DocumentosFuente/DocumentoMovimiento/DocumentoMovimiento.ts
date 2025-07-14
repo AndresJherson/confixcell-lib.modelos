@@ -6,7 +6,7 @@ export class DocumentoMovimiento extends DocumentoFuente {
     static override type = ModelType.DocumentoMovimiento;
     override type = ModelType.DocumentoMovimiento;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => DocumentoTransaccion.initialize( [x] )[0] } ) documentoTransaccion?: DocumentoTransaccion;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => DocumentoTransaccion.initialize( [x] )[0] } ) documentoTransaccion?: DocumentoTransaccion | null;
 
 
     constructor( item?: OptionalModel<DocumentoMovimiento> ) {

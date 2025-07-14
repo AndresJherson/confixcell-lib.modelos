@@ -7,8 +7,8 @@ export class SalidaProduccion extends SalidaRecurso {
     static override type = ModelType.SalidaProduccion;
     override type = ModelType.SalidaProduccion;
 
-    @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() override importeValorNeto?: number;
+    @Prop.Set() importeCostoNeto?: number | null;
+    @Prop.Set() override importeValorNeto?: number | null;
 
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
 

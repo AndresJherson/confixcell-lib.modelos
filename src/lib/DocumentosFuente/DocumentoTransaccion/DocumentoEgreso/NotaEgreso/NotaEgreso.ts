@@ -7,22 +7,22 @@ export class NotaEgreso extends DocumentoTransaccion {
     static override type = ModelType.NotaEgreso;
     override type = ModelType.NotaEgreso;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ComprobanteTipo( x ) } ) comprobanteTipo?: ComprobanteTipo;
-    @Prop.Set() comprobanteCodigoSerie?: string;
-    @Prop.Set() comprobanteCodigoNumero?: number;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ComprobanteTipo( x ) } ) comprobanteTipo?: ComprobanteTipo | null;
+    @Prop.Set() comprobanteCodigoSerie?: string | null;
+    @Prop.Set() comprobanteCodigoNumero?: number | null;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) proveedor?: Persona;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) proveedorDocumentoIdentificacion?: DocumentoIdentificacion;
-    @Prop.Set() proveedorCodigo?: string;
-    @Prop.Set() proveedorNombre?: string;
-    @Prop.Set() proveedorCelular?: number;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new LiquidacionTipo( x ) } ) liquidacion?: LiquidacionTipo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) proveedor?: Persona | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) proveedorDocumentoIdentificacion?: DocumentoIdentificacion | null;
+    @Prop.Set() proveedorCodigo?: string | null;
+    @Prop.Set() proveedorNombre?: string | null;
+    @Prop.Set() proveedorCelular?: number | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new LiquidacionTipo( x ) } ) liquidacion?: LiquidacionTipo | null;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaEgresoDetalle( x ) } ) detalles?: NotaEgresoDetalle[];
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaEgresoCredito( x ) } ) credito?: NotaEgresoCredito;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaEgresoDetalle( x ) } ) detalles?: NotaEgresoDetalle[] | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaEgresoCredito( x ) } ) credito?: NotaEgresoCredito | null;
 
-    @Prop.Set() override importeBruto?: number;
-    @Prop.Set() importeDescuento?: number;
+    @Prop.Set() override importeBruto?: number | null;
+    @Prop.Set() importeDescuento?: number | null;
     get decimalImporteDescuento(): Decimal { return Cast.toDecimal( this.importeDescuento ); }
 
 

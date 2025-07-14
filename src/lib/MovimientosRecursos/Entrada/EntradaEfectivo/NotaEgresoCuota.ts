@@ -6,7 +6,7 @@ export class NotaEgresoCuota extends Cuota {
     static override type = ModelType.NotaEgresoCuota;
     override type = ModelType.NotaEgresoCuota;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaEgresoCredito( x ) } ) declare credito?: NotaEgresoCredito;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaEgresoCredito( x ) } ) declare credito?: NotaEgresoCredito | null;
 
 
     constructor( item?: OptionalModel<NotaEgresoCuota> ) {

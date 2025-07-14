@@ -6,9 +6,9 @@ export class NotaVentaEstado extends Model {
     static override type = ModelType.NotaVentaEstado;
     override type = ModelType.NotaVentaEstado;
 
-    @Prop.Set() orden?: number;
-    @Prop.Set() nombre?: string;
-    @Prop.Set() colorHexadecimal?: string
+    @Prop.Set() orden?: number | null;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set() colorHexadecimal?: string | null
 
     constructor( item?: OptionalModel<NotaVentaEstado> ) {
         super();

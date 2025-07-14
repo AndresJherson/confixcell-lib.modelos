@@ -8,21 +8,21 @@ export class Cuota extends Model {
     static override type = ModelType.Cuota;
     override type = ModelType.Cuota;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Credito.initialize( [x] )[0] } ) credito?: ICredito<Cuota>;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Credito.initialize( [x] )[0] } ) credito?: ICredito<Cuota> | null;
     
-    @Prop.Set() numero?: number;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaVencimiento?: string;
+    @Prop.Set() numero?: number | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaVencimiento?: string | null;
 
     get decimalNumero(): Decimal { return Cast.toDecimal( this.numero ); }
     get dateTimeInicio(): DateTime { return Cast.toDateTime( this.fechaInicio ); }
     get dateTimeVencimiento(): DateTime { return Cast.toDateTime( this.fechaVencimiento ); }
 
-    @Prop.Set() duracionMinutos?: number;
-    @Prop.Set() importeInteres?: number;
-    @Prop.Set() importeAmortizacion?: number;
-    @Prop.Set() importeCuota?: number;
-    @Prop.Set() importeSaldo?: number;
+    @Prop.Set() duracionMinutos?: number | null;
+    @Prop.Set() importeInteres?: number | null;
+    @Prop.Set() importeAmortizacion?: number | null;
+    @Prop.Set() importeCuota?: number | null;
+    @Prop.Set() importeSaldo?: number | null;
 
     get decimalDuracionMinutos(): Decimal { return Cast.toDecimal( this.duracionMinutos ); }
     get decimalImporteInteres(): Decimal { return Cast.toDecimal( this.importeInteres ); }
@@ -31,12 +31,12 @@ export class Cuota extends Model {
     get decimalImporteSaldo(): Decimal { return Cast.toDecimal( this.importeSaldo ); }
 
     @Prop.Set() esActivoMora: boolean = false;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaLimiteMora?: string;
-    @Prop.Set() importeMora?: number;
-    @Prop.Set() importeCobrado?: number;
-    @Prop.Set() importePorCobrar?: number;
-    @Prop.Set() porcentajeCobrado?: number;
-    @Prop.Set() porcentajePorCobrar?: number;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaLimiteMora?: string | null;
+    @Prop.Set() importeMora?: number | null;
+    @Prop.Set() importeCobrado?: number | null;
+    @Prop.Set() importePorCobrar?: number | null;
+    @Prop.Set() porcentajeCobrado?: number | null;
+    @Prop.Set() porcentajePorCobrar?: number | null;
 
     get dateTimeLimiteMora(): DateTime { return Cast.toDateTime( this.fechaLimiteMora ); }
     get decimalImporteMora(): Decimal { return Cast.toDecimal( this.importeMora ); }

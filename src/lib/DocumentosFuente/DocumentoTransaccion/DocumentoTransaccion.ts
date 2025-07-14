@@ -8,10 +8,10 @@ export class DocumentoTransaccion extends DocumentoFuente {
     static override type = ModelType.DocumentoTransaccion;
     override type = ModelType.DocumentoTransaccion;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoEntradaEfectivo( x ) } ) docsEntradaEfectivo?: DocumentoEntradaEfectivo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoEntradaBienConsumo( x ) } ) docsEntradaBienConsumo?: DocumentoEntradaBienConsumo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoSalidaEfectivo( x ) } ) docsSalidaEfectivo?: DocumentoSalidaEfectivo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoSalidaBienConsumo( x ) } ) docsSalidaBienConsumo?: DocumentoSalidaBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoEntradaEfectivo( x ) } ) docsEntradaEfectivo?: DocumentoEntradaEfectivo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoEntradaBienConsumo( x ) } ) docsEntradaBienConsumo?: DocumentoEntradaBienConsumo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoSalidaEfectivo( x ) } ) docsSalidaEfectivo?: DocumentoSalidaEfectivo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoSalidaBienConsumo( x ) } ) docsSalidaBienConsumo?: DocumentoSalidaBienConsumo[] | null;
 
     get movimientos(): ( EntradaEfectivo | EntradaBienConsumo | SalidaEfectivo | SalidaBienConsumo | SalidaProduccion )[] {
         return [
@@ -31,17 +31,17 @@ export class DocumentoTransaccion extends DocumentoFuente {
         ]
     }
 
-    @Prop.Set() importeValorEntradaEfectivo?: number;
-    @Prop.Set() importeValorEntradaBienConsumo?: number;
+    @Prop.Set() importeValorEntradaEfectivo?: number | null;
+    @Prop.Set() importeValorEntradaBienConsumo?: number | null;
 
     get decimalImporteValorEntradaEfectivo(): Decimal { return Cast.toDecimal( this.importeValorEntradaEfectivo ); }
     get decimalImporteValorEntradaBienConsumo(): Decimal { return Cast.toDecimal( this.importeValorEntradaBienConsumo ); }
 
-    @Prop.Set() importeValorSalidaEfectivo?: number;
-    @Prop.Set() importeCostoSalidaBienConsumo?: number;
-    @Prop.Set() importeValorSalidaBienConsumo?: number;
-    @Prop.Set() importeCostoSalidaProduccion?: number;
-    @Prop.Set() importeValorSalidaProduccion?: number;
+    @Prop.Set() importeValorSalidaEfectivo?: number | null;
+    @Prop.Set() importeCostoSalidaBienConsumo?: number | null;
+    @Prop.Set() importeValorSalidaBienConsumo?: number | null;
+    @Prop.Set() importeCostoSalidaProduccion?: number | null;
+    @Prop.Set() importeValorSalidaProduccion?: number | null;
 
     get decimalImporteValorSalidaEfectivo(): Decimal { return Cast.toDecimal( this.importeValorSalidaEfectivo ); }
     get decimalImporteCostoSalidaBienConsumo(): Decimal { return Cast.toDecimal( this.importeCostoSalidaBienConsumo ); }
@@ -49,7 +49,7 @@ export class DocumentoTransaccion extends DocumentoFuente {
     get decimalImporteCostoSalidaProduccion(): Decimal { return Cast.toDecimal( this.importeCostoSalidaProduccion ); }
     get decimalImporteValorSalidaProduccion(): Decimal { return Cast.toDecimal( this.importeValorSalidaProduccion ); }
 
-    @Prop.Set() importeBruto?: number;
+    @Prop.Set() importeBruto?: number | null;
 
     get decimalImporteBruto(): Decimal { return Cast.toDecimal( this.importeBruto ); }
 

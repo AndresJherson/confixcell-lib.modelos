@@ -7,10 +7,10 @@ export class ErrorKardexBienConsumo extends Model {
     static override type = ModelType.ErrorKardexBienConsumo;
     override type = ModelType.ErrorKardexBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo;
-    @Prop.Set() mensaje?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo | null;
+    @Prop.Set() mensaje?: string | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
     get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
 
 

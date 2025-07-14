@@ -6,9 +6,9 @@ export class Rol extends Model {
     static override type: string = ModelType.Rol;
     override type: string = ModelType.Rol;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Permiso( x ) } ) permisos?: Permiso[];
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SubUsuario( x ) } ) subUsuario?: SubUsuario;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Permiso( x ) } ) permisos?: Permiso[] | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SubUsuario( x ) } ) subUsuario?: SubUsuario | null;
 
 
     constructor( item?: OptionalModel<Rol> ) {

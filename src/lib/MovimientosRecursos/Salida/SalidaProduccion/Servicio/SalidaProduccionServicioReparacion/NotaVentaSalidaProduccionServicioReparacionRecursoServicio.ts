@@ -8,18 +8,18 @@ export class NotaVentaSalidaProduccionServicioReparacionRecursoServicio extends 
     static override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
     override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ServicioReparacion( x ) } ) servicioReparacion?: ServicioReparacion;
-    @Prop.Set() descripcion?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ServicioReparacion( x ) } ) servicioReparacion?: ServicioReparacion | null;
+    @Prop.Set() descripcion?: string | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaFinal?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaFinal?: string | null;
 
     get dateTimeInicio(): DateTime { return Cast.toDateTime( this.fechaInicio ); }
     get dateTimeFinal(): DateTime { return Cast.toDateTime( this.fechaFinal ); }
 
-    @Prop.Set() importeCostoNeto?: number;
-    @Prop.Set() importeValorNeto?: number;
+    @Prop.Set() importeCostoNeto?: number | null;
+    @Prop.Set() importeValorNeto?: number | null;
 
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
     get decimalImporteValorNeto(): Decimal { return Cast.toDecimal( this.importeValorNeto ); }

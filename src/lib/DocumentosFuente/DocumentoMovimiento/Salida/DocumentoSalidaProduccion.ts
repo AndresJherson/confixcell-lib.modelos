@@ -7,9 +7,9 @@ export class DocumentoSalidaProduccion extends DocumentoSalida {
     static override type = ModelType.DocumentoSalidaProduccion;
     override type = ModelType.DocumentoSalidaProduccion;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaProduccion.initialize( [x] )[0] } ) salidas?: SalidaProduccion[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaProduccion.initialize( [x] )[0] } ) salidas?: SalidaProduccion[] | null;
 
-    @Prop.Set() importeCostoNeto?: number;
+    @Prop.Set() importeCostoNeto?: number | null;
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
 
 

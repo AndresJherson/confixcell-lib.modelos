@@ -6,7 +6,7 @@ export class SalidaProduccionBienStandar extends SalidaProduccionBien {
     static override type = ModelType.SalidaProduccionBienStandar;
     override type = ModelType.SalidaProduccionBienStandar;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividades?: SalidaProduccionBienActividad[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividades?: SalidaProduccionBienActividad[] | null;
 
     constructor( item?: OptionalModel<SalidaProduccionBienStandar> ) {
         super()

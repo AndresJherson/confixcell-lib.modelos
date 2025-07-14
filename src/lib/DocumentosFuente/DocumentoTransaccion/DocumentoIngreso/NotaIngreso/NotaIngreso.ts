@@ -7,19 +7,19 @@ export class NotaIngreso extends DocumentoTransaccion {
     static override type = ModelType.NotaIngreso;
     override type = ModelType.NotaIngreso;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) clienteDocumentoIdentificacion?: DocumentoIdentificacion;
-    @Prop.Set() clienteCodigo?: string;
-    @Prop.Set() clienteNombre?: string;
-    @Prop.Set() clienteCelular?: number;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new LiquidacionTipo( x ) } ) liquidacion?: LiquidacionTipo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) clienteDocumentoIdentificacion?: DocumentoIdentificacion | null;
+    @Prop.Set() clienteCodigo?: string | null;
+    @Prop.Set() clienteNombre?: string | null;
+    @Prop.Set() clienteCelular?: number | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new LiquidacionTipo( x ) } ) liquidacion?: LiquidacionTipo | null;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaIngresoDetalle( x ) } ) detalles?: NotaIngresoDetalle[];
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaIngresoCredito( x ) } ) credito?: NotaIngresoCredito;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaIngresoDetalle( x ) } ) detalles?: NotaIngresoDetalle[] | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaIngresoCredito( x ) } ) credito?: NotaIngresoCredito | null;
 
-    @Prop.Set() override importeBruto?: number;
-    @Prop.Set() importeDescuento?: number;
-    @Prop.Set() override importeNeto?: number;
+    @Prop.Set() override importeBruto?: number | null;
+    @Prop.Set() importeDescuento?: number | null;
+    @Prop.Set() override importeNeto?: number | null;
     get decimalImportePrecioDescuento(): Decimal { return Cast.toDecimal( this.importeDescuento ); }
 
 

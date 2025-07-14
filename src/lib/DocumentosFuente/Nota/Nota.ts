@@ -7,10 +7,10 @@ export class Nota extends Model {
     static override type = ModelType.Nota;
     override type = ModelType.Nota;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
-    @Prop.Set() descripcion?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => DocumentoFuente.initialize( [x] )[0] } ) documentoFuente?: DocumentoFuente;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuario?: Usuario;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
+    @Prop.Set() descripcion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => DocumentoFuente.initialize( [x] )[0] } ) documentoFuente?: DocumentoFuente | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuario?: Usuario | null;
 
     get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
 

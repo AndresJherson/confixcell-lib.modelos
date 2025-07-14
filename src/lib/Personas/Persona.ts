@@ -7,16 +7,16 @@ export class Persona extends Model {
     static override type = ModelType.Persona;
     override type = ModelType.Persona;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SubUsuario( x ) } ) subUsuario?: SubUsuario;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) documentoIdentificacion?: DocumentoIdentificacion;
-    @Prop.Set() codigo?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SubUsuario( x ) } ) subUsuario?: SubUsuario | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) documentoIdentificacion?: DocumentoIdentificacion | null;
+    @Prop.Set() codigo?: string | null;
 
-    get nombreCompleto(): string | undefined {
+    get nombreCompleto(): string | undefined | null {
         return undefined;
     }
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string | null;
 
     get dateTimeCreacion(): DateTime { return Cast.toDateTime( this.fechaCreacion ); }
     get dateTimeActualizacion(): DateTime { return Cast.toDateTime( this.fechaActualizacion ); }

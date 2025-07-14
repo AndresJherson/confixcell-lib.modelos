@@ -7,10 +7,10 @@ export class SalidaProduccionBienRecursoServicio extends Model {
     static override type = ModelType.SalidaProduccionBienRecursoServicio;
     override type = ModelType.SalidaProduccionBienRecursoServicio;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividad?: SalidaProduccionBienActividad;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) servicio?: Servicio;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividad?: SalidaProduccionBienActividad | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) servicio?: Servicio | null;
 
-    @Prop.Set() importeCostoNeto?: number;
+    @Prop.Set() importeCostoNeto?: number | null;
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
 
     constructor( item?: OptionalModel<SalidaProduccionBienRecursoServicio> ) {

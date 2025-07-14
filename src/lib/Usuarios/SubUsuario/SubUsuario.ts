@@ -6,10 +6,10 @@ export class SubUsuario extends Usuario {
     static override type: string = ModelType.SubUsuario;
     override type: string = ModelType.SubUsuario;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) persona?: Persona;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) creadoPor?: Usuario;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuario( x ) } ) superUsuario?: SuperUsuario;
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Rol( x ) } ) roles?: Rol[];
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) persona?: Persona | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) creadoPor?: Usuario | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuario( x ) } ) superUsuario?: SuperUsuario | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Rol( x ) } ) roles?: Rol[] | null;
 
 
     constructor( item?: OptionalModel<SubUsuario> ) {

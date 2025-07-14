@@ -8,23 +8,23 @@ export class DocumentoFuente extends Model {
     static override type = ModelType.DocumentoFuente;
     override type = ModelType.DocumentoFuente;
 
-    @Prop.Set() codigoSerie?: string;
-    @Prop.Set() codigoNumero?: number;
-    @Prop.Set() concepto?: string;
+    @Prop.Set() codigoSerie?: string | null;
+    @Prop.Set() codigoNumero?: number | null;
+    @Prop.Set() concepto?: string | null;
 
     get codigoCompleto(): string | undefined {
         const codigoSerie = this.codigoSerie ?? '';
-        const codigoNumero = this.codigoNumero !== undefined ? this.codigoNumero.toString() : '';
+        const codigoNumero = this.codigoNumero != null ? this.codigoNumero.toString() : '';
         const separator = codigoSerie && codigoNumero ? ' - ' : '';
 
         const nombreCompleto = `${codigoSerie}${separator}${codigoNumero}`.trim();
         return nombreCompleto ? nombreCompleto : undefined;
     }
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaEmision?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaAnulacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaEmision?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaAnulacion?: string | null;
 
     get dateTimeCreacion(): DateTime { return Cast.toDateTime( this.fechaCreacion ); }
     get dateTimeActualizacion(): DateTime { return Cast.toDateTime( this.fechaActualizacion ); }
@@ -32,10 +32,10 @@ export class DocumentoFuente extends Model {
     get dateTimeAnulacion(): DateTime { return Cast.toDateTime( this.fechaAnulacion ); }
 
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuario?: Usuario;
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Nota( x ) } ) notas?: Nota[];
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuario?: Usuario | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Nota( x ) } ) notas?: Nota[] | null;
 
-    @Prop.Set() importeNeto?: number;
+    @Prop.Set() importeNeto?: number | null;
     get decimalImporteNeto(): Decimal { return Cast.toDecimal( this.importeNeto ); }
 
 

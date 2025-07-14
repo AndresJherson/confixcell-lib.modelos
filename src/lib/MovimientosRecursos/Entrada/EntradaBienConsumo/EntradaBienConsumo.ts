@@ -7,12 +7,12 @@ export class EntradaBienConsumo extends EntradaRecurso {
     static override type = ModelType.EntradaBienConsumo;
     override type = ModelType.EntradaBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 
-    @Prop.Set() cantidadEntrante?: number;
-    @Prop.Set() importeValorUnitario?: number;
-    @Prop.Set() override importeValorNeto?: number;
+    @Prop.Set() cantidadEntrante?: number | null;
+    @Prop.Set() importeValorUnitario?: number | null;
+    @Prop.Set() override importeValorNeto?: number | null;
 
     get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
     get decimalImporteValorUnitario(): Decimal { return Cast.toDecimal( this.importeValorUnitario ); }

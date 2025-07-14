@@ -6,7 +6,7 @@ export class SalidaEfectivoCuota extends Cuota {
     static override type = ModelType.SalidaEfectivoCuota;
     override type = ModelType.SalidaEfectivoCuota;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaEfectivoCredito( x ) } ) override credito?: SalidaEfectivoCredito;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaEfectivoCredito( x ) } ) override credito?: SalidaEfectivoCredito | null;
 
 
     constructor( item?: OptionalModel<SalidaEfectivoCuota> ) {

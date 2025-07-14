@@ -6,9 +6,9 @@ export class BienCapital extends Bien {
     static override type = ModelType.BienCapital;
     override type = ModelType.BienCapital;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienConsumo( x ) } ) bienConsumo?: BienConsumo;
-    @Prop.Set() numero?: number;
-    @Prop.Set() descripcion?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienConsumo( x ) } ) bienConsumo?: BienConsumo | null;
+    @Prop.Set() numero?: number | null;
+    @Prop.Set() descripcion?: string | null;
 
     override get nombreCompleto() {
         const nombre = this.bienConsumo?.nombreCompleto ?? '';

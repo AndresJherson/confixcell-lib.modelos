@@ -7,9 +7,9 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida {
     static override type = ModelType.DocumentoSalidaBienConsumo;
     override type = ModelType.DocumentoSalidaBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaBienConsumo.initialize( [x] )[0] } ) salidas?: SalidaBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaBienConsumo.initialize( [x] )[0] } ) salidas?: SalidaBienConsumo[] | null;
 
-    @Prop.Set() importeCostoNeto?: number;
+    @Prop.Set() importeCostoNeto?: number | null;
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
 
 

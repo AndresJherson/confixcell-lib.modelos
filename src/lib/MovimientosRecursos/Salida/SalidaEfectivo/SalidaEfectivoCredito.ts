@@ -9,10 +9,10 @@ export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<Sa
 
     protected readonly credito: Credito<SalidaEfectivoCuota> = new Credito<SalidaEfectivoCuota>();
 
-    @Prop.Set() tasaInteresDiario?: number | undefined;
-    @Prop.Set() importeInteres?: number | undefined;
-    @Prop.Set() porcentajeInteres?: number | undefined;
-    @Prop.Set() importeValorFinal?: number | undefined;
+    @Prop.Set() tasaInteresDiario?: number | undefined | null;
+    @Prop.Set() importeInteres?: number | undefined | null;
+    @Prop.Set() porcentajeInteres?: number | undefined | null;
+    @Prop.Set() importeValorFinal?: number | undefined | null;
 
     override get decimalImporteValorNeto(): Decimal { return this.credito.decimalImporteValorNeto }
     get decimalTasaInteresDiario(): Decimal { return this.credito.decimalTasaInteresDiario }
@@ -20,7 +20,7 @@ export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<Sa
     get decimalPorcentajeInteres(): Decimal { return this.credito.decimalPorcentajeInteres }
     get decimalImporteValorFinal(): Decimal { return this.credito.decimalImporteValorFinal }
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaEfectivoCuota( x ) } ) declare cuotas?: SalidaEfectivoCuota[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaEfectivoCuota( x ) } ) declare cuotas?: SalidaEfectivoCuota[] | null;
 
     get decimalDuracionMinutos() { return this.credito.decimalDuracionMinutos; }
     get interesXminuto() { return this.credito.interesXminuto; }

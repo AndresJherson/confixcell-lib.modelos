@@ -114,7 +114,7 @@ export enum ModelType {
     DocumentoSalidaBienConsumo = 'DocumentoSalidaBienConsumo',
     DocumentoSalidaBienCapital = 'DocumentoSalidaBienCapital',
     DocumentoSalidaServicio = 'DocumentoSalidaServicio',
-    DocumentoSalidaProduccion = 'DocumentoSalidaServicio',
+    DocumentoSalidaProduccion = 'DocumentoSalidaProduccion',
 
     DocumentoTransaccion = 'DocumentoTransaccion',
     LiquidacionTipo = 'LiquidacionTipo',

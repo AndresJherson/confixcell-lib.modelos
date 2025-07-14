@@ -6,7 +6,7 @@ export class Magnitud extends Model {
     static override type = ModelType.Magnitud;
     override type = ModelType.Magnitud;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
     constructor( json?: OptionalModel<Magnitud> ) {

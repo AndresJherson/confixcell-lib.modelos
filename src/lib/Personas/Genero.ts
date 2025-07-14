@@ -5,7 +5,7 @@ export class Genero extends Model {
     static override type = ModelType.Genero;
     override type: string = ModelType.Genero;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
     constructor( json?: OptionalModel<Genero> ) {

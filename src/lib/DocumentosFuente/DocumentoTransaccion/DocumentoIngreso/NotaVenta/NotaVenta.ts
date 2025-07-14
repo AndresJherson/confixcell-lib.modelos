@@ -8,15 +8,15 @@ export class NotaVenta extends DocumentoTransaccion {
     static override type = ModelType.NotaVenta;
     override type = ModelType.NotaVenta;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCompromiso?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaPrioridad( x ) } ) prioridad?: NotaVentaPrioridad;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuarioTecnico?: Usuario;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaEstado( x ) } ) estado?: NotaVentaEstado;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCompromiso?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaPrioridad( x ) } ) prioridad?: NotaVentaPrioridad | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) usuarioTecnico?: Usuario | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaEstado( x ) } ) estado?: NotaVentaEstado | null;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaBienConsumo( x ) } ) salidasBienConsumo?: NotaVentaSalidaBienConsumo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidasProduccionServicioReparacion?: NotaVentaSalidaProduccionServicioReparacion[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaEntradaEfectivo( x ) } ) entradasEfectivo?: NotaVentaEntradaEfectivo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaBienConsumo( x ) } ) salidasBienConsumo?: NotaVentaSalidaBienConsumo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidasProduccionServicioReparacion?: NotaVentaSalidaProduccionServicioReparacion[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaVentaEntradaEfectivo( x ) } ) entradasEfectivo?: NotaVentaEntradaEfectivo[] | null;
 
     override get movimientos(): ( EntradaEfectivo | EntradaBienConsumo | SalidaEfectivo | SalidaBienConsumo | SalidaProduccion )[] {
         return [
@@ -27,11 +27,11 @@ export class NotaVenta extends DocumentoTransaccion {
         ];
     }
 
-    @Prop.Set() override importeBruto?: number;
-    @Prop.Set() importeDescuento?: number;
-    @Prop.Set() importeInicial?: number;
-    @Prop.Set() importeAdicional?: number;
-    @Prop.Set() override importeNeto?: number;
+    @Prop.Set() override importeBruto?: number | null;
+    @Prop.Set() importeDescuento?: number | null;
+    @Prop.Set() importeInicial?: number | null;
+    @Prop.Set() importeAdicional?: number | null;
+    @Prop.Set() override importeNeto?: number | null;
 
     get decimalImporteDescuento(): Decimal { return Cast.toDecimal( this.importeDescuento ); }
     get decimalImporteInicial(): Decimal { return Cast.toDecimal( this.importeInicial ); }

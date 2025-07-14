@@ -6,7 +6,7 @@ export class PantallaMarca extends Model {
     static override type = ModelType.PantallaMarca;
     override type = ModelType.PantallaMarca;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
     constructor( json?: OptionalModel<PantallaMarca> ) {

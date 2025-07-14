@@ -7,11 +7,11 @@ export class EventoPendienteKardexBienConsumo extends Model {
     static override type = ModelType.EventoPendienteKardexBienConsumo;
     override type = ModelType.EventoPendienteKardexBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo;
-    @Prop.Set() evento?: string;
-    @Prop.Set( { behavior: PropBehavior.object } ) data?: Record<any, any>;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo | null;
+    @Prop.Set() evento?: string | null;
+    @Prop.Set( { behavior: PropBehavior.object } ) data?: Record<any, any> | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
     get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
 
 

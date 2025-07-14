@@ -7,15 +7,15 @@ export class NotaIngresoDetalle extends Model {
     static override type = ModelType.NotaIngresoDetalle;
     override type = ModelType.NotaIngresoDetalle;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaIngreso( x ) } ) notaIngreso?: NotaIngreso;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Recurso.initialize( [x] )[0] } ) recurso?: Recurso;
-    @Prop.Set() concepto?: string;
-    @Prop.Set() cantidad?: number;
-    @Prop.Set() importeUnitario?: number;
-    @Prop.Set() importeBruto?: number;
-    @Prop.Set() importeDescuento?: number;
-    @Prop.Set() importeNeto?: number;
-    @Prop.Set() comentario?: string;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaIngreso( x ) } ) notaIngreso?: NotaIngreso | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Recurso.initialize( [x] )[0] } ) recurso?: Recurso | null;
+    @Prop.Set() concepto?: string | null;
+    @Prop.Set() cantidad?: number | null;
+    @Prop.Set() importeUnitario?: number | null;
+    @Prop.Set() importeBruto?: number | null;
+    @Prop.Set() importeDescuento?: number | null;
+    @Prop.Set() importeNeto?: number | null;
+    @Prop.Set() comentario?: string | null;
 
     get decimalCantidad(): Decimal { return Cast.toDecimal( this.cantidad ); }
     get decimalImporteUnitario(): Decimal { return Cast.toDecimal( this.importeUnitario ); }

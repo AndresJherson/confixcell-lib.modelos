@@ -6,17 +6,17 @@ export class LiquidacionTipo extends Model {
     static override type = ModelType.LiquidacionTipo;
     override type = ModelType.LiquidacionTipo;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
-    constructor( item?: Partial<LiquidacionTipo> ) {
+    constructor( item?: OptionalModel<LiquidacionTipo> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<LiquidacionTipo> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<LiquidacionTipo> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 

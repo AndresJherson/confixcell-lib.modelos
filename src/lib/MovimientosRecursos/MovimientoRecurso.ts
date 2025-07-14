@@ -7,18 +7,18 @@ export class MovimientoRecurso extends Model {
     static override type: string = ModelType.MovimientoRecurso;
     override type = ModelType.MovimientoRecurso;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoFuente( x ) } ) documentoFuente?: DocumentoFuente;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoFuente( x ) } ) documentoFuente?: DocumentoFuente | null;
 
     get codigoDocumentoFuente(): string | undefined {
         const codigoDocumentoFuente = this.documentoFuente?.codigoCompleto ?? '';
-        const id = this.id !== undefined ? this.id.toString() : '';
+        const id = this.id != null ? this.id.toString() : '';
         const separator = codigoDocumentoFuente && id ? ' / ' : '';
 
         const codigo = `${codigoDocumentoFuente}${separator}${id}`.trim();
         return codigo ? codigo : undefined;
     }
 
-    @Prop.Set() importeValorNeto?: number;
+    @Prop.Set() importeValorNeto?: number | null;
     get decimalImporteValorNeto(): Decimal { return Cast.toDecimal( this.importeValorNeto ); }
 
 

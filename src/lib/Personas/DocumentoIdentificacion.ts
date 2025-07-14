@@ -6,7 +6,7 @@ export class DocumentoIdentificacion extends Model {
     static override type: string = ModelType.DocumentoIdentificacion;
     override type: string = ModelType.DocumentoIdentificacion;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
     
     constructor( item?: OptionalModel<DocumentoIdentificacion> ) {

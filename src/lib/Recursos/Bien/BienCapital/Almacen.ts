@@ -6,8 +6,8 @@ export class Almacen extends Model {
     static override type = ModelType.Almacen;
     override type = ModelType.Almacen;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienCapital( x ) } ) bienCapital?: BienCapital;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienCapital( x ) } ) bienCapital?: BienCapital | null;
 
 
     constructor( item?: OptionalModel<Almacen> ) {

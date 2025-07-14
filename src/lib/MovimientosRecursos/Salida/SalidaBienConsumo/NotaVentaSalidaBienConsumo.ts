@@ -8,12 +8,12 @@ export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo {
     override type = ModelType.NotaVentaSalidaBienConsumo;
 
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta;
-    @Prop.Set() override cantidadSaliente?: number;
-    @Prop.Set() override importeValorUnitario?: number;
-    @Prop.Set() importeValorBruto?: number;
-    @Prop.Set() importeValorDescuento?: number;
-    @Prop.Set() override importeValorNeto?: number;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta | null;
+    @Prop.Set() override cantidadSaliente?: number | null;
+    @Prop.Set() override importeValorUnitario?: number | null;
+    @Prop.Set() importeValorBruto?: number | null;
+    @Prop.Set() importeValorDescuento?: number | null;
+    @Prop.Set() override importeValorNeto?: number | null;
 
     get decimalImporteValorBruto(): Decimal { return Cast.toDecimal( this.importeValorBruto ); }
     get decimalImporteValorDescuento(): Decimal { return Cast.toDecimal( this.importeValorDescuento ); }

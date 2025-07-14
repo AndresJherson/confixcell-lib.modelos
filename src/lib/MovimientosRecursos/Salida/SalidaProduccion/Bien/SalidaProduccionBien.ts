@@ -7,17 +7,17 @@ export class SalidaProduccionBien extends SalidaProduccion {
     static override type = ModelType.SalidaProduccionBien;
     override type = ModelType.SalidaProduccionBien;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 
-    @Prop.Set() cantidadSaliente?: number;
-    @Prop.Set() importeCostoUnitario?: number;
-    @Prop.Set() importeValorUnitario?: number;
+    @Prop.Set() cantidadSaliente?: number | null;
+    @Prop.Set() importeCostoUnitario?: number | null;
+    @Prop.Set() importeValorUnitario?: number | null;
 
     get decimalCantidadSaliente(): Decimal { return Cast.toDecimal( this.cantidadSaliente ); }
     get decimalImporteCostoUnitario(): Decimal { return Cast.toDecimal( this.importeCostoUnitario ); }
     get decimalImporteValorUnitario(): Decimal { return Cast.toDecimal( this.importeValorUnitario ); }
 
-    @Prop.Set() cantidadEntrante?: number;
+    @Prop.Set() cantidadEntrante?: number | null;
     get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
 
     get cantidadDisponible(): number { return this.decimalCantidadSaliente.minus( this.cantidadEntrante ?? 0 ).toNumber(); }

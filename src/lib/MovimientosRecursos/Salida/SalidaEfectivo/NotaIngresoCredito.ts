@@ -9,10 +9,10 @@ export class NotaIngresoCredito extends SalidaEfectivo implements ICredito<NotaI
 
     protected readonly credito: Credito<NotaIngresoCuota> = new Credito<NotaIngresoCuota>();
 
-    @Prop.Set() tasaInteresDiario?: number | undefined;
-    @Prop.Set() importeInteres?: number | undefined;
-    @Prop.Set() porcentajeInteres?: number | undefined;
-    @Prop.Set() importeValorFinal?: number | undefined;
+    @Prop.Set() tasaInteresDiario?: number | undefined | null;
+    @Prop.Set() importeInteres?: number | undefined | null;
+    @Prop.Set() porcentajeInteres?: number | undefined | null;
+    @Prop.Set() importeValorFinal?: number | undefined | null;
 
     override get decimalImporteValorNeto(): Decimal { return this.credito.decimalImporteValorNeto }
     get decimalTasaInteresDiario(): Decimal { return this.credito.decimalTasaInteresDiario }
@@ -20,8 +20,8 @@ export class NotaIngresoCredito extends SalidaEfectivo implements ICredito<NotaI
     get decimalPorcentajeInteres(): Decimal { return this.credito.decimalPorcentajeInteres }
     get decimalImporteValorFinal(): Decimal { return this.credito.decimalImporteValorFinal }
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaIngreso( x ) } ) override documentoFuente?: NotaIngreso;
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaIngresoCuota( x ) } ) declare cuotas?: NotaIngresoCuota[];
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaIngreso( x ) } ) override documentoFuente?: NotaIngreso | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new NotaIngresoCuota( x ) } ) declare cuotas?: NotaIngresoCuota[] | null;
 
     get decimalDuracionMinutos() { return this.credito.decimalDuracionMinutos; }
     get interesXminuto() { return this.credito.interesXminuto; }

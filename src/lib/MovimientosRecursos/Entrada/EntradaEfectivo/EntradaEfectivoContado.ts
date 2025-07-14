@@ -6,7 +6,7 @@ export class EntradaEfectivoContado extends EntradaEfectivo {
     static override type: string = ModelType.EntradaEfectivoContado;
     override type = ModelType.EntradaEfectivoContado;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia | null;
 
 
     constructor( item?: OptionalModel<EntradaEfectivoContado> ) {

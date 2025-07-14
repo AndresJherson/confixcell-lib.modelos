@@ -6,8 +6,8 @@ export class PantallaModelo extends Model {
     static override type = ModelType.PantallaModelo;
     override type = ModelType.PantallaModelo;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaMarca( x ) } ) marca?: PantallaMarca;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaMarca( x ) } ) marca?: PantallaMarca | null;
 
     get nombreCompleto() {
         const nombreCompleto = `${this.marca?.nombre ?? ''} ${this.nombre ?? ''}`.trim();

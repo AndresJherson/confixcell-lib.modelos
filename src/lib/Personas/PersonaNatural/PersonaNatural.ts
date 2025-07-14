@@ -6,12 +6,12 @@ export class PersonaNatural extends Persona {
     static override type = ModelType.PersonaNatural;
     override type = ModelType.PersonaNatural;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set() apellido?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Genero( x ) } ) genero?: Genero;
-    @Prop.Set() domicilio?: string;
-    @Prop.Set() celular?: number;
-    @Prop.Set() celularRespaldo?: number;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set() apellido?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Genero( x ) } ) genero?: Genero | null;
+    @Prop.Set() domicilio?: string | null;
+    @Prop.Set() celular?: number | null;
+    @Prop.Set() celularRespaldo?: number | null;
 
     override get nombreCompleto() {
         const nombreCompleto = `${this.nombre ?? ''} ${this.apellido ?? ''}`.trim();

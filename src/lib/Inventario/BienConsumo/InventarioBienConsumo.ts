@@ -6,7 +6,7 @@ export class InventarioBienConsumo extends Model {
     static override type = ModelType.InventarioBienConsumo;
     override type: string = ModelType.InventarioBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new KardexBienConsumo( x ) } ) kardexs?: KardexBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new KardexBienConsumo( x ) } ) kardexs?: KardexBienConsumo[] | null;
 
 
     constructor( item?: OptionalModel<InventarioBienConsumo> ) {

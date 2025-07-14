@@ -7,11 +7,11 @@ export class NotaVentaEntradaEfectivo extends EntradaEfectivo {
     static override type = ModelType.NotaVentaEntradaEfectivo;
     override type = ModelType.NotaVentaEntradaEfectivo;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta;
-    @Prop.Set() numero?: number;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta | null;
+    @Prop.Set() numero?: number | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
     get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
 
 

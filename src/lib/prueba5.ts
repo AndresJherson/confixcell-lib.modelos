@@ -25,7 +25,7 @@ class BaseModel {
 
 class A extends BaseModel {
 
-    propiedad?: B;
+    propiedad?: B | null;
 
     override setRelation( context: ExecutionContext = new ExecutionContext() ): void {
         super.setRelation( context );
@@ -42,7 +42,7 @@ class A extends BaseModel {
 
 class A2 extends A {
 
-    override propiedad?: B2;
+    override propiedad?: B2 | null;
 
     override setRelation( context: ExecutionContext = new ExecutionContext() ): void {
         super.setRelation( context );
@@ -58,7 +58,7 @@ class A2 extends A {
 
 class B extends BaseModel {
 
-    propiedad?: A;
+    propiedad?: A | null;
 
     override setRelation( context: ExecutionContext = new ExecutionContext() ): void {
         super.setRelation( context );
@@ -73,8 +73,8 @@ class B extends BaseModel {
 
 class B2 extends B {
 
-    override propiedad?: A2;
-    propiedad2?: A2
+    override propiedad?: A2 | null;
+    propiedad2?: A2 | null
 
     override setRelation( context: ExecutionContext = new ExecutionContext() ): void {
         super.setRelation( context );

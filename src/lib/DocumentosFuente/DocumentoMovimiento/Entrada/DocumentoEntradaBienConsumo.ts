@@ -7,7 +7,7 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada {
     static override type = ModelType.DocumentoEntradaBienConsumo;
     override type = ModelType.DocumentoEntradaBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => EntradaBienConsumo.initialize( [x] ) } ) entradas?: EntradaBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => EntradaBienConsumo.initialize( [x] ) } ) entradas?: EntradaBienConsumo[] | null;
 
 
     constructor( item?: OptionalModel<DocumentoEntradaBienConsumo> ) {

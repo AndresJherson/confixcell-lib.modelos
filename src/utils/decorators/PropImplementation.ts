@@ -1,4 +1,5 @@
 import { Cast, Model, PropBehavior, PropertyInfo, PropGetValue, PropMetadataProperty, TypeInfo, ValueCallback } from '../../index';
+import { PropTypes } from './prop-types';
 
 export class PropImplementation {
 
@@ -24,7 +25,7 @@ export class PropImplementation {
     }
 
 
-    static getClass<T extends Model>( instance?: Object ) {
+    static getClass<T extends Model>( instance?: Object | null ) {
         try {
             if ( instance === undefined || instance === null ) return undefined;
 
@@ -84,15 +85,19 @@ export class PropImplementation {
         const { target, propertyKey, metadata } = parameters;
         const { behavior } = metadata;
 
-        const constructorName = target.prototype?.constructor.type ?? target.constructor.type;
-        const propertyType = Reflect.getMetadata( 'design:type', target, propertyKey );
-        console.log( propertyKey, propertyType );
-
+        const constructorName: string = target.prototype?.constructor.type ?? target.constructor.type ?? '';
+        console.log( constructorName, propertyKey );
+        const propertyType: string | undefined = PropTypes[constructorName][propertyKey.toString()]
         let resolvedBehavior: string | undefined;
+
+        console.log( '-- ', propertyType );
+
+
+
         try {
             resolvedBehavior = behavior
                 ? behavior.toString()
-                : String( propertyType.name ).toLowerCase();
+                : propertyType.toLowerCase();
         }
         catch ( error ) {
             resolvedBehavior = undefined;

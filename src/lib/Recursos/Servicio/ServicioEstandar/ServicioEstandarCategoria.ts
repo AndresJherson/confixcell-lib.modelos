@@ -6,7 +6,7 @@ export class ServicioEstandarCategoria extends Model {
     static override type = ModelType.ServicioEstandarCategoria;
     override type = ModelType.ServicioEstandarCategoria;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
     constructor( json?: OptionalModel<ServicioEstandarCategoria> ) {

@@ -6,7 +6,7 @@ export class SalidaProduccionServicio extends SalidaProduccion {
     static override type = ModelType.SalidaProduccionServicio;
     override type = ModelType.SalidaProduccionServicio;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) servicio?: Servicio;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) servicio?: Servicio | null;
 
 
     constructor( item?: OptionalModel<SalidaProduccionServicio> ) {

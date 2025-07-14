@@ -8,4 +8,4 @@ type Optional<T> = {
     [K in keyof T]?: T[K] | null;
 }
 
-export type OptionalModel<T> = Optional<DataProps<T>> & Record<string, any>;
+export type OptionalModel<T> = ( Optional<DataProps<T>> & Record<string, any> ) | null | undefined;

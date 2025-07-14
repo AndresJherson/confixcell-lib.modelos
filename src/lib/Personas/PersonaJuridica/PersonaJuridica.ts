@@ -6,9 +6,9 @@ export class PersonaJuridica extends Persona {
     static override type = ModelType.PersonaJuridica;
     override type = ModelType.PersonaJuridica;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set() domicilio?: string;
-    @Prop.Set() celular?: number;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set() domicilio?: string | null;
+    @Prop.Set() celular?: number | null;
 
     override get nombreCompleto() {
         return this.nombre;

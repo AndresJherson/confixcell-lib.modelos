@@ -6,11 +6,11 @@ export class DbPreset extends Model {
     static override type: string = ModelType.DbPreset;
     override type: string = DbPreset.type;
 
-    @Prop.Set() titulo?: string;
-    @Prop.Set() target?: string;
-    @Prop.Set() dataType?: string;
-    @Prop.Set() valor?: string;
-    @Prop.Set() esActualizable?: boolean;
+    @Prop.Set() titulo?: string | null;
+    @Prop.Set() target?: string | null;
+    @Prop.Set() dataType?: string | null;
+    @Prop.Set() valor?: string | null;
+    @Prop.Set() esActualizable?: boolean | null;
 
 
     constructor( item?: OptionalModel<DbPreset> ) {

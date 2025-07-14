@@ -6,17 +6,17 @@ export class MedioTransferencia extends Model {
     static override type = ModelType.MedioTransferencia;
     override type = ModelType.MedioTransferencia;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
 
-    constructor( item?: Partial<MedioTransferencia> ) {
+    constructor( item?: OptionalModel<MedioTransferencia> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: Partial<MedioTransferencia> ): this {
-        return super.set( item as Partial<this> );
+    override set( item: OptionalModel<MedioTransferencia> ): this {
+        return super.set( item as OptionalModel<this> );
     }
 
 

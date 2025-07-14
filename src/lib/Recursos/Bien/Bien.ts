@@ -7,7 +7,7 @@ export class Bien extends Recurso {
     static override type = ModelType.Bien;
     override type = ModelType.Bien;
 
-    @Prop.Set() precioUnitario?: number;
+    @Prop.Set() precioUnitario?: number | null;
     get decimalPrecioUnitario(): Decimal { return Cast.toDecimal( this.precioUnitario ); }
 
 

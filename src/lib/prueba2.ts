@@ -45,9 +45,9 @@ abstract class ModeloBase {
 
 // Usuario - SOLO setRelation
 class Usuario extends ModeloBase {
-    private _nombre: string;
+    private _nombre: string | null;
     private _posts: Post[] = [];
-    private _perfil?: Perfil;
+    private _perfil?: Perfil | null;
 
     constructor( nombre: string ) {
         super();
@@ -130,8 +130,8 @@ class UsuarioAdministrador extends Usuario {
 
 // Post - SOLO setRelation
 class Post extends ModeloBase {
-    private _titulo: string;
-    private _usuario?: Usuario;
+    private _titulo: string | null;
+    private _usuario?: Usuario | null;
     private _comentarios: Comentario[] = [];
 
     constructor( titulo: string ) {
@@ -176,9 +176,9 @@ class Post extends ModeloBase {
 
 // Comentario - SOLO setRelation
 class Comentario extends ModeloBase {
-    private _contenido: string;
-    private _post?: Post;
-    private _autor?: Usuario;
+    private _contenido: string | null;
+    private _post?: Post | null;
+    private _autor?: Usuario | null;
 
     constructor( contenido: string ) {
         super();
@@ -217,8 +217,8 @@ class Comentario extends ModeloBase {
 
 // Perfil - SOLO setRelation
 class Perfil extends ModeloBase {
-    private _biografia: string;
-    private _usuario?: Usuario;
+    private _biografia: string | null;
+    private _usuario?: Usuario | null;
 
     constructor( biografia: string ) {
         super();

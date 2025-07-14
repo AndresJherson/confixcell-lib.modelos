@@ -6,7 +6,7 @@ export class SalidaEfectivoContado extends SalidaEfectivo {
     static override type = ModelType.SalidaEfectivoContado;
     override type = ModelType.SalidaEfectivoContado;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia | null;
 
 
     constructor( item?: OptionalModel<SalidaEfectivoContado> ) {

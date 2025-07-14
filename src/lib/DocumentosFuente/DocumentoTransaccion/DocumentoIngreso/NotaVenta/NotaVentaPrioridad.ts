@@ -6,7 +6,7 @@ export class NotaVentaPrioridad extends Model {
     static override type = ModelType.NotaVentaPrioridad;
     override type = ModelType.NotaVentaPrioridad;
 
-    @Prop.Set() nombre?: string;
+    @Prop.Set() nombre?: string | null;
 
     constructor( item?: OptionalModel<NotaVentaPrioridad> ) {
         super();

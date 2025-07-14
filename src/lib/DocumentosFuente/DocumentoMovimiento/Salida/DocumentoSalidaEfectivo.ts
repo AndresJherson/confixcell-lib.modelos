@@ -7,7 +7,7 @@ export class DocumentoSalidaEfectivo extends DocumentoSalida {
     static override type = ModelType.DocumentoSalidaEfectivo;
     override type = ModelType.DocumentoSalidaEfectivo;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaEfectivo.initialize( [x] )[0] } ) salidas?: SalidaEfectivo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaEfectivo.initialize( [x] )[0] } ) salidas?: SalidaEfectivo[] | null;
 
 
     constructor( item?: OptionalModel<DocumentoSalidaEfectivo> ) {

@@ -7,8 +7,8 @@ export class KardexLock extends Model {
     static override type = ModelType.KardexLock;
     override type = ModelType.KardexLock;
 
-    @Prop.Set() clave?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string;
+    @Prop.Set() clave?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
 
     get dataTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }
 

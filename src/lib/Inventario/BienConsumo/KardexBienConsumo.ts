@@ -8,27 +8,27 @@ export class KardexBienConsumo extends Model {
     static override type = ModelType.KardexBienConsumo;
     override type = ModelType.KardexBienConsumo;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new InventarioBienConsumo( x ) } ) inventario?: InventarioBienConsumo;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new InventarioBienConsumo( x ) } ) inventario?: InventarioBienConsumo | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new EventoPendienteKardexBienConsumo( x ) } ) eventosPendientes?: EventoPendienteKardexBienConsumo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new ErrorKardexBienConsumo( x ) } ) errores?: ErrorKardexBienConsumo[];
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new KardexMovimientoBienConsumo( x ) } ) movimientos?: KardexMovimientoBienConsumo[];
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new EventoPendienteKardexBienConsumo( x ) } ) eventosPendientes?: EventoPendienteKardexBienConsumo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new ErrorKardexBienConsumo( x ) } ) errores?: ErrorKardexBienConsumo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new KardexMovimientoBienConsumo( x ) } ) movimientos?: KardexMovimientoBienConsumo[] | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string | null;
 
     get dateTimeFechaCreacion(): DateTime { return Cast.toDateTime( this.fechaCreacion ); }
     get dateTimeFechaActualizacion(): DateTime { return Cast.toDateTime( this.fechaActualizacion ); }
 
-    @Prop.Set() entradaCantidadAcumulado?: number;
-    @Prop.Set() entradaCostoAcumulado?: number;
-    @Prop.Set() salidaCantidadAcumulado?: number;
-    @Prop.Set() salidaCostoAcumulado?: number;
-    @Prop.Set() saldoCantidad?: number;
-    @Prop.Set() saldoValorUnitario?: number;
-    @Prop.Set() saldoValorTotal?: number;
+    @Prop.Set() entradaCantidadAcumulado?: number | null;
+    @Prop.Set() entradaCostoAcumulado?: number | null;
+    @Prop.Set() salidaCantidadAcumulado?: number | null;
+    @Prop.Set() salidaCostoAcumulado?: number | null;
+    @Prop.Set() saldoCantidad?: number | null;
+    @Prop.Set() saldoValorUnitario?: number | null;
+    @Prop.Set() saldoValorTotal?: number | null;
 
     get decimalEntradaCantidadAcumulado(): Decimal { return Cast.toDecimal( this.entradaCantidadAcumulado ); }
     get decimalEntradaCostoAcumulado(): Decimal { return Cast.toDecimal( this.entradaCostoAcumulado ); }

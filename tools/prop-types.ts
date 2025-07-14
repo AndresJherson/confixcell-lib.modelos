@@ -66,7 +66,7 @@ for ( const sourceFile of sourceFiles ) {
 
 // Guardar como archivo TypeScript
 const outputPath = path.resolve( "dev/prop-types.ts" );
-const output = `export const PropTypes = ${JSON.stringify( metadata, null, 4 )} as const;\n`;
+const output = `export const PropTypes: Record<string, Record<string, string>> = ${JSON.stringify( metadata, null, 4 )} as const;\n`;
 
 fs.mkdirSync( path.dirname( outputPath ), { recursive: true } );
 fs.writeFileSync( outputPath, output );

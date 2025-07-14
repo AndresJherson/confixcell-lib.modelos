@@ -6,11 +6,11 @@ export class SuperUsuarioEmpresa extends Model {
     static override type: string = ModelType.SuperUsuarioEmpresa;
     override type: string = ModelType.SuperUsuarioEmpresa;
 
-    @Prop.Set() razonSocial?: string;
-    @Prop.Set() ruc?: string;
-    @Prop.Set() celular?: number;
-    @Prop.Set() domicilio?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuario( x ) } ) superUsuario?: SuperUsuario;
+    @Prop.Set() razonSocial?: string | null;
+    @Prop.Set() ruc?: string | null;
+    @Prop.Set() celular?: number | null;
+    @Prop.Set() domicilio?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuario( x ) } ) superUsuario?: SuperUsuario | null;
 
 
     constructor( item?: OptionalModel<SuperUsuarioEmpresa> ) {
@@ -29,9 +29,9 @@ export class SuperUsuarioEmpresa extends Model {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
-        
+
         context.execute( this, SuperUsuarioEmpresa.type, () => {
 
             this.superUsuario?.assign( {

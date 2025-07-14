@@ -6,8 +6,8 @@ export class SuperUsuario extends Usuario {
     static override type: string = ModelType.SuperUsuario;
     override type: string = ModelType.SuperUsuario;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuarioEmpresa( x ) } ) empresa?: SuperUsuarioEmpresa;
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SubUsuario( x ) } ) subUsuarios?: SubUsuario[];
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuarioEmpresa( x ) } ) empresa?: SuperUsuarioEmpresa | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SubUsuario( x ) } ) subUsuarios?: SubUsuario[] | null;
 
 
     constructor( item?: OptionalModel<SuperUsuario> ) {

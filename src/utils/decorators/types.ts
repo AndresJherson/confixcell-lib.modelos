@@ -1,4 +1,4 @@
-import { Model } from '../../../index';
+import { Model } from '../../index';
 
 export enum PropBehavior {
     string = 'string',

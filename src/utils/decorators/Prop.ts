@@ -1,4 +1,4 @@
-import { Model, PropBehavior, PropImplementation, PropMetadataProperty } from '../../../index';
+import { Model, PropBehavior, PropImplementation, PropMetadataProperty } from '../../index';
 import 'reflect-metadata';
 
 

@@ -6,9 +6,9 @@ export class Permiso extends Model {
     static override type: string = ModelType.Permiso;
     override type: string = ModelType.Permiso;
 
-    @Prop.Set() nombre?: string;
-    @Prop.Set() descripcion?: string;
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Rol( x ) } ) rol?: Rol;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set() descripcion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Rol( x ) } ) rol?: Rol | null;
 
 
     constructor( item?: OptionalModel<Permiso> ) {

@@ -7,7 +7,7 @@ export class Model {
     type: string = ModelType.Model;
 
     @Prop.Set() symbol: symbol = Symbol();
-    @Prop.Set() id?: null | number;
+    @Prop.Set() id?: number | null;
     @Prop.Set() uuid?: string | null;
 
 

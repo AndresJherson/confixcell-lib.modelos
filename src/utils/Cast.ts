@@ -3,7 +3,7 @@ import { DateTime, Duration, Interval } from "luxon";
 
 export class Cast {
 
-    static toDateTime( value?: string ) {
+    static toDateTime( value?: string | null ) {
         try {
             if ( value === undefined || value === null ) throw new Error();
 
@@ -20,7 +20,7 @@ export class Cast {
         }
     }
 
-    static toDuration( value?: string ) {
+    static toDuration( value?: string | null ) {
         try {
             if ( value === undefined || value === null ) throw new Error();
             const [hours, minutes, seconds] = value.split( ':' ).map( Number );
@@ -42,7 +42,7 @@ export class Cast {
     }
 
 
-    static toDecimal( value?: number | string ) {
+    static toDecimal( value?: number | string | null ) {
         try {
             if ( value === undefined || value === null ) throw new Error();
             const decimalValue = new Decimal( value );
@@ -58,7 +58,7 @@ export class Cast {
     }
 
 
-    static setDate( value: any ): string | undefined {
+    static setDate( value: any ): string | undefined | null {
         const datetime = Cast.toDateTime( value );
         return datetime.isValid
             ? datetime.toSQLDate()
@@ -67,7 +67,7 @@ export class Cast {
     }
 
 
-    static setDateTime( value: any ): string | undefined {
+    static setDateTime( value: any ): string | undefined | null {
         const datetime = Cast.toDateTime( value );
         return datetime.isValid
             ? datetime.toSQL()
@@ -75,7 +75,7 @@ export class Cast {
     }
 
 
-    static setTime( value: any ): string | undefined {
+    static setTime( value: any ): string | undefined | null {
         const duration = Cast.toDuration( value );
         return duration.isValid
             ? duration.toFormat( 'hh:mm:ss' )
@@ -93,7 +93,7 @@ export class Cast {
     }
 
 
-    static setNumberStrict( value: any ): number | undefined {
+    static setNumberStrict( value?: any ): number | undefined {
         try {
             if ( value === undefined || value === null ) throw new Error();
             const decimalValue = new Decimal( value );
@@ -108,7 +108,7 @@ export class Cast {
     }
 
 
-    static setString( value: any ): string | undefined {
+    static setString( value?: any ): string | undefined {
         if ( value === undefined || value === null ) return undefined;
 
         const newValue = String( value ).trim();

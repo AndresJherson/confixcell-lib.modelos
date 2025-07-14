@@ -7,13 +7,13 @@ export class Usuario extends Model {
     static override type: string = ModelType.Usuario;
     override type: string = ModelType.Usuario;
 
-    @Prop.Set() correo?: string;
-    @Prop.Set() contrasena?: string;
-    @Prop.Set() nombre?: string;
-    @Prop.Set() esActivo?: boolean;
+    @Prop.Set() correo?: string | null;
+    @Prop.Set() contrasena?: string | null;
+    @Prop.Set() nombre?: string | null;
+    @Prop.Set() esActivo?: boolean | null;
 
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string;
-    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string | null;
+    @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string | null;
 
     get dateTimeCreacion(): DateTime {
         return Cast.toDateTime( this.fechaCreacion );
@@ -46,7 +46,7 @@ export class Usuario extends Model {
         return super.set( item as OptionalModel<this> );
     }
 
-    
+
     override assign( item: OptionalModel<Usuario> ): this {
         return super.assign( item as OptionalModel<this> );
     }

@@ -1,17 +1,17 @@
 
 // Utils
-export * from './lib/utils/types';
-export * from './lib/utils/consts/ModelType';
-export * from './lib/utils/consts/DbPresetConst';
-export * from './lib/utils/Cast';
-export * from './lib/utils/Proporcion';
-export * from './lib/utils/ExecutionContext';
+export * from './utils/types';
+export * from './utils/consts/ModelType';
+export * from './utils/consts/DbPresetConst';
+export * from './utils/Cast';
+export * from './utils/Proporcion';
+export * from './utils/ExecutionContext';
 
 
 // decorators
-export * from './lib/utils/decorators/types';
-export * from './lib/utils/decorators/PropImplementation';
-export * from './lib/utils/decorators/Prop';
+export * from './utils/decorators/types';
+export * from './utils/decorators/PropImplementation';
+export * from './utils/decorators/Prop';
 
 
 // Model

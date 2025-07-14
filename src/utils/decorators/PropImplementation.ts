@@ -1,4 +1,4 @@
-import { Cast, Model, PropBehavior, PropertyInfo, PropGetValue, PropMetadataProperty, TypeInfo, ValueCallback } from '../../../index';
+import { Cast, Model, PropBehavior, PropertyInfo, PropGetValue, PropMetadataProperty, TypeInfo, ValueCallback } from '../../index';
 
 export class PropImplementation {
 

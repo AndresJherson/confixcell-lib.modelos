@@ -1,4 +1,4 @@
-import { ModelType } from '../../../index';
+import { ModelType } from '../../index';
 
 export enum DbPresetTarget {
     almacenDeBienConsumoDeNotaVenta = 'almacenDeBienConsumoDeNotaVenta',

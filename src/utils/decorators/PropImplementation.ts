@@ -86,13 +86,8 @@ export class PropImplementation {
         const { behavior } = metadata;
 
         const constructorName: string = target.prototype?.constructor.type ?? target.constructor.type ?? '';
-        console.log( constructorName, propertyKey );
         const propertyType: string | undefined = PropTypes[constructorName][propertyKey.toString()]
         let resolvedBehavior: string | undefined;
-
-        console.log( '-- ', propertyType );
-
-
 
         try {
             resolvedBehavior = behavior

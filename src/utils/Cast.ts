@@ -140,7 +140,7 @@ export class Cast {
     }
 
 
-    static toRecordByUuid<T extends object>( data: ( T & { uuid?: string } )[] ): Record<string, T> {
+    static toRecordByUuid<T extends object>( data: ( T & { uuid?: string | null } )[] ): Record<string, T> {
 
         return data.reduce(
             ( record, item ) => {

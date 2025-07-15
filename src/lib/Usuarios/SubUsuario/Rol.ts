@@ -7,6 +7,7 @@ export class Rol extends Model {
     override type: string = ModelType.Rol;
 
     @Prop.Set() nombre?: string | null;
+    @Prop.Set() descripcion?: string | null;
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Permiso( x ) } ) permisos?: Permiso[] | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SubUsuario( x ) } ) subUsuario?: SubUsuario | null;
 

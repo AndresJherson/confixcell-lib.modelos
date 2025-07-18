@@ -1,180 +1,19 @@
-import { Cast, Model, PropBehavior, PropertyInfo, PropGetValue, PropMetadataProperty, TypeInfo, Utility } from '../../index';
-import { PropTypes } from './prop-types';
+import { Cast } from "../../Cast";
+import { Utility } from "../../Utility";
+import { ClassType, PropBehavior, PropertyInfo, PropGetValue } from '../index';
 
-export class PropImplementation extends Utility {
+export class Immutable extends Utility {
 
-    private static recordMetadata = new Map<string, TypeInfo>();
-    private static classRegistry = new Map<string, typeof Model>();
-    private static extendedPropertyRegistry = new WeakMap<Function, Set<string | symbol>>();
-
-
-    // Clase
-    static defineClass( target: any ): void {
-        if ( target.type ) {
-
-            const className = target.type;
-
-            PropImplementation.classRegistry.set( className, target );
-
-            const typeInfo: TypeInfo = PropImplementation.getTypeInfo( target ) ?? {
-                name: className,
-                recordPropertyInfo: {}
-            };
-
-            PropImplementation.recordMetadata.set( className, typeInfo );
-        }
-    }
-
-
-    static getClass<T extends Model>( instance?: Object | null ) {
-        try {
-            if ( instance === undefined || instance === null ) return undefined;
-
-            const className = typeof instance === 'object'
-                ? ( Object.getPrototypeOf( instance ).constructor.type ?? ( instance as any ).type )
-                : undefined;
-
-            return PropImplementation.classRegistry.get( className.toString() ) as unknown as new ( ...args: any[] ) => T;
-        }
-        catch ( error ) {
-            return undefined;
-        }
-    }
-
-
-    static getTypeInfo( target: any ): TypeInfo | undefined {
-        try {
-            const constructorName = target.prototype?.constructor.type ?? target.constructor.type;
-            return PropImplementation.recordMetadata.get( constructorName );
-        }
-        catch ( error ) {
-            return undefined;
-        }
-    }
-
-
-    // Propiedad
-    static defineProperty<T extends PropBehavior>( parameters: {
-        target: any,
-        propertyKey: string | symbol,
-        metadata: PropMetadataProperty<T>
-    } ) {
-        const { target, propertyKey, metadata } = parameters;
-
-        const {
-            constructorName,
-            resolvedMetadata
-        } = PropImplementation.resolvePropertyMetadata( { target, propertyKey, metadata } )
-
-        if ( 'extends' in resolvedMetadata && resolvedMetadata.extends === true ) {
-            PropImplementation.defineExtendedProperty( target, propertyKey );
-        }
-
-        PropImplementation.definePropertyInfo( {
-            target,
-            constructorName,
-            propertyKey: propertyKey.toString(),
-            metadata: resolvedMetadata
-        } )
-    }
-
-    private static resolvePropertyMetadata( parameters: {
-        target: any,
-        propertyKey: string | symbol,
-        metadata: PropMetadataProperty<any>
-    } ) {
-
-        const { target, propertyKey, metadata } = parameters;
-        const { behavior } = metadata;
-
-        const constructorName: string = target.prototype?.constructor.type ?? target.constructor.type ?? '';
-        const propertyType: string | undefined = PropTypes[constructorName][propertyKey.toString()]
-        let resolvedBehavior: string | undefined;
-
-        try {
-            resolvedBehavior = behavior
-                ? behavior.toString()
-                : propertyType.toLowerCase();
-        }
-        catch ( error ) {
-            resolvedBehavior = undefined;
-        }
-
-        return {
-            constructorName,
-            resolvedMetadata: {
-                ...metadata,
-                behavior: resolvedBehavior
-            }
-        }
-    }
-
-    private static defineExtendedProperty( target: Object, key: string | symbol ): void {
-
-        const ctor = target.constructor;
-
-        (
-            PropImplementation.extendedPropertyRegistry.get( ctor ) ??
-            PropImplementation.extendedPropertyRegistry.set( ctor, new Set() ).get( ctor )
-        )!.add( key );
-
-    }
-
-    private static getExtendedKeys<T extends object>( obj: T ): ( keyof T )[] {
-
-        const keys = new Set<string | symbol>();
-        let proto = Object.getPrototypeOf( obj );
-
-        while ( proto && proto.constructor !== Object ) {
-
-            const ctor = proto.constructor;
-            const set = PropImplementation.extendedPropertyRegistry.get( ctor );
-
-            if ( set ) {
-                for ( const key of set ) keys.add( key );
-            }
-
-            proto = Object.getPrototypeOf( proto );
-        }
-
-        return Array.from( keys ) as any[];
-    }
-
-    private static definePropertyInfo( parameters: {
-        target: any,
-        propertyKey: string,
-        constructorName: string,
-        metadata: PropMetadataProperty<any>
-    } ) {
-        const { target, propertyKey, constructorName, metadata } = parameters;
-
-        const propertyInfo: PropertyInfo = {
-            name: propertyKey,
-            metadata: metadata
-        };
-
-        const typeInfo: TypeInfo = this.getTypeInfo( target ) ?? {
-            name: constructorName,
-            recordPropertyInfo: {}
-        };
-
-        typeInfo.recordPropertyInfo[propertyKey.toString()] = propertyInfo;
-
-        PropImplementation.recordMetadata.set( constructorName, typeInfo );
-    }
-
-
-    // Inmutabilidad
     static initialize<T extends object>( target: T, dto?: object ) {
         if ( dto === null || dto === undefined || typeof dto !== 'object' ) return;
 
-        const item = PropImplementation.resolveReferenceDeepModelClone( dto );
+        const item = Immutable.resolveReferenceDeepModelClone( dto );
 
         const initializedProperties = new Set<string>();
         let prototype = Object.getPrototypeOf( target );
         while ( prototype && Object.prototype !== prototype ) {
 
-            const typeInfo = PropImplementation.getTypeInfo( prototype );
+            const typeInfo = ClassType.getTypeInfo( prototype );
 
             for ( const [propertyName, propertyInfo] of Object.entries( typeInfo?.recordPropertyInfo ?? {} ) ) {
 
@@ -185,7 +24,7 @@ export class PropImplementation extends Utility {
                 const originalValue = ( target as any )[propertyName];
                 const value = ( item as any )[propertyName];
 
-
+                
                 // Valores null
                 if ( ( value === null || value === undefined ) && originalValue === undefined ) {
                     Reflect.set( target, propertyName, undefined );
@@ -198,7 +37,7 @@ export class PropImplementation extends Utility {
                 }
 
 
-                PropImplementation.initializeProperties( {
+                Immutable.initializeProperties( {
                     target,
                     propertyName,
                     propertyInfo,
@@ -220,14 +59,14 @@ export class PropImplementation extends Utility {
     static set<T extends object>( target: T, dto?: object ) {
         if ( dto === null || dto === undefined ) return;
 
-        const item = PropImplementation.resolveReferenceDeepModelClone( dto );
+        const item = Immutable.resolveReferenceDeepModelClone( dto );
 
         let prototype = Object.getPrototypeOf( target );
         const initializedProperties = new Set<string>();
 
         while ( prototype && Object.prototype !== prototype ) {
 
-            const typeInfo = PropImplementation.getTypeInfo( prototype );
+            const typeInfo = ClassType.getTypeInfo( prototype );
 
             const properties = new Set( [
                 ...Object.getOwnPropertyNames( target ),
@@ -256,7 +95,7 @@ export class PropImplementation extends Utility {
 
                 if ( !propertyInfo ) continue;
 
-                PropImplementation.initializeProperties( {
+                Immutable.initializeProperties( {
                     target,
                     propertyName,
                     propertyInfo,
@@ -329,7 +168,7 @@ export class PropImplementation extends Utility {
             Reflect.set(
                 target,
                 propertyName,
-                PropImplementation.resolveValue( {
+                Immutable.resolveValue( {
                     getValue,
                     originalValue,
                     value
@@ -343,7 +182,7 @@ export class PropImplementation extends Utility {
             const nextArray: any[] | undefined = Array.isArray( value )
                 ? value.map( ( item, i ) => {
                     const prevItem = prevArray[i];
-                    return PropImplementation.resolveValue( {
+                    return Immutable.resolveValue( {
                         getValue,
                         originalValue: prevItem,
                         value: item
@@ -434,7 +273,7 @@ export class PropImplementation extends Utility {
 
         if ( nextValue === undefined ) {
 
-            const ctor = PropImplementation.getClass( value );
+            const ctor = ClassType.getClass( value );
             if ( ctor ) {
                 nextValue = new ctor( value );
             }
@@ -454,7 +293,7 @@ export class PropImplementation extends Utility {
 
         while ( prototype && Object.prototype !== prototype ) {
 
-            const typeInfo = PropImplementation.getTypeInfo( prototype );
+            const typeInfo = ClassType.getTypeInfo( prototype );
 
             const properties = new Set( [
                 ...Object.getOwnPropertyNames( target ),
@@ -465,9 +304,9 @@ export class PropImplementation extends Utility {
 
                 if ( initializedProperties.has( propertyName ) ) continue;
                 if ( !properties.has( propertyName ) ) continue;
-    
+
                 const originalValue = ( target as any )[propertyName];
-    
+
                 // Valores null
                 if ( ( value === null || value === undefined ) && originalValue === undefined ) {
                     Reflect.set( target, propertyName, undefined );
@@ -478,12 +317,12 @@ export class PropImplementation extends Utility {
                     initializedProperties.add( propertyName );
                     continue;
                 }
-    
+
                 const propertyInfo = typeInfo?.recordPropertyInfo[propertyName];
                 if ( !propertyInfo ) continue;
-    
+
                 ( target as any )[propertyName] = value;
-    
+
                 initializedProperties.add( propertyName );
 
             }
@@ -492,77 +331,6 @@ export class PropImplementation extends Utility {
         }
 
 
-    }
-
-
-    // Extención de prototipo
-    static extends<
-        Host extends object,
-        Comp extends object
-    >(
-        host: Host,
-        propName: string,
-        component: Comp,
-    ): void {
-
-        const extendedKeys = PropImplementation.getExtendedKeys( component );
-
-        PropImplementation.copyInitialValues( host, component, extendedKeys )
-
-        Object.defineProperty( host, propName, {
-            value: component,
-            configurable: true,
-            enumerable: false
-        } );
-
-        for ( const key of extendedKeys ) {
-
-            const desc = PropImplementation.getPropertyDescriptorDeep( component, key );
-
-            if ( desc?.get || desc?.set ) {
-
-                Object.defineProperty( host, key, {
-                    get: desc.get ? desc.get.bind( component ) : undefined,
-                    set: desc.set ? v => desc.set!.call( component, v ) : undefined,
-                    enumerable: desc.enumerable ?? true,
-                    configurable: true,
-                } );
-
-            } else {
-
-                Object.defineProperty( host, key, {
-                    get() { return ( component as any )[key]; },
-                    set( v: any ) { ( component as any )[key] = v; },
-                    enumerable: desc?.enumerable ?? true,
-                    configurable: true,
-                } );
-
-            }
-        }
-    }
-
-
-    private static copyInitialValues<Host extends object, Comp extends object>(
-        host: Host,
-        comp: Comp,
-        keys: ( keyof Comp )[]
-    ) {
-        for ( const k of keys ) {
-            if ( Object.prototype.hasOwnProperty.call( host, k ) ) {
-                const v = ( host as any )[k];
-                ( comp as any )[k] = v;      // ← prevalece el valor del hijo
-            }
-        }
-    }
-
-
-    private static getPropertyDescriptorDeep( obj: any, key: PropertyKey ): PropertyDescriptor | undefined {
-        while ( obj && obj !== Object.prototype ) {
-            const desc = Object.getOwnPropertyDescriptor( obj, key );
-            if ( desc ) return desc;
-            obj = Object.getPrototypeOf( obj );
-        }
-        return undefined;
     }
 
 }

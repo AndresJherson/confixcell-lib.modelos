@@ -10,20 +10,43 @@ export class SalidaBienConsumo extends SalidaRecurso {
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 
-    @Prop.Set() cantidadSaliente?: number | null;
-    @Prop.Set() importeCostoUnitario?: number | null;
-    @Prop.Set() importeCostoNeto?: number | null;
-    @Prop.Set() importeValorUnitario?: number | null;
-    @Prop.Set() override importeValorNeto?: number | null;
+    #cantidadSaliente?: number | null | undefined;
+    #cantidadEntrante?: number | null | undefined;
+    #importeCostoUnitario?: number | null | undefined;
+    #importeCostoNeto?: number | null | undefined;
+    #importeValorUnitario?: number | null | undefined;
+    #importeValorNeto?: number | null | undefined;
 
-    get decimalCantidadSaliente(): Decimal { return Cast.toDecimal( this.cantidadSaliente ); }
+    @Prop.Set()
+    public get cantidadSaliente(): number | null | undefined { return this.#cantidadSaliente; }
+    public set cantidadSaliente( value: number | null | undefined ) { this.#cantidadSaliente = value; }
+
+    @Prop.Set()
+    public get cantidadEntrante(): number | null | undefined { return this.#cantidadEntrante; }
+    public set cantidadEntrante( value: number | null | undefined ) { this.#cantidadEntrante = value; }
+
+    @Prop.Set()
+    public get importeCostoUnitario(): number | null | undefined { return this.#importeCostoUnitario; }
+    public set importeCostoUnitario( value: number | null | undefined ) { this.#importeCostoUnitario = value; }
+
+    @Prop.Set()
+    public get importeCostoNeto(): number | null | undefined { return this.#importeCostoNeto; }
+    public set importeCostoNeto( value: number | null | undefined ) { this.#importeCostoNeto = value; }
+
+    @Prop.Set()
+    public get importeValorUnitario(): number | null | undefined { return this.#importeValorUnitario; }
+    public set importeValorUnitario( value: number | null | undefined ) { this.#importeValorUnitario = value; }
+
+    @Prop.Set()
+    public override get importeValorNeto(): number | null | undefined { return this.#importeValorNeto; }
+    public override set importeValorNeto( value: number | null | undefined ) { this.#importeValorNeto = value; }
+
     get decimalImporteCostoUnitario(): Decimal { return Cast.toDecimal( this.importeCostoUnitario ); }
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
     get decimalImporteValorUnitario(): Decimal { return Cast.toDecimal( this.importeValorUnitario ); }
 
-    @Prop.Set() cantidadEntrante?: number | null;
+    get decimalCantidadSaliente(): Decimal { return Cast.toDecimal( this.cantidadSaliente ); }
     get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
-
     get cantidadDisponible(): number | undefined { return this.decimalCantidadSaliente.minus( this.decimalCantidadEntrante ).toNumber(); };
     get decimalCantidadDisponible(): Decimal { return Cast.toDecimal( this.cantidadDisponible ); }
 
@@ -50,7 +73,7 @@ export class SalidaBienConsumo extends SalidaRecurso {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, SalidaBienConsumo.type, () => {

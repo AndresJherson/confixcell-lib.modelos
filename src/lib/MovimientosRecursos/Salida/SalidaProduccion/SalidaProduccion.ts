@@ -7,10 +7,19 @@ export class SalidaProduccion extends SalidaRecurso {
     static override type = ModelType.SalidaProduccion;
     override type = ModelType.SalidaProduccion;
 
-    @Prop.Set() importeCostoNeto?: number | null;
-    @Prop.Set() override importeValorNeto?: number | null;
+    #importeCostoNeto?: number | null | undefined;
+    #importeValorNeto?: number | null | undefined;
+    
+    @Prop.Set()
+    public get importeCostoNeto(): number | null | undefined {return this.#importeCostoNeto;}
+    public set importeCostoNeto( value: number | null | undefined ) {this.#importeCostoNeto = value;}
+
+    @Prop.Set()
+    public override get importeValorNeto(): number | null | undefined { return this.#importeValorNeto; }
+    public override set importeValorNeto( value: number | null | undefined ) { this.#importeValorNeto = value; }
 
     get decimalImporteCostoNeto(): Decimal { return Cast.toDecimal( this.importeCostoNeto ); }
+    
 
     constructor( item?: OptionalModel<SalidaProduccion> ) {
         super()

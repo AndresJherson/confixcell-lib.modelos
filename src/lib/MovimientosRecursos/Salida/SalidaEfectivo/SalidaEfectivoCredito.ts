@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { Credito, ExecutionContext, ICredito, ModelType, OptionalModel, Prop, PropBehavior, SalidaEfectivo, SalidaEfectivoCuota } from '../../../../index';
+import { Cast, Credito, ExecutionContext, ICredito, ModelType, OptionalModel, Prop, PropBehavior, SalidaEfectivo, SalidaEfectivoCuota } from '../../../../index';
 
 @Prop.Class()
 export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<SalidaEfectivoCuota> {
@@ -7,32 +7,54 @@ export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<Sa
     static override type = ModelType.SalidaEfectivoCredito;
     override type = ModelType.SalidaEfectivoCredito;
 
-    protected readonly credito: Credito<SalidaEfectivoCuota> = new Credito<SalidaEfectivoCuota>();
+    readonly #credito: Credito<SalidaEfectivoCuota> = new Credito<SalidaEfectivoCuota>( {}, this );
+    #cuotas?: SalidaEfectivoCuota[] | null | undefined;
 
-    @Prop.Set() tasaInteresDiario?: number | undefined | null;
-    @Prop.Set() importeInteres?: number | undefined | null;
-    @Prop.Set() porcentajeInteres?: number | undefined | null;
-    @Prop.Set() importeValorFinal?: number | undefined | null;
+    #importeValorNeto?: number | null | undefined;
+    #tasaInteresDiario?: number | null | undefined;
+    #importeInteres?: number | null | undefined;
+    #porcentajeInteres?: number | null | undefined;
+    #importeValorFinal?: number | null | undefined;
+    
 
-    override get decimalImporteValorNeto(): Decimal { return this.credito.decimalImporteValorNeto }
-    get decimalTasaInteresDiario(): Decimal { return this.credito.decimalTasaInteresDiario }
-    get decimalImporteInteres(): Decimal { return this.credito.decimalImporteInteres }
-    get decimalPorcentajeInteres(): Decimal { return this.credito.decimalPorcentajeInteres }
-    get decimalImporteValorFinal(): Decimal { return this.credito.decimalImporteValorFinal }
+    @Prop.Set()
+    public override get importeValorNeto(): number | null | undefined { return this.#importeValorNeto; }
+    public override set importeValorNeto( value: number | null | undefined ) { this.#importeValorNeto = value; }
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaEfectivoCuota( x ) } ) declare cuotas?: SalidaEfectivoCuota[] | null;
+    @Prop.Set()
+    public get tasaInteresDiario(): number | null | undefined { return this.#tasaInteresDiario; }
+    public set tasaInteresDiario( value: number | null | undefined ) { this.#tasaInteresDiario = value; }
 
-    get decimalDuracionMinutos() { return this.credito.decimalDuracionMinutos; }
-    get interesXminuto() { return this.credito.interesXminuto; }
-    get amortizacionXminuto() { return this.credito.amortizacionXminuto; }
-    get cuotaXminuto() { return this.credito.cuotaXminuto; }
+    @Prop.Set()
+    public get importeInteres(): number | null | undefined { return this.#importeInteres; }
+    public set importeInteres( value: number | null | undefined ) { this.#importeInteres = value; }
 
+    @Prop.Set()
+    public get porcentajeInteres(): number | null | undefined { return this.#porcentajeInteres; }
+    public set porcentajeInteres( value: number | null | undefined ) { this.#porcentajeInteres = value; }
+
+    @Prop.Set()
+    public get importeValorFinal(): number | null | undefined { return this.#importeValorFinal; }
+    public set importeValorFinal( value: number | null | undefined ) { this.#importeValorFinal = value; }
+
+    get decimalTasaInteresDiario(): Decimal { return Cast.toDecimal( this.tasaInteresDiario ) }
+    get decimalImporteInteres(): Decimal { return Cast.toDecimal( this.importeInteres ) }
+    get decimalPorcentajeInteres(): Decimal { return Cast.toDecimal( this.porcentajeInteres ) }
+    get decimalImporteValorFinal(): Decimal { return Cast.toDecimal( this.importeValorFinal ) }
+
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaEfectivoCuota( x ) } )
+    get cuotas(): SalidaEfectivoCuota[] | null | undefined { return this.#cuotas; }
+    set cuotas( value: SalidaEfectivoCuota[] | null | undefined ) { this.#cuotas = value; };
+
+    get decimalDuracionMinutos() { return this.#credito.decimalDuracionMinutos; }
+    get interesXminuto() { return this.#credito.interesXminuto; }
+    get amortizacionXminuto() { return this.#credito.amortizacionXminuto; }
+    get cuotaXminuto() { return this.#credito.cuotaXminuto; }
 
 
     constructor( item?: OptionalModel<SalidaEfectivoCredito> ) {
         super()
         Prop.initialize( this, item );
-        Prop.extends( this, 'credito', this.credito );
     }
 
 
@@ -47,35 +69,37 @@ export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<Sa
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
-        this.credito.setRelation( context );
+        context.execute( this, SalidaEfectivoCredito.type, () => {
+            this.#credito.setRelation( context );
+        } )
 
         return this;
     }
 
 
     agregarCuota( cuota: SalidaEfectivoCuota ): this {
-        this.credito.agregarCuota( cuota );
+        this.#credito.agregarCuota( cuota );
         return this;
     }
 
 
     actualizarCuota( cuota: SalidaEfectivoCuota ): this {
-        this.credito.actualizarCuota( cuota );
+        this.#credito.actualizarCuota( cuota );
         return this;
     }
 
 
     eliminarCuota( cuota: SalidaEfectivoCuota ): this {
-        this.credito.eliminarCuota( cuota );
+        this.#credito.eliminarCuota( cuota );
         return this;
     }
 
 
     getCuota( cuota: SalidaEfectivoCuota ): SalidaEfectivoCuota | undefined {
-        return this.credito.getCuota( cuota );
+        return this.#credito.getCuota( cuota );
     }
 
 
@@ -85,13 +109,13 @@ export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<Sa
 
 
     procesarCredito(): this {
-        this.credito.procesarCredito();
+        this.#credito.procesarCredito();
         return this;
     }
 
 
     procesarPagos( importeCobrado: number ): this {
-        this.procesarPagos( importeCobrado );
+        this.#credito.procesarPagos( importeCobrado );
         return this;
     }
 }

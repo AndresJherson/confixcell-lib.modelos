@@ -40,33 +40,58 @@ export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCu
     static override type = ModelType.Credito;
     override type = ModelType.Credito;
 
-    @Prop.Set( { extends: true } ) importeValorNeto?: number | null;
-    @Prop.Set( { extends: true } ) tasaInteresDiario?: number | null;
-    @Prop.Set( { extends: true } ) importeInteres?: number | null;
-    @Prop.Set( { extends: true } ) porcentajeInteres?: number | null;
-    @Prop.Set( { extends: true } ) importeValorFinal?: number | null;
+    private readonly context?: ICredito<TCuota>;
 
-    @Prop.Set( { extends: true } ) get decimalImporteValorNeto(): Decimal { return Cast.toDecimal( this.importeValorNeto ) }
-    @Prop.Set( { extends: true } ) get decimalTasaInteresDiario(): Decimal { return Cast.toDecimal( this.tasaInteresDiario ) }
-    @Prop.Set( { extends: true } ) get decimalImporteInteres(): Decimal { return Cast.toDecimal( this.importeInteres ) }
-    @Prop.Set( { extends: true } ) get decimalPorcentajeInteres(): Decimal { return Cast.toDecimal( this.porcentajeInteres ) }
-    @Prop.Set( { extends: true } ) get decimalImporteValorFinal(): Decimal { return Cast.toDecimal( this.importeValorFinal ) }
+    #importeValorNeto?: number | null | undefined;
+    @Prop.Set()
+    public get importeValorNeto(): number | null | undefined { return this.context ? this.context.importeValorNeto : this.#importeValorNeto; }
+    public set importeValorNeto( value: number | null | undefined ) { this.context ? this.context.importeValorNeto = value : this.#importeValorNeto = value; }
 
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => Cuota.initialize( [x] )[0], extends: true } ) cuotas?: TCuota[] | null;
+    #tasaInteresDiario?: number | null | undefined;
+    @Prop.Set()
+    public get tasaInteresDiario(): number | null | undefined { return this.context ? this.context.tasaInteresDiario : this.#tasaInteresDiario; }
+    public set tasaInteresDiario( value: number | null | undefined ) { this.context ? this.context.tasaInteresDiario = value : this.#tasaInteresDiario = value; }
+
+    #importeInteres?: number | null | undefined;
+    @Prop.Set()
+    public get importeInteres(): number | null | undefined { return this.context ? this.context.importeInteres : this.#importeInteres; }
+    public set importeInteres( value: number | null | undefined ) { this.context ? this.context.importeInteres = value : this.#importeInteres = value; }
+
+    #porcentajeInteres?: number | null | undefined;
+    @Prop.Set()
+    public get porcentajeInteres(): number | null | undefined { return this.context ? this.context.porcentajeInteres : this.#porcentajeInteres; }
+    public set porcentajeInteres( value: number | null | undefined ) { this.context ? this.context.porcentajeInteres = value : this.#porcentajeInteres = value; }
+
+    #importeValorFinal?: number | null | undefined;
+    @Prop.Set()
+    public get importeValorFinal(): number | null | undefined { return this.context ? this.context.importeValorFinal : this.#importeValorFinal; }
+    public set importeValorFinal( value: number | null | undefined ) { this.context ? this.context.importeValorFinal = value : this.#importeValorFinal = value; }
+
+    get decimalImporteValorNeto(): Decimal { return Cast.toDecimal( this.importeValorNeto ) }
+    get decimalTasaInteresDiario(): Decimal { return Cast.toDecimal( this.tasaInteresDiario ) }
+    get decimalImporteInteres(): Decimal { return Cast.toDecimal( this.importeInteres ) }
+    get decimalPorcentajeInteres(): Decimal { return Cast.toDecimal( this.porcentajeInteres ) }
+    get decimalImporteValorFinal(): Decimal { return Cast.toDecimal( this.importeValorFinal ) }
+
+    #cuotas?: TCuota[] | null | undefined;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => Cuota.initialize( [x] )[0] } )
+    public get cuotas(): TCuota[] | null | undefined { return this.context ? this.context.cuotas : this.#cuotas; }
+    public set cuotas( value: TCuota[] | null | undefined ) { this.context ? this.context.cuotas = value : this.#cuotas = value; }
 
     #decimalDuracionMinutos = new Decimal( 0 );
     #interesXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
     #amortizacionXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
     #cuotaXminuto = new Proporcion( TipoProporcion.directa, 0, 0 );
 
-    @Prop.Set( { extends: true } ) get decimalDuracionMinutos() { return this.#decimalDuracionMinutos; }
-    @Prop.Set( { extends: true } ) get interesXminuto() { return this.#interesXminuto; }
-    @Prop.Set( { extends: true } ) get amortizacionXminuto() { return this.#amortizacionXminuto; }
-    @Prop.Set( { extends: true } ) get cuotaXminuto() { return this.#cuotaXminuto; }
+    get decimalDuracionMinutos() { return this.#decimalDuracionMinutos; }
+    get interesXminuto() { return this.#interesXminuto; }
+    get amortizacionXminuto() { return this.#amortizacionXminuto; }
+    get cuotaXminuto() { return this.#cuotaXminuto; }
 
 
-    constructor( item?: OptionalModel<Credito<TCuota>> ) {
+    constructor( item?: OptionalModel<Credito<TCuota>>, context?: ICredito<TCuota> ) {
         super();
+        this.context = context;
         Prop.initialize( this, item );
     }
 
@@ -86,7 +111,7 @@ export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCu
         super.setRelation( context );
 
         context.execute( this, Credito.type, () => {
-            
+
             this.cuotas?.forEach( item => item.assign( {
                 credito: this
             } ).setRelation( context ) )

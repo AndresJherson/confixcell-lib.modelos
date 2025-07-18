@@ -1,4 +1,4 @@
-import { ExecutionContext, ModelType, OptionalModel, Prop } from '../index';
+import { Cast, ExecutionContext, ModelType, OptionalModel, Prop } from '../index';
 
 @Prop.Class()
 export class Model {
@@ -40,5 +40,10 @@ export class Model {
                 ( item.uuid === this.uuid )
                 ? true
                 : false;
+    }
+
+    
+    toJSON(): Record<string, any> {
+        return Cast.modelToJson( this )
     }
 }

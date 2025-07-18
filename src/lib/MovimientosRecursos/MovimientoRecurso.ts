@@ -18,7 +18,10 @@ export class MovimientoRecurso extends Model {
         return codigo ? codigo : undefined;
     }
 
-    @Prop.Set() importeValorNeto?: number | null;
+    #importeValorNeto?: number | null | undefined;
+    @Prop.Set()
+    get importeValorNeto(): number | null | undefined { return this.#importeValorNeto; }
+    set importeValorNeto( value: number | null | undefined ) { this.#importeValorNeto = value; }
     get decimalImporteValorNeto(): Decimal { return Cast.toDecimal( this.importeValorNeto ); }
 
 
@@ -39,7 +42,7 @@ export class MovimientoRecurso extends Model {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, MovimientoRecurso.type, () => {

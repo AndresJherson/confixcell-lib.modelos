@@ -61,6 +61,22 @@ for ( const sourceFile of sourceFiles ) {
             metadata[className] = metadata[className] || {};
             metadata[className][propName] = typeString;
         }
+
+        for ( const accessor of cls.getGetAccessors() ) {
+            const decorators = accessor.getDecorators();
+            const hasPropSet = decorators.some( d => d.getFullName()?.includes( "Prop.Set" ) );
+            if ( !hasPropSet ) continue;
+
+            const propName = accessor.getName();
+            const type = accessor.getReturnType();
+            const unionTypes = type.isUnion() ? type.getUnionTypes() : [type];
+            const relevantType = unionTypes.find( t => !t.isNull() && !t.isUndefined() );
+            if ( !relevantType ) continue;
+
+            const typeString = getTypeString( relevantType );
+            metadata[className] = metadata[className] || {};
+            metadata[className][propName] = typeString;
+        }
     }
 }
 

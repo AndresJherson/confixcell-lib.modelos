@@ -1,4 +1,4 @@
-import { Model } from '../../index';
+import { Model } from '../../../index';
 
 export enum PropBehavior {
     string = 'string',
@@ -31,6 +31,7 @@ export type PropGetValue<T extends PropBehavior> =
 
 export interface TypeInfo {
     name: string,
+    value: new ( ...args: any[] ) => Model,
     recordPropertyInfo: Record<string, PropertyInfo>
 }
 

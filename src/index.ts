@@ -1,5 +1,6 @@
 
 // Utils
+export * from './utils/Utility';
 export * from './utils/types';
 export * from './utils/consts/ModelType';
 export * from './utils/consts/DbPresetConst';

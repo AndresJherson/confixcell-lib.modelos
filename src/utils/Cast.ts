@@ -1,7 +1,9 @@
 import Decimal from "decimal.js";
 import { DateTime, Duration, Interval } from "luxon";
+import { Model, Utility } from '../index';
+import { ClassType } from "./Immutable";
 
-export class Cast {
+export class Cast extends Utility {
 
     static toDateTime( value?: string | null ) {
         try {
@@ -140,7 +142,7 @@ export class Cast {
     }
 
 
-    static toRecordByUuid<T extends object>( data: ( T & { uuid?: string | null } )[] ): Record<string, T> {
+    static toRecordByUuid<T extends Model>( data: ( T & { uuid?: string | null } )[] ): Record<string, T> {
 
         return data.reduce(
             ( record, item ) => {
@@ -166,45 +168,61 @@ export class Cast {
     }
 
 
-    static deepClone<T extends object>( obj: T ): T {
-        const visited = new WeakMap<object, any>();
+    static modelToJson<T extends Model>( model: T ): Record<string, any> {
+        const ctor: new ( ...args: any[] ) => T = model.constructor as any;
+        const obj = new ctor( model );
+        console.log( ( obj as any )['tasaInteresDiario'] )
+        const result: Record<string, any> = {};
 
-        function _clone( value: any ): any {
-            if ( value === null || typeof value !== 'object' ) return value;
-            if ( visited.has( value ) ) return undefined;
-
-            const clone = Object.create( Object.getPrototypeOf( value ) );
-            visited.set( value, clone );
-
-            for ( const key of Reflect.ownKeys( value ) ) {
-                const descriptor = Object.getOwnPropertyDescriptor( value, key );
-                if ( !descriptor ) continue;
-
-                // Clonar la propiedad recursivamente
-                if ( 'value' in descriptor ) {
-                    // Data descriptor (value/writable)
-                    Object.defineProperty( clone, key, {
-                        value: _clone( ( value as any )[key as any] ),
-                        writable: descriptor.writable,
-                        enumerable: descriptor.enumerable,
-                        configurable: descriptor.configurable
-                    } );
-                } else {
-                    // Accessor descriptor (get/set)
-                    Object.defineProperty( clone, key, {
-                        get: descriptor.get,
-                        set: descriptor.set,
-                        enumerable: descriptor.enumerable,
-                        configurable: descriptor.configurable
-                    } );
-                }
+        // Función auxiliar para procesar valores
+        const processValue = ( value: any ): any => {
+            if ( value === null || value === undefined ) {
+                return value;
             }
 
-            return clone;
+            // Si es instancia de Model, usar su método toJSON
+            if ( value instanceof Model ) {
+                return Cast.modelToJson( value );
+            }
+
+            // Si es un array, procesar cada elemento
+            if ( Array.isArray( value ) ) {
+                return value.map( item => processValue( item ) );
+            }
+
+            // Si es un objeto plano, procesar sus propiedades
+            if ( typeof value === 'object' && value.constructor === Object ) {
+                const objResult: Record<string, any> = {};
+                for ( const [key, val] of Object.entries( value ) ) {
+                    objResult[key] = processValue( val );
+                }
+                return objResult;
+            }
+
+            // Para tipos primitivos, devolverlo tal como está
+            return value;
+        };
+
+        // Procesar propiedades del descriptor
+        const descriptors = Object.getOwnPropertyDescriptors( obj );
+        for ( const key of Object.keys( descriptors ) ) {
+            const value = ( obj as any )[key];
+            result[key] = processValue( value );
         }
 
-        return _clone( obj );
+        // Recorrer la cadena de prototipos
+        let proto = Object.getPrototypeOf( obj );
+        while ( proto && proto !== Object.prototype ) {
+            const typeInfo = ClassType.getTypeInfo( proto );
+            for ( const [propertyName] of Object.entries( typeInfo?.recordPropertyInfo ?? {} ) ) {
+                if ( !( propertyName in result ) ) {
+                    const value = ( obj as any )[propertyName];
+                    result[propertyName] = processValue( value );
+                }
+            }
+            proto = Object.getPrototypeOf( proto );
+        }
+
+        return result;
     }
-
-
 }

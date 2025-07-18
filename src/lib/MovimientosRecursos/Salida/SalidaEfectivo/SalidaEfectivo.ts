@@ -6,8 +6,6 @@ export class SalidaEfectivo extends SalidaRecurso {
     static override type = ModelType.SalidaEfectivo;
     override type = ModelType.SalidaEfectivo;
 
-    @Prop.Set() override importeValorNeto?: number | null;
-
     constructor( item?: OptionalModel<SalidaEfectivo> ) {
         super()
         Prop.initialize( this, item );

@@ -6,6 +6,13 @@ export class SalidaRecurso extends MovimientoRecurso {
     static override type = ModelType.SalidaRecurso;
     override type = ModelType.SalidaRecurso;
 
+    #importeValorNeto?: number | null | undefined;
+
+    @Prop.Set()
+    public override get importeValorNeto(): number | null | undefined { return this.#importeValorNeto; }
+    public override set importeValorNeto( value: number | null | undefined ) { this.#importeValorNeto = value; }
+
+    
     constructor( item?: OptionalModel<SalidaRecurso> ) {
         super()
         Prop.initialize( this, item );

@@ -9,19 +9,36 @@ export class SalidaProduccionBien extends SalidaProduccion {
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 
-    @Prop.Set() cantidadSaliente?: number | null;
-    @Prop.Set() importeCostoUnitario?: number | null;
-    @Prop.Set() importeValorUnitario?: number | null;
+    #cantidadSaliente?: number | null | undefined;
+    #cantidadEntrante?: number | null | undefined;
+    #importeCostoUnitario?: number | null | undefined;
+    #importeValorUnitario?: number | null | undefined;
+
+    @Prop.Set()
+    public get cantidadSaliente(): number | null | undefined { return this.#cantidadSaliente; }
+    public set cantidadSaliente( value: number | null | undefined ) { this.#cantidadSaliente = value; }
+
+    @Prop.Set()
+    public get cantidadEntrante(): number | null | undefined { return this.#cantidadEntrante; }
+    public set cantidadEntrante( value: number | null | undefined ) { this.#cantidadEntrante = value; }
+
+    @Prop.Set()
+    public get importeCostoUnitario(): number | null | undefined { return this.#importeCostoUnitario; }
+    public set importeCostoUnitario( value: number | null | undefined ) { this.#importeCostoUnitario = value; }
+
+    @Prop.Set()
+    public get importeValorUnitario(): number | null | undefined { return this.#importeValorUnitario; }
+    public set importeValorUnitario( value: number | null | undefined ) { this.#importeValorUnitario = value; }
 
     get decimalCantidadSaliente(): Decimal { return Cast.toDecimal( this.cantidadSaliente ); }
+    get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
+    get cantidadDisponible(): number { return this.decimalCantidadSaliente.minus( this.cantidadEntrante ?? 0 ).toNumber(); }
+    get decimalCantidadDisponible(): Decimal { return Cast.toDecimal( this.cantidadDisponible ); }
+    
     get decimalImporteCostoUnitario(): Decimal { return Cast.toDecimal( this.importeCostoUnitario ); }
     get decimalImporteValorUnitario(): Decimal { return Cast.toDecimal( this.importeValorUnitario ); }
 
-    @Prop.Set() cantidadEntrante?: number | null;
-    get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
 
-    get cantidadDisponible(): number { return this.decimalCantidadSaliente.minus( this.cantidadEntrante ?? 0 ).toNumber(); }
-    get decimalCantidadDisponible(): Decimal { return Cast.toDecimal( this.cantidadDisponible ); }
 
 
     constructor( item?: OptionalModel<SalidaProduccionBien> ) {
@@ -41,7 +58,7 @@ export class SalidaProduccionBien extends SalidaProduccion {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, SalidaProduccionBien.type, () => {

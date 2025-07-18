@@ -171,6 +171,12 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "saldoValorUnitario": "Number",
         "saldoValorTotal": "Number"
     },
+    "EntradaRecurso": {
+        "importeValorNeto": "Number"
+    },
+    "SalidaRecurso": {
+        "importeValorNeto": "Number"
+    },
     "PersonaJuridica": {
         "nombre": "String",
         "domicilio": "String",
@@ -194,6 +200,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "Rol": {
         "nombre": "String",
+        "descripcion": "String",
         "permisos": "Array<Permiso>",
         "subUsuario": "SubUsuario"
     },
@@ -242,13 +249,11 @@ export const PropTypes: Record<string, Record<string, string>> = {
     "EntradaBienConsumoValorSalida": {
         "salida": "SalidaBienConsumo"
     },
-    "EntradaEfectivo": {
-        "importeValorNeto": "Number"
-    },
     "EntradaEfectivoContado": {
         "medioTransferencia": "MedioTransferencia"
     },
     "EntradaEfectivoCredito": {
+        "importeValorNeto": "Number",
         "tasaInteresDiario": "Number",
         "importeInteres": "Number",
         "porcentajeInteres": "Number",
@@ -259,11 +264,12 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "credito": "EntradaEfectivoCredito"
     },
     "NotaEgresoCredito": {
+        "documentoFuente": "NotaEgreso",
+        "importeValorNeto": "Number",
         "tasaInteresDiario": "Number",
         "importeInteres": "Number",
         "porcentajeInteres": "Number",
         "importeValorFinal": "Number",
-        "documentoFuente": "NotaEgreso",
         "cuotas": "Array<NotaEgresoCuota>"
     },
     "NotaEgresoCuota": {
@@ -287,33 +293,32 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "almacen": "Almacen",
         "bienConsumo": "BienConsumo",
         "cantidadSaliente": "Number",
+        "cantidadEntrante": "Number",
         "importeCostoUnitario": "Number",
         "importeCostoNeto": "Number",
         "importeValorUnitario": "Number",
-        "importeValorNeto": "Number",
-        "cantidadEntrante": "Number"
+        "importeValorNeto": "Number"
     },
     "SalidaBienConsumoValorEntrada": {
         "entrada": "EntradaBienConsumo"
     },
     "NotaIngresoCredito": {
+        "documentoFuente": "NotaIngreso",
+        "importeValorNeto": "Number",
         "tasaInteresDiario": "Number",
         "importeInteres": "Number",
         "porcentajeInteres": "Number",
         "importeValorFinal": "Number",
-        "documentoFuente": "NotaIngreso",
         "cuotas": "Array<NotaIngresoCuota>"
     },
     "NotaIngresoCuota": {
         "credito": "NotaIngresoCredito"
     },
-    "SalidaEfectivo": {
-        "importeValorNeto": "Number"
-    },
     "SalidaEfectivoContado": {
         "medioTransferencia": "MedioTransferencia"
     },
     "SalidaEfectivoCredito": {
+        "importeValorNeto": "Number",
         "tasaInteresDiario": "Number",
         "importeInteres": "Number",
         "porcentajeInteres": "Number",
@@ -427,9 +432,9 @@ export const PropTypes: Record<string, Record<string, string>> = {
     "SalidaProduccionBien": {
         "bienConsumo": "BienConsumo",
         "cantidadSaliente": "Number",
+        "cantidadEntrante": "Number",
         "importeCostoUnitario": "Number",
-        "importeValorUnitario": "Number",
-        "cantidadEntrante": "Number"
+        "importeValorUnitario": "Number"
     },
     "SalidaProduccionServicio": {
         "servicio": "Servicio"

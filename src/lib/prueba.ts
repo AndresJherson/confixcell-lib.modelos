@@ -43,23 +43,34 @@ import { Credito, Cuota, DocumentoFuente, EntradaEfectivo, EntradaEfectivoCredit
 // console.log('4º fase', b)
 
 
+const credito = new Credito({
+    importeValorNeto: 0,
+    tasaInteresDiario: 2,
+    importeInteres: 3,
+    porcentajeInteres: 4,
+    importeValorFinal: 5
+})
+console.log( credito.toJSON() );
+
 const entradaEfectivo = new EntradaEfectivoCredito( {
-    documentoFuente: new DocumentoFuente()
+    documentoFuente: new DocumentoFuente({
+        importeNeto: 205.59
+    }),
 } );
-console.log( '1º', entradaEfectivo )
+console.log( '1º', entradaEfectivo.toJSON() )
 
 entradaEfectivo.importeValorNeto = 93.51;
-console.log( '2º', entradaEfectivo, entradaEfectivo.importeValorNeto )
+console.log( '2º', entradaEfectivo.toJSON(), entradaEfectivo.importeValorNeto )
 
 const e2 = new EntradaEfectivoCredito( entradaEfectivo );
-console.log( '3º', e2 );
+console.log( '3º', e2.toJSON() );
 console.log( {
     'entradaEfectivo.documentoFuente === e2.documentoFuente': entradaEfectivo.documentoFuente === e2.documentoFuente
 } )
 
 e2.importeValorFinal = 32;
 e2.importeValorNeto = 541.92
-console.log( e2, e2.importeValorFinal )
+console.log( e2.toJSON(), e2.importeValorFinal )
 
 console.log( "\n JSON" )
 console.log( JSON.stringify( entradaEfectivo ) )
@@ -67,19 +78,17 @@ console.log( JSON.stringify( e2 ) )
 
 console.log( "\n cuotas" )
 const cuota1 = new EntradaEfectivoCuota( { fechaVencimiento: DateTime.local().plus( { days: 5 } ).toSQL() } );
-console.log( "cutoa creada", cuota1 )
+console.log( "cuota creada", cuota1.toJSON() )
 e2.agregarCuota( cuota1 );
 
 console.log( '1º cuota agregada:', {
-    modelo: e2.cuotas,
-    credito: ( e2 as any )['credito'].cuotas
+    modelo: e2.cuotas?.map( x => x.toJSON() ),
 } )
 
 cuota1.importeCuota = 32.1;
 
 console.log( 'importeCuota cambiado:', {
-    cuota: e2.cuotas![0],
-    deCredito: ( e2 as any )['credito'].cuotas[0]
+    cuota: e2.cuotas![0].toJSON(),
 } )
 
 
@@ -89,8 +98,8 @@ console.log( 'importeCuota cambiado:', {
 
 
 
-/** Prueba de usuario */
-const usuario = new SubUsuario();
-usuario.set({
+// /** Prueba de usuario */
+// const usuario = new SubUsuario();
+// usuario.set({
     
-});
+// });

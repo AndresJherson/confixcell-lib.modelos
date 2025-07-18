@@ -171,7 +171,6 @@ export class Cast extends Utility {
     static modelToJson<T extends Model>( model: T ): Record<string, any> {
         const ctor: new ( ...args: any[] ) => T = model.constructor as any;
         const obj = new ctor( model );
-        console.log( ( obj as any )['tasaInteresDiario'] )
         const result: Record<string, any> = {};
 
         // Función auxiliar para procesar valores

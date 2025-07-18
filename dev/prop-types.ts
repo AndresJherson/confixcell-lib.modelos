@@ -70,13 +70,6 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "fechaCreacion": "String",
         "fechaActualizacion": "String"
     },
-    "DbPreset": {
-        "titulo": "String",
-        "target": "String",
-        "dataType": "String",
-        "valor": "String",
-        "esActualizable": "Boolean"
-    },
     "Recurso": {
         "codigo": "String",
         "esActualizable": "Boolean",
@@ -210,8 +203,13 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "superUsuario": "SuperUsuario",
         "roles": "Array<Rol>"
     },
+    "Preset": {
+        "json": "__type",
+        "superUsuario": "SuperUsuario"
+    },
     "SuperUsuario": {
         "empresa": "SuperUsuarioEmpresa",
+        "preset": "Preset",
         "subUsuarios": "Array<SubUsuario>"
     },
     "SuperUsuarioEmpresa": {

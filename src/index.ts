@@ -3,16 +3,13 @@
 export * from './utils/Utility';
 export * from './utils/types';
 export * from './utils/consts/ModelType';
-export * from './utils/consts/DbPresetConst';
 export * from './utils/Cast';
 export * from './utils/Proporcion';
 export * from './utils/ExecutionContext';
 
 
 // decorators
-export * from './utils/decorators/types';
-export * from './utils/decorators/PropImplementation';
-export * from './utils/decorators/Prop';
+export * from './utils/decorators';
 
 
 // Model
@@ -23,6 +20,7 @@ export * from './lib/Model';
 export * from './lib/Usuarios/Usuario';
 export * from './lib/Usuarios/SuperUsuario/SuperUsuario';
 export * from './lib/Usuarios/SuperUsuario/SuperUsuarioEmpresa';
+export * from './lib/Usuarios/SuperUsuario/Preset';
 export * from './lib/Usuarios/SubUsuario/SubUsuario';
 export * from './lib/Usuarios/SubUsuario/Rol';
 export * from './lib/Usuarios/SubUsuario/Permiso';
@@ -160,7 +158,3 @@ export * from './lib/Inventario/BienConsumo/KardexMovimientoBienConsumo';
 export * from './lib/Inventario/BienConsumo/EventoPendienteKardexBienConsumo';
 export * from './lib/Inventario/BienConsumo/ErrorKardexBienConsumo';
 export * from './lib/Inventario/BienConsumo/MovimientoTipoBienConsumo';
-
-
-// Config
-export * from './lib/Presets/DbPreset';

@@ -7,6 +7,7 @@ export enum ModelType {
     Usuario = 'Usuario',
     SuperUsuario = 'SuperUsuario',
     SuperUsuarioEmpresa = 'SuperUsuarioEmpresa',
+    Preset = 'Preset',
     SubUsuario = 'SubUsuario',
     Rol = 'Rol',
     Permiso = 'Permiso',
@@ -140,8 +141,4 @@ export enum ModelType {
     KardexMovimientoBienConsumo = 'KardexMovimientoBienConsumo',
     EventoPendienteKardexBienConsumo = 'EventoPendienteKardexBienConsumo',
     ErrorKardexBienConsumo = 'ErrorKardexBienConsumo',
-
-
-    // Preset
-    DbPreset = 'DbPreset'
 }

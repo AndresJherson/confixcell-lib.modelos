@@ -12,8 +12,8 @@ export class SalidaEfectivo extends SalidaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaEfectivo>[] ): SalidaEfectivo[] {
-        return data.map( item => new ( Prop.getClass<SalidaEfectivo>( item ) ?? SalidaEfectivo )( item ) )
+    static override initialize( data: OptionalModel<SalidaEfectivo>[] ): Array<SalidaEfectivo | null> {
+        return Prop.arrayInitialize( SalidaEfectivo, data );
     }
 
 

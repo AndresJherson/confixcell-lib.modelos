@@ -15,12 +15,8 @@ export class Usuario extends Model {
     @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string | null;
     @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string | null;
 
-    get dateTimeCreacion(): DateTime {
-        return Cast.toDateTime( this.fechaCreacion );
-    }
-    get dateTimeActualizacion(): DateTime {
-        return Cast.toDateTime( this.fechaActualizacion );
-    }
+    get dateTimeCreacion(): DateTime { return Cast.toDateTime( this.fechaCreacion ); }
+    get dateTimeActualizacion(): DateTime { return Cast.toDateTime( this.fechaActualizacion ); }
 
 
     constructor( item?: OptionalModel<Usuario> ) {
@@ -52,7 +48,7 @@ export class Usuario extends Model {
     }
 
 
-    static initialize( data: OptionalModel<Usuario>[] ): Usuario[] {
-        return data.map( item => new ( Prop.getClass<Usuario>( item ) ?? Usuario )( item ) )
+    static override initialize( data: OptionalModel<Usuario>[] ): Array<Usuario | null> {
+        return Prop.arrayInitialize( Usuario, data );
     }
 }

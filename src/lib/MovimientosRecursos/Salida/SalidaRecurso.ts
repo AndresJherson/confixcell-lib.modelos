@@ -12,7 +12,7 @@ export class SalidaRecurso extends MovimientoRecurso {
     public override get importeValorNeto(): number | null | undefined { return this.#importeValorNeto; }
     public override set importeValorNeto( value: number | null | undefined ) { this.#importeValorNeto = value; }
 
-    
+
     constructor( item?: OptionalModel<SalidaRecurso> ) {
         super()
         Prop.initialize( this, item );
@@ -24,8 +24,8 @@ export class SalidaRecurso extends MovimientoRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaRecurso>[] ): SalidaRecurso[] {
-        return data.map( item => new ( Prop.getClass<SalidaRecurso>( item ) ?? SalidaRecurso )( item ) )
+    static override initialize( data: OptionalModel<SalidaRecurso>[] ): Array<SalidaRecurso | null> {
+        return Prop.arrayInitialize( SalidaRecurso, data );
     }
 
 

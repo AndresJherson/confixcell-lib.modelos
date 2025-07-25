@@ -22,7 +22,7 @@ export class DocumentoSalida extends DocumentoMovimiento {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoSalida>[] ): DocumentoSalida[] {
-        return data.map( item => new ( Prop.getClass<DocumentoSalida>( item ) ?? DocumentoSalida )( item ) )
+    static override initialize( data: OptionalModel<DocumentoSalida>[] ): Array<DocumentoSalida | null> {
+        return Prop.arrayInitialize( DocumentoSalida, data );
     }
 }

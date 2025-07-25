@@ -26,7 +26,7 @@ export class SalidaProduccionServicio extends SalidaProduccion {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, SalidaProduccionServicio.type, () => {
@@ -39,12 +39,7 @@ export class SalidaProduccionServicio extends SalidaProduccion {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaProduccionServicio>[] ): SalidaProduccionServicio[] {
-        return data.map( item =>
-            new (
-                Prop.getClass<SalidaProduccionServicio>( item )
-                ?? SalidaProduccionServicio
-            )( item )
-        )
+    static override initialize( data: OptionalModel<SalidaProduccionServicio>[] ): Array<SalidaProduccionServicio | null> {
+        return Prop.arrayInitialize( SalidaProduccionServicio, data );
     }
 }

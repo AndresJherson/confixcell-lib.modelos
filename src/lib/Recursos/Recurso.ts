@@ -39,8 +39,8 @@ export class Recurso extends Model {
     }
 
 
-    static initialize( data: OptionalModel<Recurso>[] ): Recurso[] {
-        return data.map( item => new ( Prop.getClass<Recurso>( item ) ?? Recurso )( item ) )
+    static override initialize( data: OptionalModel<Recurso>[] ): Array<Recurso | null> {
+        return Prop.arrayInitialize( Recurso, data );
     }
 
 

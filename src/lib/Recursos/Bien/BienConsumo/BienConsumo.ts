@@ -23,7 +23,7 @@ export class BienConsumo extends Bien {
     }
 
 
-    static override initialize( data: OptionalModel<BienConsumo>[] ): BienConsumo[] {
-        return data.map( item => new ( Prop.getClass<BienConsumo>( item ) ?? BienConsumo )( item ) )
+    static override initialize( data: OptionalModel<BienConsumo>[] ): Array<BienConsumo | null> {
+        return Prop.arrayInitialize( BienConsumo, data );
     }
 }

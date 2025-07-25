@@ -53,8 +53,8 @@ export class MovimientoRecurso extends Model {
     }
 
 
-    static initialize( data: OptionalModel<MovimientoRecurso>[] ): MovimientoRecurso[] {
-        return data.map( item => new ( Prop.getClass<MovimientoRecurso>( item ) ?? MovimientoRecurso )( item ) )
+    static override initialize( data: OptionalModel<MovimientoRecurso>[] ): Array<MovimientoRecurso | null> {
+        return Prop.arrayInitialize( MovimientoRecurso, data );
     }
 
 

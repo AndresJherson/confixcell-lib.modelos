@@ -57,8 +57,8 @@ export class SalidaBienConsumo extends SalidaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaBienConsumo>[] ): SalidaBienConsumo[] {
-        return data.map( item => new ( Prop.getClass<SalidaBienConsumo>( item ) ?? SalidaBienConsumo )( item ) )
+    static override initialize( data: OptionalModel<SalidaBienConsumo>[] ): Array<SalidaBienConsumo | null> {
+        return Prop.arrayInitialize( SalidaBienConsumo, data );
     }
 
 

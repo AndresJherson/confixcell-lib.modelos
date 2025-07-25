@@ -89,7 +89,7 @@ export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCu
     get cuotaXminuto() { return this.#cuotaXminuto; }
 
 
-    constructor( item?: OptionalModel<Credito<TCuota>>, context?: ICredito<TCuota> ) {
+    constructor( item?: OptionalModel<ICredito<TCuota>>, context?: ICredito<TCuota> ) {
         super();
         this.context = context;
         Prop.initialize( this, item );
@@ -122,8 +122,8 @@ export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCu
     }
 
 
-    static initialize<TCuota extends Cuota>( data: OptionalModel<ICredito<TCuota>>[] ): ICredito<TCuota>[] {
-        return data.map( item => new ( Prop.getClass<ICredito<TCuota>>( item ) ?? Credito )( item ) )
+    static override initialize<TCuota extends Cuota>( data: OptionalModel<ICredito<TCuota>>[] ): Array<ICredito<TCuota> | null> {
+        return Prop.arrayInitialize( Credito<TCuota>, data );
     }
 
 

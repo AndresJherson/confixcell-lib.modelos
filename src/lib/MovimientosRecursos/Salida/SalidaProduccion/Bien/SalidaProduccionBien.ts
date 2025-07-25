@@ -34,7 +34,7 @@ export class SalidaProduccionBien extends SalidaProduccion {
     get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
     get cantidadDisponible(): number { return this.decimalCantidadSaliente.minus( this.cantidadEntrante ?? 0 ).toNumber(); }
     get decimalCantidadDisponible(): Decimal { return Cast.toDecimal( this.cantidadDisponible ); }
-    
+
     get decimalImporteCostoUnitario(): Decimal { return Cast.toDecimal( this.importeCostoUnitario ); }
     get decimalImporteValorUnitario(): Decimal { return Cast.toDecimal( this.importeValorUnitario ); }
 
@@ -69,13 +69,8 @@ export class SalidaProduccionBien extends SalidaProduccion {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaProduccionBien>[] ): SalidaProduccionBien[] {
-        return data.map( item =>
-            new (
-                Prop.getClass<SalidaProduccionBien>( item )
-                ?? SalidaProduccionBien
-            )( item )
-        )
+    static override initialize( data: OptionalModel<SalidaProduccionBien>[] ): Array<SalidaProduccionBien | null> {
+        return Prop.arrayInitialize( SalidaProduccionBien, data );
     }
 
 

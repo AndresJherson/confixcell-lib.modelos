@@ -21,4 +21,9 @@ export class Servicio extends Recurso {
     override assign( item: OptionalModel<Servicio> ): this {
         return super.assign( item as OptionalModel<this> );
     }
+
+
+    static override initialize( data: OptionalModel<Servicio>[] ): Array<Servicio | null> {
+        return Prop.arrayInitialize( Servicio, data );
+    }
 }

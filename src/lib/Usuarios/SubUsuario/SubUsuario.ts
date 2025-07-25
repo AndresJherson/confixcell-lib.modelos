@@ -1,4 +1,4 @@
-import { ExecutionContext, Model, ModelType, OptionalModel, Persona, Prop, PropBehavior, Rol, SuperUsuario, Usuario } from '../../../index';
+import { ExecutionContext, ModelType, OptionalModel, Persona, Prop, PropBehavior, Rol, SuperUsuario, Usuario } from '../../../index';
 
 @Prop.Class()
 export class SubUsuario extends Usuario {
@@ -10,6 +10,10 @@ export class SubUsuario extends Usuario {
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Usuario.initialize( [x] )[0] } ) creadoPor?: Usuario | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SuperUsuario( x ) } ) superUsuario?: SuperUsuario | null;
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new Rol( x ) } ) roles?: Rol[] | null;
+
+    get permisos() {
+        return [...new Set( this.roles?.flatMap( rol => rol.permisos?.map( permiso => permiso.nombre ) ) )]
+    }
 
 
     constructor( item?: OptionalModel<SubUsuario> ) {
@@ -29,7 +33,7 @@ export class SubUsuario extends Usuario {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, SubUsuario.type, () => {

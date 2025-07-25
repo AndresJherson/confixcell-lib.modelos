@@ -67,8 +67,8 @@ export class DocumentoTransaccion extends DocumentoFuente {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoTransaccion>[] ): DocumentoTransaccion[] {
-        return data.map( item => new ( Prop.getClass<DocumentoTransaccion>( item ) ?? DocumentoTransaccion )( item ) )
+    static override initialize( data: OptionalModel<DocumentoTransaccion>[] ): Array<DocumentoTransaccion | null> {
+        return Prop.arrayInitialize( DocumentoTransaccion, data );
     }
 
 
@@ -83,26 +83,26 @@ export class DocumentoTransaccion extends DocumentoFuente {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, DocumentoTransaccion.type, () => {
 
-            this.docsEntradaEfectivo?.forEach( item => item.assign({
+            this.docsEntradaEfectivo?.forEach( item => item.assign( {
                 documentoTransaccion: this
-            }).setRelation( context ) );
+            } ).setRelation( context ) );
 
-            this.docsEntradaBienConsumo?.forEach( item => item.assign({
+            this.docsEntradaBienConsumo?.forEach( item => item.assign( {
                 documentoTransaccion: this
-            }).setRelation( context ) );
+            } ).setRelation( context ) );
 
-            this.docsSalidaEfectivo?.forEach( item => item.assign({
+            this.docsSalidaEfectivo?.forEach( item => item.assign( {
                 documentoTransaccion: this
-            }).setRelation( context ) );
+            } ).setRelation( context ) );
 
-            this.docsSalidaBienConsumo?.forEach( item => item.assign({
+            this.docsSalidaBienConsumo?.forEach( item => item.assign( {
                 documentoTransaccion: this
-            }).setRelation( context ) );
+            } ).setRelation( context ) );
 
         } )
 

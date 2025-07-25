@@ -11,9 +11,17 @@ export * from './utils/ExecutionContext';
 // decorators
 export * from './utils/decorators';
 
+// Functions
+export * from './utils/Function';
+export * from './utils/PropertyDescriptors';
+
 
 // Model
 export * from './lib/Model';
+
+
+// Records
+export * from './lib/Record/PresetRecord';
 
 
 // Usuarios

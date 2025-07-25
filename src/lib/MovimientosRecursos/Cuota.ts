@@ -72,8 +72,8 @@ export class Cuota extends Model {
     }
 
 
-    static initialize( data: OptionalModel<Cuota>[] ): Cuota[] {
-        return data.map( item => new ( Prop.getClass<Cuota>( item ) ?? Cuota )( item ) );
+    static override initialize( data: OptionalModel<Cuota>[] ): Array<Cuota | null> {
+        return Prop.arrayInitialize( Cuota, data );
     }
 
 

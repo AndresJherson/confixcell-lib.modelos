@@ -1,10 +1,11 @@
 import { Cast, ExecutionContext, ModelType, OptionalModel, Prop } from '../index';
+import { Immutable, UtilImmutable } from '../utils/Immutable';
 
 @Prop.Class()
-export class Model {
+export class Model extends Immutable {
 
-    static type: string = ModelType.Model;
-    type: string = ModelType.Model;
+    static override type: string = ModelType.Model;
+    override type: string = ModelType.Model;
 
     @Prop.Set() symbol: symbol = Symbol();
     @Prop.Set() id?: number | null;
@@ -12,10 +13,16 @@ export class Model {
 
 
     constructor( item?: OptionalModel<Model> ) {
+        super();
         Prop.initialize( this, item );
     }
 
+    static initialize( data: OptionalModel<Model>[] ): Array<Model | null> {
+        return Prop.arrayInitialize( Model, data );
+    }
 
+
+    // Actualizar datos
     set( item: OptionalModel<this> ): this {
         Prop.set( this, item );
         return this;
@@ -28,11 +35,13 @@ export class Model {
     }
 
 
+    // Relacionar datos
     setRelation( context = new ExecutionContext() ): this {
         return this;
     }
 
 
+    // Verificar identidad de datos
     isSameIdentity( item: this ): boolean {
         return item.symbol === this.symbol
             ? true
@@ -42,8 +51,30 @@ export class Model {
                 : false;
     }
 
-    
+
     toJSON(): Record<string, any> {
         return Cast.modelToJson( this )
     }
+
+
+    // Instancias
+    getInstancesOf<T extends typeof Model>( targetClass: T ) {
+        return UtilImmutable.getInstancesOf( this, targetClass );
+    }
+
+    setInstanceBySymbol<T extends typeof Model>( targetClass: T, record: Record<symbol, InstanceType<T>> ) {
+        UtilImmutable.setInstanceBySymbol( this, targetClass, record );
+        return this;
+    }
+
+    setInstanceByUuid<T extends typeof Model>( targetClass: T, record: Record<string, InstanceType<T>> ) {
+        UtilImmutable.setInstanceByUuid( this, targetClass, record );
+        return this;
+    }
+
+    setInstanceById<T extends typeof Model>( targetClass: T, record: Record<number, InstanceType<T>> ) {
+        UtilImmutable.setInstanceById( this, targetClass, record );
+        return this;
+    }
 }
+

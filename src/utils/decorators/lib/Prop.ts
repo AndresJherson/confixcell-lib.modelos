@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { ClassType, Immutable, PropBehavior, PropertyType, PropMetadataProperty } from '../../Immutable';
-import { Model } from '../../../index';
+import { ClassType, UtilImmutable, PropBehavior, PropertyType, PropMetadataProperty } from '../../Immutable';
+import { Model, OptionalModel } from '../../../index';
 
 
 export class Prop {
@@ -14,7 +14,7 @@ export class Prop {
 
     static Set<T extends PropBehavior>( metadata?: PropMetadataProperty<T> ): PropertyDecorator {
         return ( target: any, propertyKey ) => {
-            
+
             PropertyType.defineProperty( {
                 target,
                 propertyKey,
@@ -26,17 +26,26 @@ export class Prop {
 
 
     static initialize( target: NonNullable<Object>, item?: any ) {
-        Immutable.initialize( target, item );
+        UtilImmutable.initialize( target, item );
+    }
+
+
+    static arrayInitialize<T extends Model>( targetClass: new ( ...args: any ) => T, data: OptionalModel<T>[] ): Array<T | null> {
+        return data.map( item =>
+            item != null
+                ? new ( ClassType.getClass<T>( item ) ?? targetClass )( item )
+                : null
+        )
     }
 
 
     static set( target: NonNullable<Object>, item?: any ) {
-        Immutable.set( target, item );
+        UtilImmutable.set( target, item );
     }
 
 
     static assign( target: NonNullable<Object>, item?: any ) {
-        Immutable.assign( target, item );
+        UtilImmutable.assign( target, item );
     }
 
 

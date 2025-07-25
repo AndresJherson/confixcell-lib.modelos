@@ -1,3 +1,4 @@
+import { UtilPropertyDescriptor } from '../../PropertyDescriptors';
 import { ClassType, PropBehavior, PropertyInfo, PropMetadataProperty, TypeInfo } from '../index';
 import { PropTypes } from './prop-types';
 
@@ -11,13 +12,14 @@ export class PropertyType {
         const { target, propertyKey, metadata } = parameters;
 
         const {
-            constructorName,
+            ctor,
+            className,
             resolvedMetadata
         } = PropertyType.resolvePropertyMetadata( { target, propertyKey, metadata } )
 
         PropertyType.definePropertyInfo( {
-            target,
-            constructorName,
+            ctor,
+            className,
             propertyKey: propertyKey.toString(),
             metadata: resolvedMetadata
         } )
@@ -33,8 +35,11 @@ export class PropertyType {
         const { target, propertyKey, metadata } = parameters;
         const { behavior } = metadata;
 
-        const constructorName: string = target.prototype?.constructor.type ?? target.constructor.type ?? '';
-        const propertyType: string | undefined = PropTypes[constructorName][propertyKey.toString()]
+        const ctor = UtilPropertyDescriptor.getConstructor( target );
+        if ( !ctor ) throw new Error( `[PropertyType] No se pudo obtener el constructor para  ${target}` );
+        const className = ctor.type as string;
+
+        const propertyType: string | undefined = PropTypes[className][propertyKey.toString()]
         let resolvedBehavior: string | undefined;
 
         try {
@@ -47,7 +52,8 @@ export class PropertyType {
         }
 
         return {
-            constructorName,
+            ctor,
+            className,
             resolvedMetadata: {
                 ...metadata,
                 behavior: resolvedBehavior
@@ -57,27 +63,27 @@ export class PropertyType {
 
 
     private static definePropertyInfo( parameters: {
-        target: any,
+        ctor: new() => any,
+        className: string,
         propertyKey: string,
-        constructorName: string,
         metadata: PropMetadataProperty<any>
     } ) {
-        const { target, propertyKey, constructorName, metadata } = parameters;
+        const { ctor, className, propertyKey, metadata } = parameters;
 
         const propertyInfo: PropertyInfo = {
             name: propertyKey,
             metadata: metadata
         };
 
-        const typeInfo: TypeInfo = ClassType.getTypeInfo( target ) ?? {
-            name: constructorName,
-            value: target,
+        const typeInfo: TypeInfo = ClassType.getTypeInfo( ctor ) ?? {
+            name: className,
+            value: ctor,
             recordPropertyInfo: {}
         };
 
         typeInfo.recordPropertyInfo[propertyKey.toString()] = propertyInfo;
 
-        ClassType.recordMetadata.set( constructorName, typeInfo );
+        ClassType.recordMetadata.set( className, typeInfo );
     }
 
 }

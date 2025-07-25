@@ -23,7 +23,7 @@ export class EntradaEfectivo extends EntradaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<EntradaEfectivo>[] ): EntradaEfectivo[] {
-        return data.map( item => new ( Prop.getClass<EntradaEfectivo>( item ) ?? EntradaEfectivo )( item ) )
+    static override initialize( data: OptionalModel<EntradaEfectivo>[] ): Array<EntradaEfectivo | null> {
+        return Prop.arrayInitialize( EntradaEfectivo, data );
     }
 }

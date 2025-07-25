@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { Cast, DocumentoIdentificacion, ExecutionContext, Model, ModelType, OptionalModel, Prop, PropBehavior, SubUsuario } from '../../index';
+import { ClassType } from '../../utils/Immutable';
 
 @Prop.Class()
 export class Persona extends Model {
@@ -56,8 +57,8 @@ export class Persona extends Model {
     }
 
 
-    static initialize( data: OptionalModel<Persona>[] ): Persona[] {
-        return data.map( item => new ( Prop.getClass<Persona>( item ) ?? Persona )( item ) )
+    static override initialize( data: OptionalModel<Persona>[] ): Array<Persona | null> {
+        return Prop.arrayInitialize( Persona, data );
     }
 
 

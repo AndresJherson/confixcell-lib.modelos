@@ -8,6 +8,7 @@ export enum ModelType {
     SuperUsuario = 'SuperUsuario',
     SuperUsuarioEmpresa = 'SuperUsuarioEmpresa',
     Preset = 'Preset',
+    PresetRecord = 'PresetRecord',
     SubUsuario = 'SubUsuario',
     Rol = 'Rol',
     Permiso = 'Permiso',

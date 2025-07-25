@@ -27,7 +27,7 @@ export class Bien extends Recurso {
     }
 
 
-    static override initialize( data: OptionalModel<Bien>[] ): Bien[] {
-        return data.map( item => new ( Prop.getClass<Bien>( item ) ?? Bien )( item ) )
+    static override initialize( data: OptionalModel<Bien>[] ): Array<Bien | null> {
+        return Prop.arrayInitialize( Bien, data );
     }
 }

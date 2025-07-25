@@ -12,8 +12,8 @@ export class DocumentoIngreso extends DocumentoTransaccion {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoIngreso>[] ): DocumentoTransaccion[] {
-        return data.map( item => new ( Prop.getClass<DocumentoIngreso>( item ) ?? DocumentoTransaccion )( item ) )
+    static override initialize( data: OptionalModel<DocumentoIngreso>[] ): Array<DocumentoTransaccion | null> {
+        return Prop.arrayInitialize( DocumentoIngreso, data );
     }
 
 

@@ -1,4 +1,4 @@
-import { Model } from '../../../index';
+import { Immutable } from './Immutable';
 
 export enum PropBehavior {
     string = 'string',
@@ -13,7 +13,7 @@ export enum PropBehavior {
     enum = 'enum'
 }
 
-export type ValueCallback<T> = ( prev: any, curr: any ) => T;
+export type ValueCallback<T> = ( prev: any, curr: any ) => ( T | null | undefined );
 
 export type PropGetValue<T extends PropBehavior> =
     T extends
@@ -24,14 +24,14 @@ export type PropGetValue<T extends PropBehavior> =
     T extends PropBehavior.number ? ValueCallback<Number> :
     T extends PropBehavior.boolean ? ValueCallback<Boolean> :
     T extends PropBehavior.object ? ValueCallback<Object> :
-    T extends PropBehavior.model ? ValueCallback<Model> :
+    T extends PropBehavior.model ? ValueCallback<Immutable> :
     T extends PropBehavior.array ? ValueCallback<any> :
     never;
 
 
 export interface TypeInfo {
     name: string,
-    value: new ( ...args: any[] ) => Model,
+    value: new ( ...args: any[] ) => Immutable,
     recordPropertyInfo: Record<string, PropertyInfo>
 }
 

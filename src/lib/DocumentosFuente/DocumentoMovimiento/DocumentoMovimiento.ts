@@ -26,7 +26,7 @@ export class DocumentoMovimiento extends DocumentoFuente {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, DocumentoMovimiento.type, () => {
@@ -39,7 +39,7 @@ export class DocumentoMovimiento extends DocumentoFuente {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoMovimiento>[] ): DocumentoMovimiento[] {
-        return data.map( item => new ( Prop.getClass<DocumentoMovimiento>( item ) ?? DocumentoMovimiento )( item ) )
+    static override initialize( data: OptionalModel<DocumentoMovimiento>[] ): Array<DocumentoMovimiento | null> {
+        return Prop.arrayInitialize( DocumentoMovimiento, data );
     }
 }

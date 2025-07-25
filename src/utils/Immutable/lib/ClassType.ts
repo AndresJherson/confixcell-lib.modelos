@@ -1,5 +1,5 @@
-import { Model } from '../../../index';
-import { TypeInfo } from '../index';
+import { UtilPropertyDescriptor } from '../../../index';
+import { Immutable, TypeInfo } from '../index';
 
 export class ClassType {
 
@@ -9,11 +9,13 @@ export class ClassType {
     static defineClass( target: any ): void {
         if ( target.type ) {
 
-            const className = target.type;
+            const ctr = UtilPropertyDescriptor.getConstructor( target );
+            if ( !ctr ) throw new Error( `[PropertyType] No se pudo obtener el constructor para  ${target}` );
+            const className = ctr.type as string;
 
             const typeInfo: TypeInfo = ClassType.getTypeInfo( target ) ?? {
                 name: className,
-                value: target,
+                value: ctr,
                 recordPropertyInfo: {}
             };
 
@@ -22,7 +24,7 @@ export class ClassType {
     }
 
 
-    static getClass<T extends Model>( instance?: Object | null ) {
+    static getClass<T extends Immutable>( instance?: Object | null ) {
         try {
             if ( instance === undefined || instance === null ) return undefined;
 
@@ -42,8 +44,11 @@ export class ClassType {
 
     static getTypeInfo( target: any ): TypeInfo | undefined {
         try {
-            const constructorName = target.prototype?.constructor.type ?? target.constructor.type;
-            return ClassType.recordMetadata.get( constructorName );
+            const ctr = UtilPropertyDescriptor.getConstructor( target );
+            if ( !ctr ) throw Error();
+
+            const className = ctr.type as string;
+            return ClassType.recordMetadata.get( className );
         }
         catch ( error ) {
             return undefined;

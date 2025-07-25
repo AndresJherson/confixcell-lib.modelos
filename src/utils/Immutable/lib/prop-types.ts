@@ -70,6 +70,16 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "fechaCreacion": "String",
         "fechaActualizacion": "String"
     },
+    "MetadataPresetRecord": {
+        "value": "TValue",
+        "descripcion": "String",
+        "model": "TModel"
+    },
+    "PresetRecord": {
+        "almacenDeBienesDeConsumoDeNotaVenta": "MetadataPresetRecord<String, Almacen>",
+        "almacenDeRecursosBienDeConsumoDeNotaVenta": "MetadataPresetRecord<String, Almacen>",
+        "servicioDeReparacionDeNotaVenta": "MetadataPresetRecord<String, Servicio>"
+    },
     "Recurso": {
         "codigo": "String",
         "esActualizable": "Boolean",

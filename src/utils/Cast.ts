@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 import { DateTime, Duration, Interval } from "luxon";
-import { Model, Utility } from '../index';
+import { Model, Utility, UtilPropertyDescriptor } from '../index';
 import { ClassType } from "./Immutable";
 
 export class Cast extends Utility {
@@ -169,7 +169,7 @@ export class Cast extends Utility {
 
 
     static modelToJson<T extends Model>( model: T ): Record<string, any> {
-        const ctor: new ( ...args: any[] ) => T = model.constructor as any;
+        const ctor = model.constructor as new ( ...args: any[] ) => T;
         const obj = new ctor( model );
         const result: Record<string, any> = {};
 
@@ -202,9 +202,8 @@ export class Cast extends Utility {
             return value;
         };
 
-        // Procesar propiedades del descriptor
-        const descriptors = Object.getOwnPropertyDescriptors( obj );
-        for ( const key of Object.keys( descriptors ) ) {
+        // Procesar propiedades leibles
+        for ( const key of UtilPropertyDescriptor.getReadablePropertyNames( obj ) ) {
             const value = ( obj as any )[key];
             result[key] = processValue( value );
         }

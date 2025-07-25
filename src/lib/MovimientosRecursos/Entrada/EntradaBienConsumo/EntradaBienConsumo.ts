@@ -28,9 +28,9 @@ export class EntradaBienConsumo extends EntradaRecurso {
     public override set importeValorNeto( value: number | null | undefined ) { this.#importeValorNeto = value; }
 
     @Prop.Set()
-    public get cantidadSaliente(): number {return this.#cantidadSaliente;}
-    public set cantidadSaliente( value: number ) {this.#cantidadSaliente = value;}
-    
+    public get cantidadSaliente(): number { return this.#cantidadSaliente; }
+    public set cantidadSaliente( value: number ) { this.#cantidadSaliente = value; }
+
     get decimalCantidadEntrante(): Decimal { return Cast.toDecimal( this.cantidadEntrante ); }
     get decimalCantidadSaliente(): Decimal { return Cast.toDecimal( this.cantidadSaliente ); }
     get cantidadDisponible(): number { return this.decimalCantidadEntrante.minus( this.cantidadSaliente ).toNumber(); };
@@ -70,8 +70,8 @@ export class EntradaBienConsumo extends EntradaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<EntradaBienConsumo>[] ): EntradaBienConsumo[] {
-        return data.map( item => new ( Prop.getClass<EntradaBienConsumo>( item ) ?? EntradaBienConsumo )( item ) )
+    static override initialize( data: OptionalModel<EntradaBienConsumo>[] ): Array<EntradaBienConsumo | null> {
+        return Prop.arrayInitialize( EntradaBienConsumo, data );
     }
 
 

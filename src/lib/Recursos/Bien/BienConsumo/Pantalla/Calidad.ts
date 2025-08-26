@@ -3,8 +3,8 @@ import { Model, ModelType, OptionalModel, Prop } from "../../../../../index";
 @Prop.Class()
 export class Calidad extends Model {
 
-    static override type = ModelType.Calidad;
-    override type = ModelType.Calidad;
+    static override type: string = ModelType.Calidad;
+    override type: string = ModelType.Calidad;
 
     @Prop.Set() nombre?: string | null;
 

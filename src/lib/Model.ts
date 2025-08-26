@@ -8,7 +8,6 @@ export class Model extends Immutable {
     override type: string = ModelType.Model;
 
     @Prop.Set() symbol: symbol = Symbol();
-    @Prop.Set() id?: number | null;
     @Prop.Set() uuid?: string | null;
 
 
@@ -17,7 +16,10 @@ export class Model extends Immutable {
         Prop.initialize( this, item );
     }
 
-    static initialize( data: OptionalModel<Model>[] ): Array<Model | null> {
+
+    static initialize<TModel extends Model, TItem extends OptionalModel<TModel>>(
+        data: TItem[]
+    ) {
         return Prop.arrayInitialize( Model, data );
     }
 
@@ -71,10 +73,4 @@ export class Model extends Immutable {
         UtilImmutable.setInstanceByUuid( this, targetClass, record );
         return this;
     }
-
-    setInstanceById<T extends typeof Model>( targetClass: T, record: Record<number, InstanceType<T>> ) {
-        UtilImmutable.setInstanceById( this, targetClass, record );
-        return this;
-    }
 }
-

@@ -3,9 +3,10 @@ import { Model, ModelType, OptionalModel, Prop, PropBehavior } from '../../index
 @Prop.Class()
 export class PoliticaComercial extends Model {
 
-    static override type = ModelType.PoliticaComercial;
+    static override type: string = ModelType.PoliticaComercial;
     override type: string = ModelType.PoliticaComercial;
 
+    @Prop.Set() numero?: number | null;
     @Prop.Set() descripcion?: string | null;
     @Prop.Set() esActivo?: boolean | null;
 

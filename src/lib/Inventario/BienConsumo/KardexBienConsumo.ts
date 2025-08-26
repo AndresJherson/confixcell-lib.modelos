@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon';
-import { Almacen, BienConsumo, Cast, ErrorKardexBienConsumo, EventoPendienteKardexBienConsumo, ExecutionContext, InventarioBienConsumo, KardexMovimientoBienConsumo, Model, ModelType, OptionalModel, Prop, PropBehavior } from '../../../index';
+import { Almacen, BienConsumo, Cast, ErrorKardexBienConsumo, EventoPendienteKardexBienConsumo, ExecutionContext, InventarioBienConsumo, KardexBienConsumoMovimiento, Model, ModelType, OptionalModel, Prop, PropBehavior } from '../../../index';
 import Decimal from 'decimal.js';
 
 @Prop.Class()
 export class KardexBienConsumo extends Model {
 
-    static override type = ModelType.KardexBienConsumo;
-    override type = ModelType.KardexBienConsumo;
+    static override type: string = ModelType.KardexBienConsumo;
+    override type: string = ModelType.KardexBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new InventarioBienConsumo( x ) } ) inventario?: InventarioBienConsumo | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
@@ -14,7 +14,7 @@ export class KardexBienConsumo extends Model {
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new EventoPendienteKardexBienConsumo( x ) } ) eventosPendientes?: EventoPendienteKardexBienConsumo[] | null;
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new ErrorKardexBienConsumo( x ) } ) errores?: ErrorKardexBienConsumo[] | null;
-    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new KardexMovimientoBienConsumo( x ) } ) movimientos?: KardexMovimientoBienConsumo[] | null;
+    @Prop.Set( { behavior: PropBehavior.array, getValue: x => new KardexBienConsumoMovimiento( x ) } ) movimientos?: KardexBienConsumoMovimiento[] | null;
 
     @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCreacion?: string | null;
     @Prop.Set( { behavior: PropBehavior.datetime } ) fechaActualizacion?: string | null;

@@ -4,8 +4,8 @@ import { Cast, Model, ModelType, OptionalModel, Prop, PropBehavior } from '../..
 @Prop.Class()
 export class KardexLock extends Model {
 
-    static override type = ModelType.KardexLock;
-    override type = ModelType.KardexLock;
+    static override type: string = ModelType.KardexLock;
+    override type: string = ModelType.KardexLock;
 
     @Prop.Set() clave?: string | null;
     @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;

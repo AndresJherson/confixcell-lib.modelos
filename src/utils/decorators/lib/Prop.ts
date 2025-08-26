@@ -1,14 +1,22 @@
 import 'reflect-metadata';
 import { ClassType, UtilImmutable, PropBehavior, PropertyType, PropMetadataProperty } from '../../Immutable';
 import { Model, OptionalModel } from '../../../index';
+import { UtilModels } from '../../UtilModels';
 
 
 export class Prop {
 
     static Class(): ClassDecorator {
-        return ( target: any ) => {
+        return ( target: Function ) => {
             ClassType.defineClass( target );
         };
+    }
+
+
+    static Implements( interfaces: Function[] ): ClassDecorator {
+        return ( target: Function ) => {
+            UtilModels.implements( target, interfaces );
+        }
     }
 
 
@@ -30,12 +38,26 @@ export class Prop {
     }
 
 
-    static arrayInitialize<T extends Model>( targetClass: new ( ...args: any ) => T, data: OptionalModel<T>[] ): Array<T | null> {
+    static arrayInitialize<
+        TCtor extends new ( ...args: any ) => Model,
+        TItem extends OptionalModel<InstanceType<TCtor>>
+    >(
+        targetClass: TCtor,
+        data: Array<TItem>
+    )
+        : unknown extends TItem
+        ? Array<InstanceType<TCtor> | null>
+        : null extends TItem
+        ? Array<InstanceType<TCtor> | null>
+        : undefined extends TItem
+        ? Array<InstanceType<TCtor> | null>
+        : Array<InstanceType<TCtor>> {
+
         return data.map( item =>
             item != null
-                ? new ( ClassType.getClass<T>( item ) ?? targetClass )( item )
+                ? new ( ClassType.getClass<InstanceType<TCtor>>( item ) ?? targetClass )( item )
                 : null
-        )
+        ) as any;
     }
 
 

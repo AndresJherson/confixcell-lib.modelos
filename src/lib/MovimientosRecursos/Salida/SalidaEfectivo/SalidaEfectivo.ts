@@ -3,8 +3,8 @@ import { ModelType, OptionalModel, Prop, SalidaRecurso } from '../../../../index
 @Prop.Class()
 export class SalidaEfectivo extends SalidaRecurso {
 
-    static override type = ModelType.SalidaEfectivo;
-    override type = ModelType.SalidaEfectivo;
+    static override type: string = ModelType.SalidaEfectivo;
+    override type: string = ModelType.SalidaEfectivo;
 
     constructor( item?: OptionalModel<SalidaEfectivo> ) {
         super()
@@ -12,7 +12,7 @@ export class SalidaEfectivo extends SalidaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaEfectivo>[] ): Array<SalidaEfectivo | null> {
+    static override initialize<TModel extends SalidaEfectivo, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( SalidaEfectivo, data );
     }
 

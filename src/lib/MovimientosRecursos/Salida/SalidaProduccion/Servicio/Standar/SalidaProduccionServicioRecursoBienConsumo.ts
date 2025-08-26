@@ -3,10 +3,11 @@ import { Almacen, BienConsumo, Cast, ExecutionContext, Model, ModelType, Optiona
 
 @Prop.Class()
 export class SalidaProduccionServicioRecursoBienConsumo extends Model {
-    static override type = ModelType.SalidaProduccionServicioRecursoBienConsumo;
-    override type = ModelType.SalidaProduccionServicioRecursoBienConsumo;
+    static override type: string = ModelType.SalidaProduccionServicioRecursoBienConsumo;
+    override type: string = ModelType.SalidaProduccionServicioRecursoBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionServicioActividad( x ) } ) actividad?: SalidaProduccionServicioActividad | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 

@@ -4,8 +4,8 @@ import { DocumentoEntrada, EntradaEfectivo, ExecutionContext, ModelType, Optiona
 @Prop.Class()
 export class DocumentoEntradaEfectivo extends DocumentoEntrada {
 
-    static override type = ModelType.DocumentoEntradaEfectivo;
-    override type = ModelType.DocumentoEntradaEfectivo;
+    static override type: string = ModelType.DocumentoEntradaEfectivo;
+    override type: string = ModelType.DocumentoEntradaEfectivo;
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => EntradaEfectivo.initialize( [x] )[0] } ) entradas?: EntradaEfectivo[] | null;
 

@@ -2,7 +2,7 @@ import { Model, ModelType, OptionalModel, Prop } from "../../index";
 
 @Prop.Class()
 export class Genero extends Model {
-    static override type = ModelType.Genero;
+    static override type: string = ModelType.Genero;
     override type: string = ModelType.Genero;
 
     @Prop.Set() nombre?: string | null;

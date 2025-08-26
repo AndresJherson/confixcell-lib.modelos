@@ -1,11 +1,11 @@
 import Decimal from 'decimal.js';
-import { Almacen, BienConsumo, Cast, ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaRecurso } from '../../../../index';
+import { Almacen, BienConsumo, Cast, ExecutionContext, ModelType, MovimientoRecurso, OptionalModel, Prop, PropBehavior, SalidaRecurso } from '../../../../index';
 
 @Prop.Class()
 export class SalidaBienConsumo extends SalidaRecurso {
 
-    static override type = ModelType.SalidaBienConsumo;
-    override type = ModelType.SalidaBienConsumo;
+    static override type: string = ModelType.SalidaBienConsumo;
+    override type: string = ModelType.SalidaBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
@@ -57,7 +57,7 @@ export class SalidaBienConsumo extends SalidaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaBienConsumo>[] ): Array<SalidaBienConsumo | null> {
+    static override initialize<TModel extends SalidaBienConsumo, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( SalidaBienConsumo, data );
     }
 

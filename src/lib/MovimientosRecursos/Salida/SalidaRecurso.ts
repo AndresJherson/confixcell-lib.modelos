@@ -3,8 +3,8 @@ import { ModelType, MovimientoRecurso, OptionalModel, Prop } from '../../../inde
 @Prop.Class()
 export class SalidaRecurso extends MovimientoRecurso {
 
-    static override type = ModelType.SalidaRecurso;
-    override type = ModelType.SalidaRecurso;
+    static override type: string = ModelType.SalidaRecurso;
+    override type: string = ModelType.SalidaRecurso;
 
     #importeValorNeto?: number | null | undefined;
 
@@ -24,7 +24,7 @@ export class SalidaRecurso extends MovimientoRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaRecurso>[] ): Array<SalidaRecurso | null> {
+    static override initialize<TModel extends SalidaRecurso, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( SalidaRecurso, data );
     }
 

@@ -1,4 +1,4 @@
-import { UtilPropertyDescriptor } from '../../PropertyDescriptors';
+import { UtilPropertyDescriptor } from '../../UtilPropertyDescriptors';
 import { ClassType, PropBehavior, PropertyInfo, PropMetadataProperty, TypeInfo } from '../index';
 import { PropTypes } from './prop-types';
 

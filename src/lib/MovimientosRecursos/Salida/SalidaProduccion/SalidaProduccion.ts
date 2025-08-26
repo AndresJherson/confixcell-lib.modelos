@@ -4,8 +4,8 @@ import { Cast, ModelType, OptionalModel, Prop, SalidaRecurso } from '../../../..
 @Prop.Class()
 export class SalidaProduccion extends SalidaRecurso {
 
-    static override type = ModelType.SalidaProduccion;
-    override type = ModelType.SalidaProduccion;
+    static override type: string = ModelType.SalidaProduccion;
+    override type: string = ModelType.SalidaProduccion;
 
     #importeCostoNeto?: number | null | undefined;
     #importeValorNeto?: number | null | undefined;
@@ -37,7 +37,7 @@ export class SalidaProduccion extends SalidaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaProduccion>[] ): Array<SalidaProduccion | null> {
+    static override initialize<TModel extends SalidaProduccion, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( SalidaProduccion, data );
     }
 }

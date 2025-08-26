@@ -4,8 +4,8 @@ import { Cast, ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, R
 @Prop.Class()
 export class ServicioEstandar extends Recurso {
 
-    static override type = ModelType.ServicioEstandar;
-    override type = ModelType.ServicioEstandar;
+    static override type: string = ModelType.ServicioEstandar;
+    override type: string = ModelType.ServicioEstandar;
 
     @Prop.Set() nombre?: string | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ServicioEstandarCategoria( x ) } ) categoria?: ServicioEstandarCategoria | null;

@@ -4,8 +4,8 @@ import { BienConsumo, Cast, ExecutionContext, ModelType, OptionalModel, Prop, Pr
 @Prop.Class()
 export class SalidaProduccionBien extends SalidaProduccion {
 
-    static override type = ModelType.SalidaProduccionBien;
-    override type = ModelType.SalidaProduccionBien;
+    static override type: string = ModelType.SalidaProduccionBien;
+    override type: string = ModelType.SalidaProduccionBien;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
 
@@ -69,7 +69,7 @@ export class SalidaProduccionBien extends SalidaProduccion {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaProduccionBien>[] ): Array<SalidaProduccionBien | null> {
+    static override initialize<TModel extends SalidaProduccionBien, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( SalidaProduccionBien, data );
     }
 

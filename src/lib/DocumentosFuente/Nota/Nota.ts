@@ -4,9 +4,10 @@ import { Cast, DocumentoFuente, ExecutionContext, Model, ModelType, OptionalMode
 @Prop.Class()
 export class Nota extends Model {
 
-    static override type = ModelType.Nota;
-    override type = ModelType.Nota;
+    static override type: string = ModelType.Nota;
+    override type: string = ModelType.Nota;
 
+    @Prop.Set() numero?: number | null;
     @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
     @Prop.Set() descripcion?: string | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => DocumentoFuente.initialize( [x] )[0] } ) documentoFuente?: DocumentoFuente | null;

@@ -4,7 +4,7 @@ import { EntradaEfectivo, ExecutionContext, MedioTransferencia, ModelType, Optio
 export class EntradaEfectivoContado extends EntradaEfectivo {
 
     static override type: string = ModelType.EntradaEfectivoContado;
-    override type = ModelType.EntradaEfectivoContado;
+    override type: string = ModelType.EntradaEfectivoContado;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia | null;
 

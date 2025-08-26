@@ -4,7 +4,7 @@ import { EntradaRecurso, ModelType, OptionalModel, Prop } from '../../../../inde
 export class EntradaEfectivo extends EntradaRecurso {
 
     static override type: string = ModelType.EntradaEfectivo;
-    override type = ModelType.EntradaEfectivo;
+    override type: string = ModelType.EntradaEfectivo;
 
 
     constructor( item?: OptionalModel<EntradaEfectivo> ) {
@@ -23,7 +23,7 @@ export class EntradaEfectivo extends EntradaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<EntradaEfectivo>[] ): Array<EntradaEfectivo | null> {
+    static override initialize<TModel extends EntradaEfectivo, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( EntradaEfectivo, data );
     }
 }

@@ -3,8 +3,8 @@ import { EntradaBienConsumo, ModelType, OptionalModel, Prop } from '../../../../
 @Prop.Class()
 export class EntradaBienConsumoValorNuevo extends EntradaBienConsumo {
     
-    static override type = ModelType.EntradaBienConsumoValorNuevo;
-    override type = ModelType.EntradaBienConsumoValorNuevo;
+    static override type = 'EntradaBienConsumoValorNuevo';
+    override type = 'EntradaBienConsumoValorNuevo';
 
 
     constructor( item?: OptionalModel<EntradaBienConsumoValorNuevo> ) {

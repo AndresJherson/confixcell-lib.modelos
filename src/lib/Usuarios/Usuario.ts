@@ -48,7 +48,7 @@ export class Usuario extends Model {
     }
 
 
-    static override initialize( data: OptionalModel<Usuario>[] ): Array<Usuario | null> {
+    static override initialize<TModel extends Usuario, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( Usuario, data );
     }
 }

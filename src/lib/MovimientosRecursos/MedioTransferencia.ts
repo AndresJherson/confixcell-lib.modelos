@@ -3,8 +3,8 @@ import { Model, ModelType, OptionalModel, Prop } from "../../index";
 @Prop.Class()
 export class MedioTransferencia extends Model {
 
-    static override type = ModelType.MedioTransferencia;
-    override type = ModelType.MedioTransferencia;
+    static override type: string = ModelType.MedioTransferencia;
+    override type: string = ModelType.MedioTransferencia;
 
     @Prop.Set() nombre?: string | null;
 

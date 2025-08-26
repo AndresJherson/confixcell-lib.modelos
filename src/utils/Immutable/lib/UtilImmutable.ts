@@ -24,17 +24,18 @@ export class UtilImmutable extends Utility {
                 if ( initializedProperties.has( propertyName ) ) continue;
                 if ( !( propertyName in item ) ) continue;
 
-                const originalValue = ( target as any )[propertyName];
-                const value = ( item as any )[propertyName];
+                const prevValue = ( target as any )[propertyName];
+                const nextValue = ( item as any )[propertyName];
 
 
                 // Valores null
-                if ( ( value === null || value === undefined ) && originalValue === undefined ) {
-                    Reflect.set( target, propertyName, undefined );
+                if ( nextValue === null ) {
+                    Reflect.set( target, propertyName, null );
                     initializedProperties.add( propertyName );
                     continue;
                 }
-                else if ( value === null && originalValue !== undefined ) {
+                else if ( nextValue === undefined ) {
+                    Reflect.set( target, propertyName, undefined );
                     initializedProperties.add( propertyName );
                     continue;
                 }
@@ -44,8 +45,8 @@ export class UtilImmutable extends Utility {
                     target,
                     propertyName,
                     propertyInfo,
-                    originalValue,
-                    value
+                    prevValue,
+                    nextValue
                 } );
 
 
@@ -76,21 +77,22 @@ export class UtilImmutable extends Utility {
                 ...Object.keys( typeInfo?.recordPropertyInfo ?? {} )
             ] )
 
-            for ( const [propertyName, value] of Object.entries( item ) ) {
+            for ( const [propertyName, nextValue] of Object.entries( item ) ) {
 
                 if ( UtilPropertyDescriptor.isReadonly( target, propertyName ) ) continue;
                 if ( initializedProperties.has( propertyName ) ) continue;
                 if ( !properties.has( propertyName ) ) continue;
 
-                const originalValue = ( target as any )[propertyName];
+                const prevValue = ( target as any )[propertyName];
 
                 // Valores null
-                if ( ( value === null || value === undefined ) && originalValue === undefined ) {
-                    Reflect.set( target, propertyName, undefined );
+                if ( nextValue === null ) {
+                    Reflect.set( target, propertyName, null );
                     initializedProperties.add( propertyName );
                     continue;
                 }
-                else if ( value === null && originalValue !== undefined ) {
+                else if ( nextValue === undefined ) {
+                    Reflect.set( target, propertyName, undefined );
                     initializedProperties.add( propertyName );
                     continue;
                 }
@@ -98,7 +100,7 @@ export class UtilImmutable extends Utility {
                 const propertyInfo = typeInfo?.recordPropertyInfo[propertyName];
 
                 if ( !propertyInfo ) {
-                    Reflect.set( target, propertyName, value );
+                    Reflect.set( target, propertyName, nextValue );
                     initializedProperties.add( propertyName );
                     continue
                 };
@@ -107,8 +109,8 @@ export class UtilImmutable extends Utility {
                     target,
                     propertyName,
                     propertyInfo,
-                    originalValue,
-                    value
+                    prevValue,
+                    nextValue
                 } )
 
                 initializedProperties.add( propertyName );
@@ -124,11 +126,11 @@ export class UtilImmutable extends Utility {
         target: any,
         propertyName: string,
         propertyInfo: PropertyInfo,
-        originalValue: any,
-        value: any
+        prevValue: any,
+        nextValue: any
     } ) {
 
-        const { target, propertyName, propertyInfo, originalValue, value } = parameters;
+        const { target, propertyName, propertyInfo, prevValue, nextValue } = parameters;
         const { metadata } = propertyInfo;
         const { behavior, getValue } = metadata;
 
@@ -139,10 +141,10 @@ export class UtilImmutable extends Utility {
                 getValue
                     ? (
                         getValue.length === 1
-                            ? getValue( value, undefined )
-                            : getValue( originalValue, value )
+                            ? getValue( nextValue, undefined )
+                            : getValue( prevValue, nextValue )
                     )
-                    : Cast.setString( value )
+                    : Cast.setString( nextValue )
             );
         }
         else if ( behavior === PropBehavior.number ) {
@@ -152,10 +154,10 @@ export class UtilImmutable extends Utility {
                 getValue
                     ? (
                         getValue.length === 1
-                            ? getValue( value, undefined )
-                            : getValue( originalValue, value )
+                            ? getValue( nextValue, undefined )
+                            : getValue( prevValue, nextValue )
                     )
-                    : Cast.setNumber( value )
+                    : Cast.setNumber( nextValue )
             );
         }
         else if ( behavior === PropBehavior.boolean ) {
@@ -165,10 +167,10 @@ export class UtilImmutable extends Utility {
                 getValue
                     ? (
                         getValue.length === 1
-                            ? getValue( value, undefined )
-                            : getValue( originalValue, value )
+                            ? getValue( nextValue, undefined )
+                            : getValue( prevValue, nextValue )
                     )
-                    : Boolean( value )
+                    : Boolean( nextValue )
             );
         }
         else if ( metadata.behavior === PropBehavior.model ) {
@@ -178,22 +180,22 @@ export class UtilImmutable extends Utility {
                 propertyName,
                 UtilImmutable.resolveValue( {
                     getValue,
-                    originalValue,
-                    value
+                    prevValue,
+                    nextValue
                 } )
             )
 
         }
         else if ( behavior === PropBehavior.array ) {
 
-            const prevArray: any[] = Array.isArray( originalValue ) ? originalValue : [];
-            const nextArray: any[] | undefined = Array.isArray( value )
-                ? value.map( ( item, i ) => {
+            const prevArray: any[] = Array.isArray( prevValue ) ? prevValue : [];
+            const nextArray: any[] | undefined = Array.isArray( nextValue )
+                ? nextValue.map( ( nextItem, i ) => {
                     const prevItem = prevArray[i];
                     return UtilImmutable.resolveValue( {
                         getValue,
-                        originalValue: prevItem,
-                        value: item
+                        prevValue: prevItem,
+                        nextValue: nextItem
                     } )
                 } )
                     .filter( item => item !== undefined )
@@ -212,10 +214,10 @@ export class UtilImmutable extends Utility {
                 getValue
                     ? (
                         getValue.length === 1
-                            ? getValue( value, undefined )
-                            : getValue( originalValue, value )
+                            ? getValue( nextValue, undefined )
+                            : getValue( prevValue, nextValue )
                     )
-                    : Cast.setDate( value )
+                    : Cast.setDate( nextValue )
             );
         }
         else if ( behavior === PropBehavior.time ) {
@@ -225,10 +227,10 @@ export class UtilImmutable extends Utility {
                 getValue
                     ? (
                         getValue.length === 1
-                            ? getValue( value, undefined )
-                            : getValue( originalValue, value )
+                            ? getValue( nextValue, undefined )
+                            : getValue( prevValue, nextValue )
                     )
-                    : Cast.setTime( value )
+                    : Cast.setTime( nextValue )
             );
         }
         else if ( behavior === PropBehavior.datetime ) {
@@ -238,10 +240,10 @@ export class UtilImmutable extends Utility {
                 getValue
                     ? (
                         getValue.length === 1
-                            ? getValue( value, undefined )
-                            : getValue( originalValue, value )
+                            ? getValue( nextValue, undefined )
+                            : getValue( prevValue, nextValue )
                     )
-                    : Cast.setDateTime( value )
+                    : Cast.setDateTime( nextValue )
             );
         }
         else if ( behavior === PropBehavior.object ) {
@@ -251,44 +253,44 @@ export class UtilImmutable extends Utility {
                 getValue
                     ? (
                         getValue.length === 1
-                            ? getValue( value, undefined )
-                            : getValue( originalValue, value )
+                            ? getValue( nextValue, undefined )
+                            : getValue( prevValue, nextValue )
                     )
-                    : Cast.setObject( value )
+                    : Cast.setObject( nextValue )
             );
         }
         else {
-            Reflect.set( target, propertyName, value );
+            Reflect.set( target, propertyName, nextValue );
         }
     }
 
 
     private static resolveValue<T extends PropBehavior>( parameters: {
         getValue?: PropGetValue<T>,
-        originalValue: any,
-        value: any
+        prevValue: any,
+        nextValue: any
     } ) {
 
-        const { getValue, originalValue, value } = parameters;
+        const { getValue, prevValue, nextValue } = parameters;
 
-        let nextValue: any | undefined = getValue
+        let processedValue: any | undefined = getValue
             ? (
                 getValue.length === 1
-                    ? getValue( value, undefined )
-                    : getValue( originalValue, value )
+                    ? getValue( nextValue, undefined )
+                    : getValue( prevValue, nextValue )
             )
             : undefined;
 
-        if ( nextValue === undefined ) {
+        if ( processedValue === undefined ) {
 
-            const ctor = ClassType.getClass( value );
+            const ctor = ClassType.getClass( nextValue );
             if ( ctor ) {
-                nextValue = new ctor( value );
+                processedValue = new ctor( nextValue );
             }
 
         }
 
-        return nextValue;
+        return processedValue;
     }
 
 
@@ -308,21 +310,21 @@ export class UtilImmutable extends Utility {
                 ...Object.keys( typeInfo?.recordPropertyInfo ?? {} )
             ] )
 
-            for ( const [propertyName, value] of Object.entries( item ) ) {
+            for ( const [propertyName, nextValue] of Object.entries( item ) ) {
 
                 if ( UtilPropertyDescriptor.isReadonly( target, propertyName ) ) continue;
                 if ( initializedProperties.has( propertyName ) ) continue;
                 if ( !properties.has( propertyName ) ) continue;
 
-                const originalValue = ( target as any )[propertyName];
 
                 // Valores null
-                if ( ( value === null || value === undefined ) && originalValue === undefined ) {
-                    Reflect.set( target, propertyName, undefined );
+                if ( nextValue === null ) {
+                    Reflect.set( target, propertyName, null );
                     initializedProperties.add( propertyName );
                     continue;
                 }
-                else if ( value === null && originalValue !== undefined ) {
+                else if ( nextValue === undefined ) {
+                    Reflect.set( target, propertyName, undefined );
                     initializedProperties.add( propertyName );
                     continue;
                 }
@@ -330,7 +332,7 @@ export class UtilImmutable extends Utility {
                 const propertyInfo = typeInfo?.recordPropertyInfo[propertyName];
                 if ( !propertyInfo ) continue;
 
-                ( target as any )[propertyName] = value;
+                ( target as any )[propertyName] = nextValue;
 
                 initializedProperties.add( propertyName );
 
@@ -344,7 +346,7 @@ export class UtilImmutable extends Utility {
 
 
     static getInstancesOf<
-        TRoot extends Immutable,
+        TRoot extends object,
         TTargetClass extends typeof Immutable
     >( root: TRoot, targetClass: TTargetClass ): InstanceType<TTargetClass>[] {
         const seen = new WeakSet()
@@ -378,37 +380,28 @@ export class UtilImmutable extends Utility {
     }
 
 
-
     static setInstanceBySymbol<
-        TRoot extends Immutable,
+        TRoot extends object,
         TTargetClass extends typeof Immutable
     >( root: TRoot, targetClass: TTargetClass, record: Record<symbol, InstanceType<TTargetClass>> ) {
         UtilImmutable.setInstanceByKey( root, targetClass, record, 'symbol' );
     }
 
-
     static setInstanceByUuid<
-        TRoot extends Immutable,
+        TRoot extends object,
         TTarget extends typeof Immutable
     >( root: TRoot, targetClass: TTarget, record: Record<string, InstanceType<TTarget>> ) {
         UtilImmutable.setInstanceByKey( root, targetClass, record, 'uuid' );
     }
 
-    static setInstanceById<
-        TRoot extends Immutable,
-        TTargetClass extends typeof Immutable
-    >( root: TRoot, targetClass: TTargetClass, record: Record<number, InstanceType<TTargetClass>> ) {
-        UtilImmutable.setInstanceByKey( root, targetClass, record, 'id' );
-    }
-
     private static setInstanceByKey<
-        TRoot extends Immutable,
+        TRoot extends object,
         TTargetClass extends typeof Immutable
     >(
         root: TRoot,
         targetClass: TTargetClass,
         record: Record<any, InstanceType<TTargetClass>>,
-        targetKey: 'symbol' | 'id' | 'uuid'
+        targetKey: 'symbol' | 'uuid'
     ) {
 
         const seen = new WeakSet()

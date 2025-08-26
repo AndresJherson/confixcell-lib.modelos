@@ -3,10 +3,10 @@ import { Bien, BienConsumo, ExecutionContext, ModelType, OptionalModel, Prop, Pr
 @Prop.Class()
 export class BienCapital extends Bien {
 
-    static override type = ModelType.BienCapital;
-    override type = ModelType.BienCapital;
+    static override type: string = ModelType.BienCapital;
+    override type: string = ModelType.BienCapital;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienConsumo( x ) } ) bienConsumo?: BienConsumo | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
     @Prop.Set() numero?: number | null;
     @Prop.Set() descripcion?: string | null;
 
@@ -37,7 +37,7 @@ export class BienCapital extends Bien {
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
         context.execute( this, BienCapital.type, () => {

@@ -5,10 +5,11 @@ import Decimal from 'decimal.js';
 @Prop.Class()
 export class NotaVentaSalidaProduccionServicioReparacionRecursoServicio extends Model {
 
-    static override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
-    override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
+    static override type: string = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
+    override type: string = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoServicio;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ServicioReparacion( x ) } ) servicioReparacion?: ServicioReparacion | null;
     @Prop.Set() descripcion?: string | null;
 

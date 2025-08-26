@@ -4,8 +4,8 @@ import { Cast, DocumentoIdentificacion, DocumentoTransaccion, ExecutionContext, 
 @Prop.Class()
 export class NotaIngreso extends DocumentoTransaccion {
 
-    static override type = ModelType.NotaIngreso;
-    override type = ModelType.NotaIngreso;
+    static override type: string = ModelType.NotaIngreso;
+    override type: string = ModelType.NotaIngreso;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) clienteDocumentoIdentificacion?: DocumentoIdentificacion | null;

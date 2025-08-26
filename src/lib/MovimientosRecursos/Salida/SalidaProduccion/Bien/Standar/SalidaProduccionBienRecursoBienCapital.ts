@@ -4,10 +4,11 @@ import { BienCapital, Cast, ExecutionContext, Model, ModelType, OptionalModel, P
 @Prop.Class()
 export class SalidaProduccionBienRecursoBienCapital extends Model {
 
-    static override type = ModelType.SalidaProduccionBienRecursoBienCapital;
-    override type = ModelType.SalidaProduccionBienRecursoBienCapital;
+    static override type: string = ModelType.SalidaProduccionBienRecursoBienCapital;
+    override type: string = ModelType.SalidaProduccionBienRecursoBienCapital;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividad?: SalidaProduccionBienActividad | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienCapital( x ) } ) bienCapital?: BienCapital | null;
 
     @Prop.Set() importeCostoNeto?: number | null;

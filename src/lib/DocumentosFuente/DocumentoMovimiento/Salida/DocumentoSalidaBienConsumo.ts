@@ -1,11 +1,11 @@
 import Decimal from 'decimal.js';
-import { Cast, DocumentoSalida, ExecutionContext, KardexBienConsumo, KardexMovimientoBienConsumo, ModelType, MovimientoTipoBienConsumo, OptionalModel, Prop, PropBehavior, SalidaBienConsumo, SalidaBienConsumoValorEntrada, SalidaBienConsumoValorNuevo } from '../../../../index';
+import { Cast, DocumentoSalida, ExecutionContext, KardexBienConsumo, KardexBienConsumoMovimiento, ModelType, MovimientoTipoBienConsumo, OptionalModel, Prop, PropBehavior, SalidaBienConsumo, SalidaBienConsumoValorEntrada, SalidaBienConsumoValorNuevo } from '../../../../index';
 
 @Prop.Class()
 export class DocumentoSalidaBienConsumo extends DocumentoSalida {
 
-    static override type = ModelType.DocumentoSalidaBienConsumo;
-    override type = ModelType.DocumentoSalidaBienConsumo;
+    static override type: string = ModelType.DocumentoSalidaBienConsumo;
+    override type: string = ModelType.DocumentoSalidaBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaBienConsumo.initialize( [x] )[0] } ) salidas?: SalidaBienConsumo[] | null;
 
@@ -134,7 +134,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida {
             }
 
             if ( sal instanceof SalidaBienConsumoValorNuevo ) {
-                record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
+                record[clave].movimientos?.push( new KardexBienConsumoMovimiento( {
                     uuid: sal.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_NUEVO,
                     fecha: this.fechaEmision,
@@ -145,7 +145,7 @@ export class DocumentoSalidaBienConsumo extends DocumentoSalida {
                 } ) )
             }
             else if ( sal instanceof SalidaBienConsumoValorEntrada ) {
-                record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
+                record[clave].movimientos?.push( new KardexBienConsumoMovimiento( {
                     uuid: sal.uuid,
                     referenciaUuid: sal.entrada?.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_VALOR_ENTRADA,

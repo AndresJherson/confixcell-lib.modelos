@@ -4,8 +4,8 @@ import { Cast, ExecutionContext, KardexBienConsumo, Model, ModelType, OptionalMo
 @Prop.Class()
 export class EventoPendienteKardexBienConsumo extends Model {
 
-    static override type = ModelType.EventoPendienteKardexBienConsumo;
-    override type = ModelType.EventoPendienteKardexBienConsumo;
+    static override type: string = ModelType.EventoPendienteKardexBienConsumo;
+    override type: string = ModelType.EventoPendienteKardexBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo | null;
     @Prop.Set() evento?: string | null;

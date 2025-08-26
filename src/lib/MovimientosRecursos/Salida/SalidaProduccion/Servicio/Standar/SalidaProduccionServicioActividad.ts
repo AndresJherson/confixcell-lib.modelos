@@ -5,10 +5,11 @@ import { DateTime } from 'luxon';
 @Prop.Class()
 export class SalidaProduccionServicioActividad extends Model {
 
-    static override type = ModelType.SalidaProduccionServicioActividad;
-    override type = ModelType.SalidaProduccionServicioActividad;
+    static override type: string = ModelType.SalidaProduccionServicioActividad;
+    override type: string = ModelType.SalidaProduccionServicioActividad;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionServicioStandar( x ) } ) salidaProduccionServicioStandar?: SalidaProduccionServicioStandar | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set() nombre?: string | null;
 
     @Prop.Set( { behavior: PropBehavior.datetime } ) fechaInicio?: string | null;

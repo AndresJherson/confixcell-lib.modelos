@@ -3,8 +3,8 @@ import { ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaP
 @Prop.Class()
 export class SalidaProduccionServicio extends SalidaProduccion {
 
-    static override type = ModelType.SalidaProduccionServicio;
-    override type = ModelType.SalidaProduccionServicio;
+    static override type: string = ModelType.SalidaProduccionServicio;
+    override type: string = ModelType.SalidaProduccionServicio;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) servicio?: Servicio | null;
 
@@ -39,7 +39,7 @@ export class SalidaProduccionServicio extends SalidaProduccion {
     }
 
 
-    static override initialize( data: OptionalModel<SalidaProduccionServicio>[] ): Array<SalidaProduccionServicio | null> {
+    static override initialize<TModel extends SalidaProduccionServicio, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( SalidaProduccionServicio, data );
     }
 }

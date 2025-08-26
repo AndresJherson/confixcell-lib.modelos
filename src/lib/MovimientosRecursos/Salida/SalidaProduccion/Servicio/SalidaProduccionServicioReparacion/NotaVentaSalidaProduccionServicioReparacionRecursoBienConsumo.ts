@@ -5,10 +5,11 @@ import { DateTime } from 'luxon';
 @Prop.Class()
 export class NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo extends Model {
 
-    static override type = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo;
-    override type = NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo.type;
+    static override type: string = ModelType.NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo;
+    override type: string = NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo.type;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVentaSalidaProduccionServicioReparacion( x ) } ) salidaProduccion?: NotaVentaSalidaProduccionServicioReparacion | null;
+    @Prop.Set() numero?: number | null;
 
     @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;
     get dateTimeFecha(): DateTime { return Cast.toDateTime( this.fecha ); }

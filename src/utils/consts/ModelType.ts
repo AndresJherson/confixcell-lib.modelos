@@ -139,7 +139,7 @@ export enum ModelType {
     
     InventarioBienConsumo = 'InventarioBienConsumo',
     KardexBienConsumo = 'KardexBienConsumo',
-    KardexMovimientoBienConsumo = 'KardexMovimientoBienConsumo',
+    KardexBienConsumoMovimiento = 'KardexBienConsumoMovimiento',
     EventoPendienteKardexBienConsumo = 'EventoPendienteKardexBienConsumo',
     ErrorKardexBienConsumo = 'ErrorKardexBienConsumo',
 }

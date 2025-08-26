@@ -1,6 +1,8 @@
 dev
 dist
+docs
 node_modules
+test
 
 .npmignore
 *.tgz

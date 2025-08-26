@@ -4,8 +4,8 @@ import { ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaP
 @Prop.Class()
 export class SalidaProduccionServicioStandar extends SalidaProduccionServicio {
 
-    static override type = ModelType.SalidaProduccionServicioStandar;
-    override type = ModelType.SalidaProduccionServicioStandar;
+    static override type: string = ModelType.SalidaProduccionServicioStandar;
+    override type: string = ModelType.SalidaProduccionServicioStandar;
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionServicioActividad( x ) } ) actividades?: SalidaProduccionServicioActividad[] | null;
 

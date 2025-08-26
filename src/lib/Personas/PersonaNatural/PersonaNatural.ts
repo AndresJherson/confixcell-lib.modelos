@@ -3,8 +3,8 @@ import { ExecutionContext, Genero, ModelType, OptionalModel, Persona, Prop, Prop
 @Prop.Class()
 export class PersonaNatural extends Persona {
 
-    static override type = ModelType.PersonaNatural;
-    override type = ModelType.PersonaNatural;
+    static override type: string = ModelType.PersonaNatural;
+    override type: string = ModelType.PersonaNatural;
 
     @Prop.Set() nombre?: string | null;
     @Prop.Set() apellido?: string | null;

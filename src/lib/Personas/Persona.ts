@@ -5,8 +5,8 @@ import { ClassType } from '../../utils/Immutable';
 @Prop.Class()
 export class Persona extends Model {
 
-    static override type = ModelType.Persona;
-    override type = ModelType.Persona;
+    static override type: string = ModelType.Persona;
+    override type: string = ModelType.Persona;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SubUsuario( x ) } ) subUsuario?: SubUsuario | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoIdentificacion( x ) } ) documentoIdentificacion?: DocumentoIdentificacion | null;
@@ -57,7 +57,7 @@ export class Persona extends Model {
     }
 
 
-    static override initialize( data: OptionalModel<Persona>[] ): Array<Persona | null> {
+    static override initialize<TModel extends Persona, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( Persona, data );
     }
 

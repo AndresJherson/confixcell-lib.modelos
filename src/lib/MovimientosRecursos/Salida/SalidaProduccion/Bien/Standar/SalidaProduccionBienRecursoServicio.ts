@@ -4,10 +4,11 @@ import { Cast, ExecutionContext, Model, ModelType, OptionalModel, Prop, PropBeha
 @Prop.Class()
 export class SalidaProduccionBienRecursoServicio extends Model {
 
-    static override type = ModelType.SalidaProduccionBienRecursoServicio;
-    override type = ModelType.SalidaProduccionBienRecursoServicio;
+    static override type: string = ModelType.SalidaProduccionBienRecursoServicio;
+    override type: string = ModelType.SalidaProduccionBienRecursoServicio;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividad?: SalidaProduccionBienActividad | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) servicio?: Servicio | null;
 
     @Prop.Set() importeCostoNeto?: number | null;

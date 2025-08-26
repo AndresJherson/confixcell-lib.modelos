@@ -6,6 +6,8 @@ export * from './utils/consts/ModelType';
 export * from './utils/Cast';
 export * from './utils/Proporcion';
 export * from './utils/ExecutionContext';
+export * from './utils/ContextRecord';
+export * from './utils/UtilModels';
 
 
 // decorators
@@ -13,7 +15,7 @@ export * from './utils/decorators';
 
 // Functions
 export * from './utils/Function';
-export * from './utils/PropertyDescriptors';
+export * from './utils/UtilPropertyDescriptors';
 
 
 // Model
@@ -162,7 +164,7 @@ export * from './lib/Inventario/KardexLock';
 
 export * from './lib/Inventario/BienConsumo/InventarioBienConsumo';
 export * from './lib/Inventario/BienConsumo/KardexBienConsumo';
-export * from './lib/Inventario/BienConsumo/KardexMovimientoBienConsumo';
+export * from './lib/Inventario/BienConsumo/KardexBienConsumoMovimiento';
 export * from './lib/Inventario/BienConsumo/EventoPendienteKardexBienConsumo';
 export * from './lib/Inventario/BienConsumo/ErrorKardexBienConsumo';
 export * from './lib/Inventario/BienConsumo/MovimientoTipoBienConsumo';

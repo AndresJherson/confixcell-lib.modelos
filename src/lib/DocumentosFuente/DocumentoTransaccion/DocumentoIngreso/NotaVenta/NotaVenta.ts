@@ -1,12 +1,12 @@
 import Decimal from 'decimal.js';
-import { Cast, DocumentoTransaccion, EntradaBienConsumo, EntradaEfectivo, ExecutionContext, KardexBienConsumo, KardexMovimientoBienConsumo, ModelType, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, OptionalModel, Persona, Prop, PropBehavior, SalidaBienConsumo, SalidaEfectivo, SalidaProduccion, Usuario } from '../../../../../index';
+import { Cast, DocumentoTransaccion, EntradaBienConsumo, EntradaEfectivo, ExecutionContext, KardexBienConsumo, KardexBienConsumoMovimiento, ModelType, MovimientoTipoBienConsumo, NotaVentaEntradaEfectivo, NotaVentaEstado, NotaVentaPrioridad, NotaVentaSalidaBienConsumo, NotaVentaSalidaProduccionServicioReparacion, OptionalModel, Persona, Prop, PropBehavior, SalidaBienConsumo, SalidaEfectivo, SalidaProduccion, Usuario } from '../../../../../index';
 import { DateTime } from 'luxon';
 
 @Prop.Class()
 export class NotaVenta extends DocumentoTransaccion {
 
-    static override type = ModelType.NotaVenta;
-    override type = ModelType.NotaVenta;
+    static override type: string = ModelType.NotaVenta;
+    override type: string = ModelType.NotaVenta;
 
     @Prop.Set( { behavior: PropBehavior.datetime } ) fechaCompromiso?: string | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Persona.initialize( [x] )[0] } ) cliente?: Persona | null;
@@ -340,7 +340,7 @@ export class NotaVenta extends DocumentoTransaccion {
                 } )
             }
 
-            record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
+            record[clave].movimientos?.push( new KardexBienConsumoMovimiento( {
                 uuid: sal.uuid,
                 movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA,
                 fecha: this.fechaEmision,
@@ -366,7 +366,7 @@ export class NotaVenta extends DocumentoTransaccion {
                     } )
                 }
 
-                record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
+                record[clave].movimientos?.push( new KardexBienConsumoMovimiento( {
                     uuid: recurso.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.SALIDA_NOTA_VENTA_SERVICIO_REPARACION_RECURSO,
                     fecha: this.fechaEmision,

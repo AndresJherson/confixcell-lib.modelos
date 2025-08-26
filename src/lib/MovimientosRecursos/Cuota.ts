@@ -5,8 +5,8 @@ import { DateTime, Interval } from 'luxon';
 @Prop.Class()
 export class Cuota extends Model {
 
-    static override type = ModelType.Cuota;
-    override type = ModelType.Cuota;
+    static override type: string = ModelType.Cuota;
+    override type: string = ModelType.Cuota;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Credito.initialize( [x] )[0] } ) credito?: ICredito<Cuota> | null;
     
@@ -72,7 +72,7 @@ export class Cuota extends Model {
     }
 
 
-    static override initialize( data: OptionalModel<Cuota>[] ): Array<Cuota | null> {
+    static override initialize<TModel extends Model, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( Cuota, data );
     }
 

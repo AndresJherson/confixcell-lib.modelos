@@ -5,7 +5,7 @@ import { Cast, Credito, EntradaEfectivo, EntradaEfectivoCuota, ExecutionContext,
 export class EntradaEfectivoCredito extends EntradaEfectivo implements ICredito<EntradaEfectivoCuota> {
 
     static override type: string = ModelType.EntradaEfectivoCredito;
-    override type = ModelType.EntradaEfectivoCredito;
+    override type: string = ModelType.EntradaEfectivoCredito;
 
     readonly #credito: Credito<EntradaEfectivoCuota> = new Credito<EntradaEfectivoCuota>( {}, this );
 

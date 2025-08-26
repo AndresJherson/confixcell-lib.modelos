@@ -3,8 +3,8 @@ import { ExecutionContext, Model, ModelType, OptionalModel, PantallaMarca, Prop,
 @Prop.Class()
 export class PantallaModelo extends Model {
 
-    static override type = ModelType.PantallaModelo;
-    override type = ModelType.PantallaModelo;
+    static override type: string = ModelType.PantallaModelo;
+    override type: string = ModelType.PantallaModelo;
 
     @Prop.Set() nombre?: string | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new PantallaMarca( x ) } ) marca?: PantallaMarca | null;

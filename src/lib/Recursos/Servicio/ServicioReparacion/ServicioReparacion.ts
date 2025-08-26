@@ -3,11 +3,10 @@ import { ModelType, OptionalModel, Prop, PropBehavior, Recurso } from "../../../
 @Prop.Class()
 export class ServicioReparacion extends Recurso {
 
-    static override type = ModelType.ServicioReparacion;
-    override type = ModelType.ServicioReparacion;
+    static override type: string = ModelType.ServicioReparacion;
+    override type: string = ModelType.ServicioReparacion;
 
     @Prop.Set() nombre?: string | null;
-    @Prop.Set( { behavior: PropBehavior.boolean, getValue: () => true } ) override esSalida?: boolean | null = true;
 
     override get nombreCompleto() {
         return this.nombre;

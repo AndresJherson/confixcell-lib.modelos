@@ -1,7 +1,6 @@
 export const PropTypes: Record<string, Record<string, string>> = {
     "Model": {
         "symbol": "Symbol",
-        "id": "Number",
         "uuid": "String"
     },
     "DocumentoFuente": {
@@ -17,6 +16,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "importeNeto": "Number"
     },
     "PoliticaComercial": {
+        "numero": "Number",
         "descripcion": "String",
         "esActivo": "Boolean"
     },
@@ -55,6 +55,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "MovimientoRecurso": {
         "documentoFuente": "DocumentoFuente",
+        "numero": "Number",
         "importeValorNeto": "Number"
     },
     "DocumentoIdentificacion": {
@@ -82,8 +83,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "Recurso": {
         "codigo": "String",
-        "esActualizable": "Boolean",
-        "esSalida": "Boolean",
+        "esEscribible": "Boolean",
         "fechaCreacion": "String",
         "fechaActualizacion": "String"
     },
@@ -116,6 +116,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "nombre": "String"
     },
     "Nota": {
+        "numero": "Number",
         "fecha": "String",
         "descripcion": "String",
         "documentoFuente": "DocumentoFuente",
@@ -123,6 +124,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "ErrorKardexBienConsumo": {
         "kardex": "KardexBienConsumo",
+        "numero": "Number",
         "mensaje": "String",
         "fecha": "String"
     },
@@ -141,7 +143,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "bienConsumo": "BienConsumo",
         "eventosPendientes": "Array<EventoPendienteKardexBienConsumo>",
         "errores": "Array<ErrorKardexBienConsumo>",
-        "movimientos": "Array<KardexMovimientoBienConsumo>",
+        "movimientos": "Array<KardexBienConsumoMovimiento>",
         "fechaCreacion": "String",
         "fechaActualizacion": "String",
         "entradaCantidadAcumulado": "Number",
@@ -152,13 +154,15 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "saldoValorUnitario": "Number",
         "saldoValorTotal": "Number"
     },
-    "KardexMovimientoBienConsumo": {
+    "KardexBienConsumoMovimiento": {
         "kardex": "KardexBienConsumo",
+        "numero": "Number",
         "referenciaUuid": "String",
         "movimientoTipo": "String",
         "fecha": "String",
         "documentoFuenteCodigoSerie": "String",
         "documentoFuenteCodigoNumero": "Number",
+        "movimientoNumero": "Number",
         "concepto": "String",
         "entradaCantidad": "Number",
         "entradaCostoUnitario": "Number",
@@ -285,7 +289,6 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "NotaVentaEntradaEfectivo": {
         "documentoFuente": "NotaVenta",
-        "numero": "Number",
         "medioTransferencia": "MedioTransferencia",
         "fecha": "String"
     },
@@ -358,8 +361,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "nombre": "String"
     },
     "ServicioReparacion": {
-        "nombre": "String",
-        "esSalida": "Boolean"
+        "nombre": "String"
     },
     "ComprobanteTipo": {
         "nombre": "String"
@@ -381,6 +383,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "NotaEgresoDetalle": {
         "notaEgreso": "NotaEgreso",
+        "numero": "Number",
         "recurso": "Recurso",
         "concepto": "String",
         "cantidad": "Number",
@@ -405,6 +408,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "NotaIngresoDetalle": {
         "notaIngreso": "NotaIngreso",
+        "numero": "Number",
         "recurso": "Recurso",
         "concepto": "String",
         "cantidad": "Number",
@@ -430,7 +434,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
         "importeNeto": "Number"
     },
     "NotaVentaEstado": {
-        "orden": "Number",
+        "numero": "Number",
         "nombre": "String",
         "colorHexadecimal": "String"
     },
@@ -459,8 +463,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "PantallaModeloCalidad": {
         "modelo": "PantallaModelo",
-        "calidad": "Calidad",
-        "esSalida": "Boolean"
+        "calidad": "Calidad"
     },
     "Magnitud": {
         "nombre": "String"
@@ -479,6 +482,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "SalidaProduccionBienActividad": {
         "salidaProduccionBienStandar": "SalidaProduccionBienStandar",
+        "numero": "Number",
         "nombre": "String",
         "fechaInicio": "String",
         "fechaFinal": "String",
@@ -489,11 +493,13 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "SalidaProduccionBienRecursoBienCapital": {
         "actividad": "SalidaProduccionBienActividad",
+        "numero": "Number",
         "bienCapital": "BienCapital",
         "importeCostoNeto": "Number"
     },
     "SalidaProduccionBienRecursoBienConsumo": {
         "actividad": "SalidaProduccionBienActividad",
+        "numero": "Number",
         "almacen": "Almacen",
         "bienConsumo": "BienConsumo",
         "cantidad": "Number",
@@ -502,6 +508,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "SalidaProduccionBienRecursoServicio": {
         "actividad": "SalidaProduccionBienActividad",
+        "numero": "Number",
         "servicio": "Servicio",
         "importeCostoNeto": "Number"
     },
@@ -521,6 +528,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "NotaVentaSalidaProduccionServicioReparacionRecursoBienConsumo": {
         "salidaProduccion": "NotaVentaSalidaProduccionServicioReparacion",
+        "numero": "Number",
         "fecha": "String",
         "almacen": "Almacen",
         "bienConsumo": "BienConsumo",
@@ -532,6 +540,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "NotaVentaSalidaProduccionServicioReparacionRecursoServicio": {
         "salidaProduccion": "NotaVentaSalidaProduccionServicioReparacion",
+        "numero": "Number",
         "servicioReparacion": "ServicioReparacion",
         "descripcion": "String",
         "fechaInicio": "String",
@@ -541,6 +550,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "SalidaProduccionServicioActividad": {
         "salidaProduccionServicioStandar": "SalidaProduccionServicioStandar",
+        "numero": "Number",
         "nombre": "String",
         "fechaInicio": "String",
         "fechaFinal": "String",
@@ -551,11 +561,13 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "SalidaProduccionServicioRecursoBienCapital": {
         "actividad": "SalidaProduccionServicioActividad",
+        "numero": "Number",
         "bienCapital": "BienCapital",
         "importeCostoNeto": "Number"
     },
     "SalidaProduccionServicioRecursoBienConsumo": {
         "actividad": "SalidaProduccionServicioActividad",
+        "numero": "Number",
         "almacen": "Almacen",
         "bienConsumo": "BienConsumo",
         "cantidad": "Number",
@@ -564,6 +576,7 @@ export const PropTypes: Record<string, Record<string, string>> = {
     },
     "SalidaProduccionServicioRecursoServicio": {
         "actividad": "SalidaProduccionServicioActividad",
+        "numero": "Number",
         "servicio": "Servicio",
         "importeCostoNeto": "Number"
     },

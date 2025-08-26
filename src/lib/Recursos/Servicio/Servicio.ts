@@ -3,8 +3,8 @@ import { ModelType, OptionalModel, Prop, Recurso } from "../../../index";
 @Prop.Class()
 export class Servicio extends Recurso {
 
-    static override type = ModelType.Servicio;
-    override type = ModelType.Servicio;
+    static override type: string = ModelType.Servicio;
+    override type: string = ModelType.Servicio;
 
 
     constructor( json?: OptionalModel<Servicio> ) {
@@ -23,7 +23,7 @@ export class Servicio extends Recurso {
     }
 
 
-    static override initialize( data: OptionalModel<Servicio>[] ): Array<Servicio | null> {
+    static override initialize<TItem extends Servicio, TArray extends OptionalModel<TItem>>( data: TArray[] ) {
         return Prop.arrayInitialize( Servicio, data );
     }
 }

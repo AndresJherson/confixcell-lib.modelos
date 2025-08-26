@@ -4,8 +4,8 @@ import { Cast, ModelType, OptionalModel, Prop, Recurso } from "../../../index";
 @Prop.Class()
 export class Bien extends Recurso {
 
-    static override type = ModelType.Bien;
-    override type = ModelType.Bien;
+    static override type: string = ModelType.Bien;
+    override type: string = ModelType.Bien;
 
     @Prop.Set() precioUnitario?: number | null;
     get decimalPrecioUnitario(): Decimal { return Cast.toDecimal( this.precioUnitario ); }
@@ -27,7 +27,7 @@ export class Bien extends Recurso {
     }
 
 
-    static override initialize( data: OptionalModel<Bien>[] ): Array<Bien | null> {
+    static override initialize<TModel extends Bien, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( Bien, data );
     }
 }

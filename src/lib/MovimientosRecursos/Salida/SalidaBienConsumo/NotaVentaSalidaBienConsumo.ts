@@ -4,8 +4,8 @@ import { Cast, ExecutionContext, ModelType, NotaVenta, OptionalModel, Prop, Prop
 @Prop.Class()
 export class NotaVentaSalidaBienConsumo extends SalidaBienConsumo {
 
-    static override type = ModelType.NotaVentaSalidaBienConsumo;
-    override type = ModelType.NotaVentaSalidaBienConsumo;
+    static override type: string = ModelType.NotaVentaSalidaBienConsumo;
+    override type: string = ModelType.NotaVentaSalidaBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta | null;
 

@@ -4,8 +4,8 @@ import { Immutable } from '../../utils/Immutable';
 @Prop.Class()
 export class MetadataPresetRecord<TValue extends Object = any, TModel extends Object = any> extends Immutable {
 
-    static override type = 'MetadataPresetRecord';
-    override type = MetadataPresetRecord.type;
+    static override type: string = 'MetadataPresetRecord';
+    override type: string = MetadataPresetRecord.type;
 
     @Prop.Set() value?: TValue | null;
     @Prop.Set() descripcion: string = '';
@@ -23,34 +23,34 @@ export class PresetRecord extends Model {
     static override type: string = ModelType.PresetRecord;
     override type: string = ModelType.PresetRecord;
 
-    static almacenDeBienesDeConsumoDeNotaVenta: MetadataPresetSchema<typeof String, typeof Almacen> = {
+    static almacenDeBienesDeConsumoDeNotaVenta: MetadataPresetSchema<String, Almacen> = {
         valueCtor: String,
         descripcion: 'Almacén de productos para el documento Nota de Venta',
         modelCtor: Almacen,
         processMetadata: prevValue => new MetadataPresetRecord( {
-            value: prevValue.value != null ? String( prevValue.value ) : null,
+            value: prevValue.value != null ? new String( prevValue.value ) : null,
             descripcion: PresetRecord.almacenDeBienesDeConsumoDeNotaVenta.descripcion,
             model: prevValue.model != null ? new Almacen( prevValue.model ) : null
         } )
     }
 
-    static almacenDeRecursosBienDeConsumoDeNotaVenta: MetadataPresetSchema<typeof String, typeof Almacen> = {
+    static almacenDeRecursosBienDeConsumoDeNotaVenta: MetadataPresetSchema<String, Almacen> = {
         valueCtor: String,
         descripcion: 'Almacén de recursos del servicio de reparación para el documento Nota de Venta',
         modelCtor: Almacen,
         processMetadata: prevValue => new MetadataPresetRecord( {
-            value: prevValue.value != null ? String( prevValue.value ) : null,
+            value: prevValue.value != null ? new String( prevValue.value ) : null,
             descripcion: PresetRecord.almacenDeRecursosBienDeConsumoDeNotaVenta.descripcion,
             model: prevValue.model != null ? new Almacen( prevValue.model ) : null
         } )
     }
 
-    static servicioDeReparacionDeNotaVenta: MetadataPresetSchema<typeof String, typeof Servicio> = {
+    static servicioDeReparacionDeNotaVenta: MetadataPresetSchema<String, Servicio> = {
         valueCtor: String,
         descripcion: 'Servicio de Reparación de solo lectura',
         modelCtor: Servicio,
         processMetadata: prevValue => new MetadataPresetRecord( {
-            value: prevValue.value != null ? String( prevValue.value ) : null,
+            value: prevValue.value != null ? new String( prevValue.value ) : null,
             descripcion: PresetRecord.servicioDeReparacionDeNotaVenta.descripcion,
             model: prevValue.model != null ? new Servicio( prevValue.model ) : null
         } )
@@ -78,10 +78,10 @@ export class PresetRecord extends Model {
                     const value = schema[key];
                     const prevMetadata = presetRecord[key]
                     presetRecord.set( {
-                        [key]: {
+                        [key]: new MetadataPresetRecord( {
                             ...prevMetadata,
                             value: value
-                        }
+                        } )
                     } );
 
                 }
@@ -195,11 +195,11 @@ export class PresetRecord extends Model {
     }
 }
 
-export interface MetadataPresetSchema<TValueCtor extends new ( ...args: any ) => any, TModelCtor extends typeof Model> {
-    valueCtor: TValueCtor,
+export interface MetadataPresetSchema<TValue extends Object, TModel extends Model> {
+    valueCtor: new ( ...args: any ) => TValue,
     descripcion: string,
-    modelCtor: TModelCtor,
-    processMetadata: ( previousValue: MetadataPresetRecord ) => MetadataPresetRecord<InstanceType<TValueCtor>, InstanceType<TModelCtor>>
+    modelCtor: new ( ...args: any ) => TModel,
+    processMetadata: ( previousValue: MetadataPresetRecord ) => MetadataPresetRecord<TValue, TModel>
 }
 
 

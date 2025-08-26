@@ -4,12 +4,11 @@ import { Cast, Model, ModelType, OptionalModel, Prop, PropBehavior } from '../..
 @Prop.Class()
 export class Recurso extends Model {
 
-    static override type = ModelType.Recurso;
-    override type = ModelType.Recurso;
+    static override type: string = ModelType.Recurso;
+    override type: string = ModelType.Recurso;
 
     @Prop.Set() codigo?: string | null;
-    @Prop.Set() esActualizable?: boolean | null;
-    @Prop.Set() esSalida?: boolean | null;
+    @Prop.Set() esEscribible?: boolean | null;
 
     get nombreCompleto(): string | undefined | null {
         return undefined;
@@ -39,7 +38,7 @@ export class Recurso extends Model {
     }
 
 
-    static override initialize( data: OptionalModel<Recurso>[] ): Array<Recurso | null> {
+    static override initialize<TModel extends Recurso, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( Recurso, data );
     }
 

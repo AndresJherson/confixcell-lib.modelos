@@ -3,8 +3,8 @@ import { DocumentoFuente, DocumentoTransaccion, ExecutionContext, ModelType, Opt
 @Prop.Class()
 export class DocumentoMovimiento extends DocumentoFuente {
 
-    static override type = ModelType.DocumentoMovimiento;
-    override type = ModelType.DocumentoMovimiento;
+    static override type: string = ModelType.DocumentoMovimiento;
+    override type: string = ModelType.DocumentoMovimiento;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => DocumentoTransaccion.initialize( [x] )[0] } ) documentoTransaccion?: DocumentoTransaccion | null;
 
@@ -39,7 +39,7 @@ export class DocumentoMovimiento extends DocumentoFuente {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoMovimiento>[] ): Array<DocumentoMovimiento | null> {
+    static override initialize<TModel extends DocumentoMovimiento, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( DocumentoMovimiento, data );
     }
 }

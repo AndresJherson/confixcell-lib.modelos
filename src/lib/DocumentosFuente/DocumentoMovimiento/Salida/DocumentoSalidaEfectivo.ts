@@ -4,8 +4,8 @@ import { DocumentoSalida, ExecutionContext, ModelType, OptionalModel, Prop, Prop
 @Prop.Class()
 export class DocumentoSalidaEfectivo extends DocumentoSalida {
 
-    static override type = ModelType.DocumentoSalidaEfectivo;
-    override type = ModelType.DocumentoSalidaEfectivo;
+    static override type: string = ModelType.DocumentoSalidaEfectivo;
+    override type: string = ModelType.DocumentoSalidaEfectivo;
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => SalidaEfectivo.initialize( [x] )[0] } ) salidas?: SalidaEfectivo[] | null;
 

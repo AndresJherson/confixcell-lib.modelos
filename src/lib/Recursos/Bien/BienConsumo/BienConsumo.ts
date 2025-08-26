@@ -1,10 +1,10 @@
-import { Bien, ModelType, OptionalModel, Prop } from '../../../../index';
+import { Bien, ModelType, OptionalModel, Prop, Recurso } from '../../../../index';
 
 @Prop.Class()
 export class BienConsumo extends Bien {
 
-    static override type = ModelType.BienConsumo;
-    override type = ModelType.BienConsumo;
+    static override type: string = ModelType.BienConsumo;
+    override type: string = ModelType.BienConsumo;
 
 
     constructor( item?: OptionalModel<BienConsumo> ) {
@@ -23,7 +23,7 @@ export class BienConsumo extends Bien {
     }
 
 
-    static override initialize( data: OptionalModel<BienConsumo>[] ): Array<BienConsumo | null> {
+    static override initialize<TModel extends BienConsumo, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( BienConsumo, data );
     }
 }

@@ -3,8 +3,8 @@ import { EntradaBienConsumo, ExecutionContext, ModelType, OptionalModel, Prop, P
 @Prop.Class()
 export class SalidaBienConsumoValorEntrada extends SalidaBienConsumo {
 
-    static override type = ModelType.SalidaBienConsumoValorEntrada;
-    override type = ModelType.SalidaBienConsumoValorEntrada;
+    static override type: string = ModelType.SalidaBienConsumoValorEntrada;
+    override type: string = ModelType.SalidaBienConsumoValorEntrada;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => EntradaBienConsumo.initialize( [x] )[0] } ) entrada?: EntradaBienConsumo | null;
 

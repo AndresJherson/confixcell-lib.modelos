@@ -5,8 +5,8 @@ import { DateTime } from "luxon";
 @Prop.Class()
 export class DocumentoTransaccion extends DocumentoFuente {
 
-    static override type = ModelType.DocumentoTransaccion;
-    override type = ModelType.DocumentoTransaccion;
+    static override type: string = ModelType.DocumentoTransaccion;
+    override type: string = ModelType.DocumentoTransaccion;
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoEntradaEfectivo( x ) } ) docsEntradaEfectivo?: DocumentoEntradaEfectivo[] | null;
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new DocumentoEntradaBienConsumo( x ) } ) docsEntradaBienConsumo?: DocumentoEntradaBienConsumo[] | null;
@@ -22,7 +22,7 @@ export class DocumentoTransaccion extends DocumentoFuente {
         ];
     }
 
-    get documentosMovimiento() {
+    get documentosMovimiento(): Array<DocumentoEntradaEfectivo | DocumentoEntradaBienConsumo | DocumentoSalidaEfectivo | DocumentoSalidaBienConsumo> {
         return [
             ...this.docsEntradaEfectivo ?? [],
             ...this.docsEntradaBienConsumo ?? [],
@@ -67,7 +67,7 @@ export class DocumentoTransaccion extends DocumentoFuente {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoTransaccion>[] ): Array<DocumentoTransaccion | null> {
+    static override initialize<TModel extends DocumentoTransaccion, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( DocumentoTransaccion, data );
     }
 

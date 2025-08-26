@@ -4,8 +4,8 @@ import { Credito, NotaIngresoCuota, Prop, PropBehavior, SalidaEfectivo, ModelTyp
 @Prop.Class()
 export class NotaIngresoCredito extends SalidaEfectivo implements ICredito<NotaIngresoCuota> {
 
-    static override type = ModelType.NotaIngresoCredito;
-    override type = ModelType.NotaIngresoCredito;
+    static override type: string = ModelType.NotaIngresoCredito;
+    override type: string = ModelType.NotaIngresoCredito;
 
     readonly #credito: Credito<NotaIngresoCuota> = new Credito<NotaIngresoCuota>( {}, this );
 

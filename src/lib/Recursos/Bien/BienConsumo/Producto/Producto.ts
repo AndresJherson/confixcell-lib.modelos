@@ -3,8 +3,8 @@ import { BienConsumo, ExecutionContext, Magnitud, ModelType, OptionalModel, Prod
 @Prop.Class()
 export class Producto extends BienConsumo {
 
-    static override type = ModelType.Producto;
-    override type = ModelType.Producto;
+    static override type: string = ModelType.Producto;
+    override type: string = ModelType.Producto;
 
     @Prop.Set() nombre?: string | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ProductoMarca( x ) } ) marca?: ProductoMarca | null;

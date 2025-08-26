@@ -5,16 +5,17 @@ import { Cast, DocumentoFuente, ExecutionContext, Model, ModelType, OptionalMode
 export class MovimientoRecurso extends Model {
 
     static override type: string = ModelType.MovimientoRecurso;
-    override type = ModelType.MovimientoRecurso;
+    override type: string = ModelType.MovimientoRecurso;
 
-    @Prop.Set( { behavior: PropBehavior.model, getValue: x => new DocumentoFuente( x ) } ) documentoFuente?: DocumentoFuente | null;
+    @Prop.Set( { behavior: PropBehavior.model, getValue: x => DocumentoFuente.initialize( [x] )[0] } ) documentoFuente?: DocumentoFuente | null;
+    @Prop.Set() numero?: number | null;
 
     get codigoDocumentoFuente(): string | undefined {
         const codigoDocumentoFuente = this.documentoFuente?.codigoCompleto ?? '';
-        const id = this.id != null ? this.id.toString() : '';
-        const separator = codigoDocumentoFuente && id ? ' / ' : '';
+        const numero = this.numero?.toString() ?? '';
+        const separator = codigoDocumentoFuente && numero ? ' ' : '';
 
-        const codigo = `${codigoDocumentoFuente}${separator}${id}`.trim();
+        const codigo = `${codigoDocumentoFuente}${separator}${numero}`.trim();
         return codigo ? codigo : undefined;
     }
 
@@ -53,7 +54,7 @@ export class MovimientoRecurso extends Model {
     }
 
 
-    static override initialize( data: OptionalModel<MovimientoRecurso>[] ): Array<MovimientoRecurso | null> {
+    static override initialize<TModel extends MovimientoRecurso, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( MovimientoRecurso, data );
     }
 

@@ -4,8 +4,8 @@ import { Cast, Credito, ExecutionContext, ICredito, ModelType, OptionalModel, Pr
 @Prop.Class()
 export class SalidaEfectivoCredito extends SalidaEfectivo implements ICredito<SalidaEfectivoCuota> {
 
-    static override type = ModelType.SalidaEfectivoCredito;
-    override type = ModelType.SalidaEfectivoCredito;
+    static override type: string = ModelType.SalidaEfectivoCredito;
+    override type: string = ModelType.SalidaEfectivoCredito;
 
     readonly #credito: Credito<SalidaEfectivoCuota> = new Credito<SalidaEfectivoCuota>( {}, this );
     #cuotas?: SalidaEfectivoCuota[] | null | undefined;

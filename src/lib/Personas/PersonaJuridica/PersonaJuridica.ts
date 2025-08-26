@@ -3,8 +3,8 @@ import { ModelType, OptionalModel, Persona, Prop } from "../../../index";
 @Prop.Class()
 export class PersonaJuridica extends Persona {
 
-    static override type = ModelType.PersonaJuridica;
-    override type = ModelType.PersonaJuridica;
+    static override type: string = ModelType.PersonaJuridica;
+    override type: string = ModelType.PersonaJuridica;
 
     @Prop.Set() nombre?: string | null;
     @Prop.Set() domicilio?: string | null;

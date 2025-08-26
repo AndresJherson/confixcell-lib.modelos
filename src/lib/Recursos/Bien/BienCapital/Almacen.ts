@@ -3,8 +3,8 @@ import { BienCapital, ExecutionContext, Model, ModelType, OptionalModel, Prop, P
 @Prop.Class()
 export class Almacen extends Model {
 
-    static override type = ModelType.Almacen;
-    override type = ModelType.Almacen;
+    static override type: string = ModelType.Almacen;
+    override type: string = ModelType.Almacen;
 
     @Prop.Set() nombre?: string | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new BienCapital( x ) } ) bienCapital?: BienCapital | null;

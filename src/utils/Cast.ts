@@ -1,13 +1,13 @@
 import Decimal from "decimal.js";
 import { DateTime, Duration, Interval } from "luxon";
-import { Model, Utility, UtilPropertyDescriptor } from '../index';
-import { ClassType } from "./Immutable";
+import { Model, Utility, UtilPropertyDescriptor } from './../index';
+import { ClassType, Immutable } from "./Immutable";
 
 export class Cast extends Utility {
 
-    static toDateTime( value?: string | null ) {
+    static toDateTime( value?: unknown ) {
         try {
-            if ( value === undefined || value === null ) throw new Error();
+            if ( !(typeof value === 'string') ) throw new Error();
 
             let datetime = DateTime.fromSQL( value );
             if ( datetime.isValid ) return datetime;
@@ -17,7 +17,7 @@ export class Cast extends Utility {
                 ? datetime
                 : DateTime.invalid( '-', '-' );
         }
-        catch ( error: any ) {
+        catch ( error: unknown ) {
             return DateTime.invalid( '-', '-' );
         }
     }
@@ -95,10 +95,10 @@ export class Cast extends Utility {
     }
 
 
-    static setNumberStrict( value?: any ): number | undefined {
+    static setNumberStrict( value?: unknown ): number | undefined {
         try {
             if ( value === undefined || value === null ) throw new Error();
-            const decimalValue = new Decimal( value );
+            const decimalValue = new Decimal( value as any );
             return decimalValue.isNaN()
                 ? 0
                 : !decimalValue.isFinite()
@@ -110,7 +110,7 @@ export class Cast extends Utility {
     }
 
 
-    static setString( value?: any ): string | undefined {
+    static setString( value?: unknown ): string | undefined {
         if ( value === undefined || value === null ) return undefined;
 
         const newValue = String( value ).trim();
@@ -121,7 +121,7 @@ export class Cast extends Utility {
     }
 
 
-    static setObject( value: any ): Record<any, any> | undefined {
+    static setObject( value: unknown ): Record<any, any> | undefined {
         if ( value === undefined || value === null ) return undefined;
 
         try {
@@ -142,7 +142,7 @@ export class Cast extends Utility {
     }
 
 
-    static toRecordByUuid<T extends Model>( data: ( T & { uuid?: string | null } )[] ): Record<string, T> {
+    static arrayToRecordByUuid<T extends object & { uuid?: string | null }>( data: T[] ): Record<string, T> {
 
         return data.reduce(
             ( record, item ) => {

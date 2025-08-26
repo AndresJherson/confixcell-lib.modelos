@@ -3,8 +3,8 @@ import { DocumentoMovimiento, ModelType, OptionalModel, Prop } from '../../../..
 @Prop.Class()
 export class DocumentoSalida extends DocumentoMovimiento {
 
-    static override type = ModelType.DocumentoSalida;
-    override type = ModelType.DocumentoSalida;
+    static override type: string = ModelType.DocumentoSalida;
+    override type: string = ModelType.DocumentoSalida;
 
     constructor( item?: OptionalModel<DocumentoSalida> ) {
         super();
@@ -22,7 +22,7 @@ export class DocumentoSalida extends DocumentoMovimiento {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoSalida>[] ): Array<DocumentoSalida | null> {
+    static override initialize<TModel extends DocumentoSalida, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( DocumentoSalida, data );
     }
 }

@@ -1,11 +1,11 @@
 import Decimal from 'decimal.js';
-import { DocumentoEntrada, EntradaBienConsumo, EntradaBienConsumoValorNuevo, EntradaBienConsumoValorSalida, ExecutionContext, KardexBienConsumo, KardexMovimientoBienConsumo, ModelType, MovimientoTipoBienConsumo, OptionalModel, Prop, PropBehavior } from '../../../../index';
+import { DocumentoEntrada, EntradaBienConsumo, EntradaBienConsumoValorNuevo, EntradaBienConsumoValorSalida, ExecutionContext, KardexBienConsumo, KardexBienConsumoMovimiento, ModelType, MovimientoTipoBienConsumo, OptionalModel, Prop, PropBehavior } from '../../../../index';
 
 @Prop.Class()
 export class DocumentoEntradaBienConsumo extends DocumentoEntrada {
 
-    static override type = ModelType.DocumentoEntradaBienConsumo;
-    override type = ModelType.DocumentoEntradaBienConsumo;
+    static override type: string = ModelType.DocumentoEntradaBienConsumo;
+    override type: string = ModelType.DocumentoEntradaBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => EntradaBienConsumo.initialize( [x] ) } ) entradas?: EntradaBienConsumo[] | null;
 
@@ -113,7 +113,7 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada {
             }
 
             if ( ent instanceof EntradaBienConsumoValorNuevo ) {
-                record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
+                record[clave].movimientos?.push( new KardexBienConsumoMovimiento( {
                     uuid: ent.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.ENTRADA_VALOR_NUEVO,
                     fecha: this.fechaEmision,
@@ -126,7 +126,7 @@ export class DocumentoEntradaBienConsumo extends DocumentoEntrada {
                 } ) )
             }
             else if ( ent instanceof EntradaBienConsumoValorSalida ) {
-                record[clave].movimientos?.push( new KardexMovimientoBienConsumo( {
+                record[clave].movimientos?.push( new KardexBienConsumoMovimiento( {
                     uuid: ent.uuid,
                     referenciaUuid: ent.salida?.uuid,
                     movimientoTipo: MovimientoTipoBienConsumo.ENTRADA_VALOR_SALIDA,

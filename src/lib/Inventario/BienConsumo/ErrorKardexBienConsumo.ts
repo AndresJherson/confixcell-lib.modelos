@@ -4,10 +4,11 @@ import { Cast, ExecutionContext, KardexBienConsumo, Model, ModelType, OptionalMo
 @Prop.Class()
 export class ErrorKardexBienConsumo extends Model {
 
-    static override type = ModelType.ErrorKardexBienConsumo;
-    override type = ModelType.ErrorKardexBienConsumo;
+    static override type: string = ModelType.ErrorKardexBienConsumo;
+    override type: string = ModelType.ErrorKardexBienConsumo;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set() mensaje?: string | null;
 
     @Prop.Set( { behavior: PropBehavior.datetime } ) fecha?: string | null;

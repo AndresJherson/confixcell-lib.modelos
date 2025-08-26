@@ -5,8 +5,8 @@ import Decimal from 'decimal.js';
 @Prop.Class()
 export class DocumentoFuente extends Model {
 
-    static override type = ModelType.DocumentoFuente;
-    override type = ModelType.DocumentoFuente;
+    static override type: string = ModelType.DocumentoFuente;
+    override type: string = ModelType.DocumentoFuente;
 
     @Prop.Set() codigoSerie?: string | null;
     @Prop.Set() codigoNumero?: number | null;
@@ -45,7 +45,7 @@ export class DocumentoFuente extends Model {
     }
 
 
-    static override initialize( data: OptionalModel<DocumentoFuente>[] ): Array<DocumentoFuente | null> {
+    static override initialize<TModel extends DocumentoFuente, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( DocumentoFuente, data );
     }
 

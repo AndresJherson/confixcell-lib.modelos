@@ -3,8 +3,8 @@ import { ExecutionContext, ModelType, OptionalModel, Prop, PropBehavior, SalidaP
 
 @Prop.Class()
 export class SalidaProduccionBienStandar extends SalidaProduccionBien {
-    static override type = ModelType.SalidaProduccionBienStandar;
-    override type = ModelType.SalidaProduccionBienStandar;
+    static override type: string = ModelType.SalidaProduccionBienStandar;
+    override type: string = ModelType.SalidaProduccionBienStandar;
 
     @Prop.Set( { behavior: PropBehavior.array, getValue: x => new SalidaProduccionBienActividad( x ) } ) actividades?: SalidaProduccionBienActividad[] | null;
 

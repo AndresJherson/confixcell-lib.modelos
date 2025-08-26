@@ -3,8 +3,8 @@ import { ExecutionContext, MedioTransferencia, ModelType, OptionalModel, Prop, P
 @Prop.Class()
 export class SalidaEfectivoContado extends SalidaEfectivo {
 
-    static override type = ModelType.SalidaEfectivoContado;
-    override type = ModelType.SalidaEfectivoContado;
+    static override type: string = ModelType.SalidaEfectivoContado;
+    override type: string = ModelType.SalidaEfectivoContado;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new MedioTransferencia( x ) } ) medioTransferencia?: MedioTransferencia | null;
 

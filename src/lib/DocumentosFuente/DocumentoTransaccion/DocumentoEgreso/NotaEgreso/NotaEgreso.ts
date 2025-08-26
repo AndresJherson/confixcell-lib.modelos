@@ -4,8 +4,8 @@ import { Cast, ComprobanteTipo, DocumentoIdentificacion, DocumentoTransaccion, E
 @Prop.Class()
 export class NotaEgreso extends DocumentoTransaccion {
 
-    static override type = ModelType.NotaEgreso;
-    override type = ModelType.NotaEgreso;
+    static override type: string = ModelType.NotaEgreso;
+    override type: string = ModelType.NotaEgreso;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new ComprobanteTipo( x ) } ) comprobanteTipo?: ComprobanteTipo | null;
     @Prop.Set() comprobanteCodigoSerie?: string | null;

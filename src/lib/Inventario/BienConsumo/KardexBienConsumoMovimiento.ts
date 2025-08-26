@@ -3,12 +3,13 @@ import { Cast, ExecutionContext, KardexBienConsumo, Model, ModelType, OptionalMo
 import Decimal from "decimal.js";
 
 @Prop.Class()
-export class KardexMovimientoBienConsumo extends Model {
+export class KardexBienConsumoMovimiento extends Model {
 
-    static override type = ModelType.KardexMovimientoBienConsumo;
-    override type = ModelType.KardexMovimientoBienConsumo;
+    static override type: string = ModelType.KardexBienConsumoMovimiento;
+    override type: string = ModelType.KardexBienConsumoMovimiento;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new KardexBienConsumo( x ) } ) kardex?: KardexBienConsumo | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set() referenciaUuid?: string | null;
     @Prop.Set() movimientoTipo?: string | null;
 
@@ -17,7 +18,21 @@ export class KardexMovimientoBienConsumo extends Model {
 
     @Prop.Set() documentoFuenteCodigoSerie?: string | null;
     @Prop.Set() documentoFuenteCodigoNumero?: number | null;
+    @Prop.Set() movimientoNumero?: number | null;
     @Prop.Set() concepto?: string | null;
+
+    get codigoDocumentoFuente(): string | undefined {
+        const codigoSerie = this.documentoFuenteCodigoSerie ?? '';
+        const codigoNumero = this.documentoFuenteCodigoNumero?.toString() ?? '';
+        const separadorDocumento = codigoSerie && codigoNumero ? '-' : '';
+        const codigoDocumento = `${codigoSerie}${separadorDocumento}${codigoNumero}`.trim();
+
+        const movimientoNumero = this.movimientoNumero?.toString() ?? '';
+        const separadorMovimiento = codigoDocumento ? ' ' : '';
+
+        const codigoCompleto = `${codigoDocumento}${separadorMovimiento}${movimientoNumero}`.trim();
+        return codigoCompleto ? codigoCompleto : undefined;
+    }
 
 
     @Prop.Set() entradaCantidad?: number | null;
@@ -53,27 +68,27 @@ export class KardexMovimientoBienConsumo extends Model {
     get decimalSaldoValorTotal(): Decimal { return Cast.toDecimal( this.saldoValorTotal ); }
 
 
-    constructor( item?: OptionalModel<KardexMovimientoBienConsumo> ) {
+    constructor( item?: OptionalModel<KardexBienConsumoMovimiento> ) {
         super();
         Prop.initialize( this, item );
     }
 
 
-    override set( item: OptionalModel<KardexMovimientoBienConsumo> ): this {
+    override set( item: OptionalModel<KardexBienConsumoMovimiento> ): this {
         return super.set( item as OptionalModel<this> );
     }
 
 
-    override assign( item: OptionalModel<KardexMovimientoBienConsumo> ): this {
+    override assign( item: OptionalModel<KardexBienConsumoMovimiento> ): this {
         return super.assign( item as OptionalModel<this> );
     }
 
 
     override setRelation( context = new ExecutionContext() ): this {
-        
+
         super.setRelation( context );
 
-        context.execute( this, KardexMovimientoBienConsumo.type, () => {
+        context.execute( this, KardexBienConsumoMovimiento.type, () => {
 
             this.kardex?.setRelation( context )
 

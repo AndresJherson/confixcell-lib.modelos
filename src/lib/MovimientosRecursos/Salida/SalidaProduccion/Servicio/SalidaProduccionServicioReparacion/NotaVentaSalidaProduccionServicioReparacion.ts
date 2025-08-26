@@ -4,8 +4,8 @@ import { ExecutionContext, ModelType, NotaVenta, NotaVentaSalidaProduccionServic
 @Prop.Class()
 export class NotaVentaSalidaProduccionServicioReparacion extends SalidaProduccionServicio {
 
-    static override type = ModelType.NotaVentaSalidaProduccionServicioReparacion;
-    override type = ModelType.NotaVentaSalidaProduccionServicioReparacion;
+    static override type: string = ModelType.NotaVentaSalidaProduccionServicioReparacion;
+    override type: string = ModelType.NotaVentaSalidaProduccionServicioReparacion;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaVenta( x ) } ) override documentoFuente?: NotaVenta | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Servicio.initialize( [x] )[0] } ) override servicio?: Servicio | null;

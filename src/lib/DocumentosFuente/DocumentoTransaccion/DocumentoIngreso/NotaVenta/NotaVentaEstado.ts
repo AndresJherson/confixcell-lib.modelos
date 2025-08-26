@@ -3,10 +3,10 @@ import { Model, ModelType, OptionalModel, Prop } from '../../../../../index';
 @Prop.Class()
 export class NotaVentaEstado extends Model {
 
-    static override type = ModelType.NotaVentaEstado;
-    override type = ModelType.NotaVentaEstado;
+    static override type: string = ModelType.NotaVentaEstado;
+    override type: string = ModelType.NotaVentaEstado;
 
-    @Prop.Set() orden?: number | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set() nombre?: string | null;
     @Prop.Set() colorHexadecimal?: string | null
 

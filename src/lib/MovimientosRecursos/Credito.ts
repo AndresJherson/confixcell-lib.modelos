@@ -37,8 +37,8 @@ export interface ICredito<TCuota extends Cuota> extends Model {
 @Prop.Class()
 export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCuota> {
 
-    static override type = ModelType.Credito;
-    override type = ModelType.Credito;
+    static override type: string = ModelType.Credito;
+    override type: string = ModelType.Credito;
 
     private readonly context?: ICredito<TCuota>;
 
@@ -122,7 +122,7 @@ export class Credito<TCuota extends Cuota> extends Model implements ICredito<TCu
     }
 
 
-    static override initialize<TCuota extends Cuota>( data: OptionalModel<ICredito<TCuota>>[] ): Array<ICredito<TCuota> | null> {
+    static override initialize<TCuota extends Cuota, TModel extends Model, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( Credito<TCuota>, data );
     }
 

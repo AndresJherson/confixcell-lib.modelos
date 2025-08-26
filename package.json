@@ -1,22 +1,26 @@
 {
-  "name": "@confixcell/modelos",
-  "version": "1.0.0",
-  "description": "modelos",
-  "license": "ISC",
-  "author": "confixcell",
-  "type": "commonjs",
-  "main": "dist/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "@types/luxon": "^3.4.2",
-    "decimal.js": "^10.5.0",
-    "luxon": "^3.5.0",
-    "reflect-metadata": "^0.2.2"
-  },
-  "devDependencies": {
-    "@types/node": "^24.0.13",
-    "ts-morph": "^26.0.0"
-  }
+    "name": "@confixcell/modelos",
+    "version": "1.0.0",
+    "description": "modelos",
+    "license": "ISC",
+    "author": "confixcell",
+    "type": "commonjs",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "ts-oneFile": "npx dts-bundle-generator -o docs/dominio.d.ts src/index.ts",
+        "diagrama-uml": "tsuml2 --glob \"src/**/*.ts\" --outFile docs/diagram.puml"
+    },
+    "dependencies": {
+        "@types/luxon": "^3.4.2",
+        "decimal.js": "^10.5.0",
+        "luxon": "^3.5.0",
+        "reflect-metadata": "^0.2.2"
+    },
+    "devDependencies": {
+        "@types/node": "^24.0.13",
+        "esbuild": "^0.25.9",
+        "terser": "^5.43.1",
+        "ts-morph": "^26.0.0"
+    }
 }

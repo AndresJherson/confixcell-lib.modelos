@@ -4,10 +4,11 @@ import { Cast, ExecutionContext, Model, ModelType, NotaEgreso, OptionalModel, Pr
 @Prop.Class()
 export class NotaEgresoDetalle extends Model {
 
-    static override type = ModelType.NotaEgresoDetalle;
-    override type = ModelType.NotaEgresoDetalle;
+    static override type: string = ModelType.NotaEgresoDetalle;
+    override type: string = ModelType.NotaEgresoDetalle;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new NotaEgreso( x ) } ) notaEgreso?: NotaEgreso | null;
+    @Prop.Set() numero?: number | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => Recurso.initialize( [x] )[0] } ) recurso?: Recurso | null;
 
     @Prop.Set() concepto?: string | null;

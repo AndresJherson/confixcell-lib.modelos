@@ -3,8 +3,8 @@ import { Cuota, ModelType, OptionalModel, Prop, PropBehavior, SalidaEfectivoCred
 @Prop.Class()
 export class SalidaEfectivoCuota extends Cuota {
 
-    static override type = ModelType.SalidaEfectivoCuota;
-    override type = ModelType.SalidaEfectivoCuota;
+    static override type: string = ModelType.SalidaEfectivoCuota;
+    override type: string = ModelType.SalidaEfectivoCuota;
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new SalidaEfectivoCredito( x ) } ) override credito?: SalidaEfectivoCredito | null;
 

@@ -4,8 +4,8 @@ import { Almacen, BienConsumo, Cast, EntradaRecurso, ExecutionContext, ModelType
 @Prop.Class()
 export class EntradaBienConsumo extends EntradaRecurso {
 
-    static override type = ModelType.EntradaBienConsumo;
-    override type = ModelType.EntradaBienConsumo;
+    static override type = 'EntradaBienConsumo';
+    override type = 'EntradaBienConsumo';
 
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => new Almacen( x ) } ) almacen?: Almacen | null;
     @Prop.Set( { behavior: PropBehavior.model, getValue: x => BienConsumo.initialize( [x] )[0] } ) bienConsumo?: BienConsumo | null;
@@ -70,7 +70,7 @@ export class EntradaBienConsumo extends EntradaRecurso {
     }
 
 
-    static override initialize( data: OptionalModel<EntradaBienConsumo>[] ): Array<EntradaBienConsumo | null> {
+    static override initialize<TModel extends EntradaBienConsumo, TItem extends OptionalModel<TModel>>( data: TItem[] ) {
         return Prop.arrayInitialize( EntradaBienConsumo, data );
     }
 

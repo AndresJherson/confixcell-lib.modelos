@@ -1,0 +1,27 @@
+import { Model, ModelType, OptionalModel, Prop } from '../../../../../index';
+
+@Prop.Class()
+export class ComprobanteTipo extends Model {
+
+    static override type = 'ComprobanteTipo';
+    override type = 'ComprobanteTipo';
+    private __ComprobanteTipo!: 'ComprobanteTipo';
+
+    @Prop.Set() nombre?: string | null;
+
+
+    constructor( item?: OptionalModel<ComprobanteTipo> ) {
+        super();
+        Prop.initialize( this, item );
+    }
+
+
+    override set( item: OptionalModel<ComprobanteTipo> ): this {
+        return super.set( item as OptionalModel<this> );
+    }
+
+
+    override assign( item: OptionalModel<ComprobanteTipo> ): this {
+        return super.assign( item as OptionalModel<this> );
+    }
+}
